@@ -1,3 +1,20 @@
 .agent
 .claude
 .DS_Store
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+expo-env.d.ts
+.metro-health-check*
+
+# Generated native projects (CNG: `expo prebuild` output is never committed)
+ios/
+android/
+
+# Logs and build info
+*.log
+*.tsbuildinfo

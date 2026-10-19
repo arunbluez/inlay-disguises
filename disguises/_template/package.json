@@ -1,0 +1,29 @@
+{
+  "name": "@inlay/disguise-template",
+  "version": "0.0.0",
+  "description": "Starting point for a new disguise.",
+  "license": "Apache-2.0",
+  "main": "src/index.tsx",
+  "types": "src/index.tsx",
+  "files": [
+    "src",
+    "assets"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@inlay/disguise-sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "typescript": "~6.0.3"
+  }
+}
