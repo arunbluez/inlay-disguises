@@ -1,0 +1,31 @@
+# Headless checks on every PR to develop/main and every push. Each step is a root pnpm script, so
+# `pnpm typecheck && pnpm lint && pnpm format:check && pnpm test` reproduces it locally.
+# DCO sign-off (see DCO, CONTRIBUTING.md) is not enforced here: whether to install the DCO GitHub
+# App or add a `git log` Signed-off-by check is the maintainer's choice.
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: ['**']
+
+permissions:
+  contents: read
+
+jobs:
+  js:
+    name: JS (typecheck, lint, format, test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
