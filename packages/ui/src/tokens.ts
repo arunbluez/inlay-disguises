@@ -129,6 +129,43 @@ export const motion = {
   galleryToViewer: { duration: 280, opacity: 240, scaleFrom: 0.94 },
   /** Toggle knob slide; sheets rise without bounce. */
   sheetToggle: 140,
+  /** How long a toast stays up before it dismisses itself. */
+  toastHold: 2400,
+} as const;
+
+/** Interaction states shared by every control. */
+export const states = {
+  /** Disabled controls drop to 45% opacity. */
+  disabledOpacity: 0.45,
+} as const;
+
+/** Dims the screen behind a sheet; the same in both schemes. */
+export const scrim = 'rgba(0,0,0,.5)';
+
+/**
+ * Control dimensions that the base scale doesn't name, read from the design source's Themes panel
+ * and the prototype screens that use each control.
+ */
+export const controls = {
+  /** Trailing glyph in buttons; tab icons. */
+  icon: 22,
+  /** Chevron at the end of a pressable row. */
+  chevron: 18,
+  /** Text inset inside a field. */
+  fieldInset: 14,
+  /** Space between a field's label and its box. */
+  labelGap: 10,
+  /** Type size of text and number input (regular and semibold, outside the named roles). */
+  fieldText: 17,
+  numberText: 20,
+  chip: { height: 34, inset: 12 },
+  toggle: { width: 46, height: 28, knob: 18, knobInset: 3, border: 2 },
+  slider: { fill: 4, thumb: 20 },
+  progress: 4,
+  tab: { height: 58, heightNoIcon: 50, gap: 4 },
+  sheet: { top: 6, headerTop: 12, headerBottom: 14 },
+  toast: { vertical: 14 },
+  emptyState: { vertical: 18 },
 } as const;
 
 export type ColorScheme = 'light' | 'dark';

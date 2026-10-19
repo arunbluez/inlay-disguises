@@ -1,0 +1,39 @@
+import type { ReactNode } from 'react';
+import { Text, View } from 'react-native';
+
+import { useTheme } from '../theme';
+import { controls, radii, spacing, textStyle } from '../tokens';
+
+export interface EmptyStateProps {
+  title: string;
+  body?: string;
+  /** Optional next step under the text, e.g. a Button. */
+  action?: ReactNode;
+  testID?: string;
+}
+
+/** A surface card saying there is nothing here yet, and what to do about it. */
+export function EmptyState({ title, body, action, testID }: EmptyStateProps) {
+  const { colors } = useTheme();
+  return (
+    <View
+      testID={testID}
+      style={{
+        borderRadius: radii.card,
+        backgroundColor: colors.surface,
+        paddingVertical: controls.emptyState.vertical,
+        paddingHorizontal: spacing[16],
+      }}
+    >
+      <View accessible accessibilityLabel={body ? `${title}. ${body}` : title}>
+        <Text style={[textStyle('action', 15), { color: colors.ink }]}>{title}</Text>
+        {body ? (
+          <Text style={[textStyle('caption', 13), { color: colors.muted, marginTop: spacing[4] }]}>
+            {body}
+          </Text>
+        ) : null}
+      </View>
+      {action ? <View style={{ marginTop: spacing[12] }}>{action}</View> : null}
+    </View>
+  );
+}
