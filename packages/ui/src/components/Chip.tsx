@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useTheme } from '../theme';
 import {
@@ -106,13 +106,22 @@ export function ChipRow<Value extends string>({
       accessibilityRole="radiogroup"
       style={{
         flexDirection: 'row',
-        borderWidth: strokes.hairline,
-        borderColor: colors.rule,
         borderRadius: radii.button,
         overflow: 'hidden',
         opacity: disabled ? states.disabledOpacity : 1,
       }}
     >
+      {/* The outline sits above the segments: iOS paints children over a view's own border. */}
+      <View
+        style={{
+          ...StyleSheet.absoluteFill,
+          borderWidth: strokes.hairline,
+          borderColor: colors.rule,
+          borderRadius: radii.button,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
       {options.map((option, index) => (
         <Segment
           key={option.value}

@@ -36,24 +36,30 @@ afterEach(() => {
 });
 
 describe('ThemeProvider + useTheme()', () => {
-  it.each(ids)('%s resolves the DARK ground and dark accent when the system scheme is dark', async (id) => {
-    systemScheme.mockReturnValue('dark');
-    const theme = await resolve((probe) => <ThemeProvider theme={id}>{probe}</ThemeProvider>);
+  it.each(ids)(
+    '%s resolves the DARK ground and dark accent when the system scheme is dark',
+    async (id) => {
+      systemScheme.mockReturnValue('dark');
+      const theme = await resolve((probe) => <ThemeProvider theme={id}>{probe}</ThemeProvider>);
 
-    expect(theme.id).toBe(id);
-    expect(theme.scheme).toBe('dark');
-    expect(theme.colors).toEqual({ ...DARK, ...accents[id].dark });
-    expect(theme.elevation).toBeNull();
-  });
+      expect(theme.id).toBe(id);
+      expect(theme.scheme).toBe('dark');
+      expect(theme.colors).toEqual({ ...DARK, ...accents[id].dark });
+      expect(theme.elevation).toBeNull();
+    },
+  );
 
-  it.each(ids)('%s resolves the LIGHT ground and light accent when the system scheme is light', async (id) => {
-    systemScheme.mockReturnValue('light');
-    const theme = await resolve((probe) => <ThemeProvider theme={id}>{probe}</ThemeProvider>);
+  it.each(ids)(
+    '%s resolves the LIGHT ground and light accent when the system scheme is light',
+    async (id) => {
+      systemScheme.mockReturnValue('light');
+      const theme = await resolve((probe) => <ThemeProvider theme={id}>{probe}</ThemeProvider>);
 
-    expect(theme.scheme).toBe('light');
-    expect(theme.colors).toEqual({ ...LIGHT, ...accents[id].light });
-    expect(theme.elevation).toEqual(elevation);
-  });
+      expect(theme.scheme).toBe('light');
+      expect(theme.colors).toEqual({ ...LIGHT, ...accents[id].light });
+      expect(theme.elevation).toEqual(elevation);
+    },
+  );
 
   it('lets the `scheme` prop override the system scheme', async () => {
     systemScheme.mockReturnValue('light');
@@ -89,6 +95,8 @@ describe('ThemeProvider + useTheme()', () => {
       return null;
     }
     jest.spyOn(console, 'error').mockImplementation(() => {});
-    await expect(render(<Orphan />)).rejects.toThrow('useTheme() must be used inside a ThemeProvider');
+    await expect(render(<Orphan />)).rejects.toThrow(
+      'useTheme() must be used inside a ThemeProvider',
+    );
   });
 });
