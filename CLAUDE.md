@@ -8,7 +8,7 @@ Planning context is shared with the app repo: `.agent/` here is a symlink to `..
 
 ## Commands
 
-Node 22, pinned in `.nvmrc`: run `nvm use` at the root first. pnpm workspaces; the root scripts fan out with `pnpm -r`. Typecheck: `pnpm typecheck`. Lint: `pnpm lint`. Test: `pnpm test`. Repo guards: `pnpm check-imports`, `pnpm check-words`. PM pipeline root: `.agent/Tasks/`, through the symlink.
+Node 22, pinned in `.nvmrc`: run `nvm use` at the root first. pnpm workspaces; the root scripts fan out with `pnpm -r`. Typecheck: `pnpm typecheck`. Lint: `pnpm lint`. Test: `pnpm test`. Repo guards `pnpm check-imports` and `pnpm check-words` arrive with E02. PM pipeline root: `.agent/Tasks/`, through the symlink.
 
 ## Rules
 
@@ -20,8 +20,10 @@ Node 22, pinned in `.nvmrc`: run `nvm use` at the root first. pnpm workspaces; t
 
 ## Loop
 
-`pnpm test` (Jest + testkit) → run the disguise in `apps/playground` on the simulator → agent-device snapshot → `pnpm check-imports && pnpm check-words`.
+Headless first: `pnpm typecheck`, `pnpm lint`, `pnpm test` (Jest + testkit). After any UI change: run the disguise in the playground on the emulator/simulator (`pnpm --filter @inlay/playground android`, or `ios` once Xcode is installed) → `agent-device snapshot` and compare with the design → `pnpm check-imports && pnpm check-words` (from E02).
+
+Branches: `main` (release) and `develop` (integration); work on `epic/Exx-*` cut from `develop`, PR back to `develop`.
 
 ## Never without asking
 
-Publishing packages, tagging `sdk-*`, changing `allowlist.json`, changing the licence or CONTRIBUTING.
+Publishing packages, creating or pushing `sdk-*` or any release tag, changing `allowlist.json`, changing the licence or CONTRIBUTING.
