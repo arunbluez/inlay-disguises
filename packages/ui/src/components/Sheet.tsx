@@ -36,7 +36,7 @@ export function Sheet({
   children,
   testID,
 }: SheetProps) {
-  const { colors } = useTheme();
+  const { colors, archivo } = useTheme();
   const { height } = useWindowDimensions();
   const [mounted, setMounted] = useState(visible);
   const [progress] = useState(() => new Animated.Value(0));
@@ -69,6 +69,7 @@ export function Sheet({
           style={StyleSheet.absoluteFill}
           accessible={false}
           importantForAccessibility="no"
+          focusable={false}
           onPress={onClose}
         />
       </Animated.View>
@@ -81,7 +82,7 @@ export function Sheet({
           bottom: 0,
           paddingTop: controls.sheet.top,
           paddingBottom: spacing[32],
-          backgroundColor: colors.surface,
+          backgroundColor: colors.bar,
           borderTopLeftRadius: radii.sheet,
           borderTopRightRadius: radii.sheet,
           transform: [
@@ -101,7 +102,7 @@ export function Sheet({
         >
           <Text
             accessibilityRole="header"
-            style={[textStyle('heading', 18), { color: colors.ink, flexShrink: 1 }]}
+            style={[textStyle('heading', 18, archivo), { color: colors.ink, flexShrink: 1 }]}
           >
             {title}
           </Text>
@@ -116,7 +117,7 @@ export function Sheet({
         {note ? (
           <Text
             style={[
-              textStyle('body', 14),
+              textStyle('body', 14, archivo),
               { color: colors.muted, paddingHorizontal: layout.gutter, paddingBottom: spacing[16] },
             ]}
           >

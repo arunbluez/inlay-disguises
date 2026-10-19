@@ -1,12 +1,10 @@
-import { Children, createContext, useContext, type ReactNode } from 'react';
+import { Children, type ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { useTheme } from '../theme';
 import { controls, layout, radii, spacing, states, strokes, textStyle } from '../tokens';
+import { focusRing, useFocused } from './focus';
 import { Chevron } from './glyphs';
-
-/** Which of a row's ends meet the group's rounded corners, so its pressed fill can follow them. */
-const RowEdges = createContext({ top: false, bottom: false });
 
 export interface ListGroupProps {
   children: ReactNode;
@@ -16,14 +14,13 @@ export interface ListGroupProps {
 /** An inset surface card that holds rows, with a hairline between each. */
 export function ListGroup({ children, testID }: ListGroupProps) {
   const { colors } = useTheme();
-  const rows = Children.toArray(children);
   return (
-    <View testID={testID} style={{ backgroundColor: colors.surface, borderRadius: radii.card }}>
-      {rows.map((row, index) => (
-        <RowEdges.Provider
-          key={index}
-          value={{ top: index === 0, bottom: index === rows.length - 1 }}
-        >
+    <View
+      testID={testID}
+      style={{ backgroundColor: colors.surface, borderRadius: radii.card, overflow: 'hidden' }}
+    >
+      {Children.toArray(children).map((row, index) => (
+        <View key={index}>
           {index > 0 ? (
             <View
               style={{
@@ -34,7 +31,7 @@ export function ListGroup({ children, testID }: ListGroupProps) {
             />
           ) : null}
           {row}
-        </RowEdges.Provider>
+        </View>
       ))}
     </View>
   );
@@ -64,33 +61,36 @@ export function ListRow({
   accessibilityLabel,
   testID,
 }: ListRowProps) {
-  const { colors } = useTheme();
-  const edges = useContext(RowEdges);
+  const { colors, archivo } = useTheme();
+  const [focused, focusHandlers] = useFocused();
   return (
     <Pressable
+      {...focusHandlers}
       testID={testID}
       accessible={trailing === undefined}
+      focusable={onPress !== undefined}
       accessibilityRole={onPress ? 'button' : undefined}
       accessibilityLabel={accessibilityLabel ?? (value ? `${title}, ${value}` : title)}
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => ({
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing[12],
-        minHeight: layout.row,
-        paddingHorizontal: spacing[16],
-        backgroundColor: pressed && onPress ? colors.bg : 'transparent',
-        borderTopLeftRadius: edges.top ? radii.card : 0,
-        borderTopRightRadius: edges.top ? radii.card : 0,
-        borderBottomLeftRadius: edges.bottom ? radii.card : 0,
-        borderBottomRightRadius: edges.bottom ? radii.card : 0,
-        opacity: disabled ? states.disabledOpacity : 1,
-      })}
+      style={({ pressed }) => [
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing[12],
+          minHeight: layout.row,
+          paddingHorizontal: spacing[16],
+          backgroundColor: pressed && onPress ? colors.press : 'transparent',
+          opacity: disabled ? states.disabledOpacity : 1,
+        },
+        focused && focusRing(colors.ink, true),
+      ]}
     >
-      <Text style={[textStyle('body'), { flex: 1, color: colors.ink }]}>{title}</Text>
-      {value ? <Text style={[textStyle('body'), { color: colors.muted }]}>{value}</Text> : null}
+      <Text style={[textStyle('body', 15, archivo), { flex: 1, color: colors.ink }]}>{title}</Text>
+      {value ? (
+        <Text style={[textStyle('body', 15, archivo), { color: colors.muted }]}>{value}</Text>
+      ) : null}
       {trailing ?? (onPress ? <Chevron size={controls.chevron} color={colors.muted} /> : null)}
     </Pressable>
   );

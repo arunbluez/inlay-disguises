@@ -3,19 +3,18 @@ import { Pressable, Text, View } from 'react-native';
 import { useTheme } from '../theme';
 import {
   controls,
-  fontFamily,
+  fontStyle,
   layout,
   radii,
-  spacing,
   states,
   strokes,
   tabularNums,
   textStyle,
 } from '../tokens';
+import { focusRing, useFocused } from './focus';
 
 const chipSlop = (layout.minHit - controls.chip.height) / 2;
-/** Corner radius just inside the row's hairline border. */
-const inner = radii.button - strokes.hairline;
+const segmentSlop = (layout.minHit - controls.segment.height) / 2;
 
 export interface ChipProps {
   label: string;
@@ -27,6 +26,11 @@ export interface ChipProps {
   testID?: string;
 }
 
+/** Semibold caption text, the type of chips and segments. */
+function chipText(size: number, archivo: boolean, color: string) {
+  return { ...textStyle('caption', size, archivo), ...fontStyle(600, archivo), color };
+}
+
 /** A small outlined chip; the selected one fills with ink. Used for filters and quick picks. */
 export function Chip({
   label,
@@ -36,9 +40,11 @@ export function Chip({
   numeric = false,
   testID,
 }: ChipProps) {
-  const { colors } = useTheme();
+  const { colors, archivo } = useTheme();
+  const [focused, focusHandlers] = useFocused();
   return (
     <Pressable
+      {...focusHandlers}
       testID={testID}
       accessibilityRole="button"
       accessibilityLabel={label}
@@ -46,22 +52,23 @@ export function Chip({
       disabled={disabled}
       onPress={onPress}
       hitSlop={chipSlop}
-      style={({ pressed }) => ({
-        height: controls.chip.height,
-        justifyContent: 'center',
-        paddingHorizontal: controls.chip.inset,
-        borderRadius: radii.button,
-        borderWidth: strokes.hairline,
-        borderColor: selected ? colors.ink : colors.rule,
-        backgroundColor: selected ? colors.ink : pressed ? colors.surface : 'transparent',
-        opacity: disabled ? states.disabledOpacity : 1,
-      })}
+      style={({ pressed }) => [
+        {
+          height: controls.chip.height,
+          justifyContent: 'center',
+          paddingHorizontal: controls.chip.inset,
+          borderRadius: radii.button,
+          borderWidth: strokes.hairline,
+          borderColor: selected ? colors.ink : colors.rule,
+          backgroundColor: selected ? colors.ink : pressed ? colors.press : 'transparent',
+          opacity: disabled ? states.disabledOpacity : 1,
+        },
+        focused && focusRing(colors.ink),
+      ]}
     >
       <Text
         style={{
-          ...textStyle('caption', 13),
-          fontFamily: fontFamily[600],
-          color: selected ? colors.bg : colors.ink,
+          ...chipText(13, archivo, selected ? colors.bg : colors.ink),
           fontVariant: numeric ? [...tabularNums] : undefined,
         }}
       >
@@ -102,49 +109,63 @@ export function ChipRow<Value extends string>({
         borderWidth: strokes.hairline,
         borderColor: colors.rule,
         borderRadius: radii.button,
+        overflow: 'hidden',
         opacity: disabled ? states.disabledOpacity : 1,
       }}
     >
-      {options.map((option, index) => {
-        const selected = option.value === value;
-        return (
-          <Pressable
-            key={option.value}
-            testID={testID ? `${testID}-${option.value}` : undefined}
-            accessibilityRole="radio"
-            accessibilityLabel={option.label}
-            accessibilityState={{ checked: selected, selected, disabled }}
-            disabled={disabled}
-            onPress={() => onChange(option.value)}
-            style={({ pressed }) => ({
-              flex: 1,
-              height: layout.minHit,
-              justifyContent: 'center',
-              paddingHorizontal: spacing[12],
-              borderLeftWidth: index === 0 ? 0 : strokes.hairline,
-              borderLeftColor: colors.rule,
-              // The end segments round with the row so the selected fill follows its corners.
-              ...(index === 0 && { borderTopLeftRadius: inner, borderBottomLeftRadius: inner }),
-              ...(index === options.length - 1 && {
-                borderTopRightRadius: inner,
-                borderBottomRightRadius: inner,
-              }),
-              backgroundColor: selected ? colors.accent : pressed ? colors.surface : 'transparent',
-            })}
-          >
-            <Text
-              numberOfLines={1}
-              style={{
-                ...textStyle('caption', 13),
-                fontFamily: fontFamily[600],
-                color: selected ? colors.on : colors.ink,
-              }}
-            >
-              {option.label}
-            </Text>
-          </Pressable>
-        );
-      })}
+      {options.map((option, index) => (
+        <Segment
+          key={option.value}
+          label={option.label}
+          selected={option.value === value}
+          first={index === 0}
+          disabled={disabled}
+          onPress={() => onChange(option.value)}
+          testID={testID ? `${testID}-${option.value}` : undefined}
+        />
+      ))}
     </View>
+  );
+}
+
+interface SegmentProps {
+  label: string;
+  selected: boolean;
+  first: boolean;
+  disabled: boolean;
+  onPress: () => void;
+  testID?: string;
+}
+
+function Segment({ label, selected, first, disabled, onPress, testID }: SegmentProps) {
+  const { colors, archivo } = useTheme();
+  const [focused, focusHandlers] = useFocused();
+  return (
+    <Pressable
+      {...focusHandlers}
+      testID={testID}
+      accessibilityRole="radio"
+      accessibilityLabel={label}
+      accessibilityState={{ checked: selected, selected, disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      hitSlop={{ top: segmentSlop, bottom: segmentSlop }}
+      style={({ pressed }) => [
+        {
+          flex: 1,
+          height: controls.segment.height,
+          justifyContent: 'center',
+          paddingHorizontal: controls.segment.inset,
+          borderLeftWidth: first ? 0 : strokes.hairline,
+          borderLeftColor: colors.rule,
+          backgroundColor: selected ? colors.accent : pressed ? colors.press : 'transparent',
+        },
+        focused && focusRing(colors.ink, true),
+      ]}
+    >
+      <Text numberOfLines={1} style={chipText(12, archivo, selected ? colors.on : colors.ink)}>
+        {label}
+      </Text>
+    </Pressable>
   );
 }

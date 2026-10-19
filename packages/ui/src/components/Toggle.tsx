@@ -3,6 +3,7 @@ import { Animated, Easing, Pressable } from 'react-native';
 
 import { useTheme } from '../theme';
 import { controls, layout, motion, radii, states } from '../tokens';
+import { focusRing, useFocused } from './focus';
 
 export interface ToggleProps {
   value: boolean;
@@ -27,6 +28,7 @@ export function Toggle({
 }: ToggleProps) {
   const { colors } = useTheme();
   const [position] = useState(() => new Animated.Value(value ? 1 : 0));
+  const [focused, focusHandlers] = useFocused();
 
   useEffect(() => {
     const slide = Animated.timing(position, {
@@ -41,6 +43,7 @@ export function Toggle({
 
   return (
     <Pressable
+      {...focusHandlers}
       testID={testID}
       accessibilityRole="switch"
       accessibilityLabel={accessibilityLabel}
@@ -48,15 +51,18 @@ export function Toggle({
       disabled={disabled}
       hitSlop={{ top: slop, bottom: slop, left: 0, right: 0 }}
       onPress={() => onValueChange(!value)}
-      style={{
-        width,
-        height,
-        borderRadius: radii.pill,
-        borderWidth: border,
-        borderColor: value ? colors.accent : colors.rule,
-        backgroundColor: value ? colors.accent : 'transparent',
-        opacity: disabled ? states.disabledOpacity : 1,
-      }}
+      style={[
+        {
+          width,
+          height,
+          borderRadius: radii.pill,
+          borderWidth: border,
+          borderColor: value ? colors.accent : colors.rule,
+          backgroundColor: value ? colors.accent : 'transparent',
+          opacity: disabled ? states.disabledOpacity : 1,
+        },
+        focused && focusRing(colors.ink),
+      ]}
     >
       <Animated.View
         style={{

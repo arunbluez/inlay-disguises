@@ -17,6 +17,8 @@ export interface Theme {
   colors: Palette;
   /** `boxShadow` strings in light; `null` in dark, where surfaces step up in colour instead. */
   elevation: typeof elevation | null;
+  /** Whether Archivo is loaded; pass to `textStyle`/`fontStyle`, which fall back to the system font. */
+  archivo: boolean;
 }
 
 const ThemeContext = createContext<Theme | null>(null);
@@ -28,6 +30,11 @@ export interface ThemeProviderProps<HostThemeId extends string> {
   themes?: Record<HostThemeId, ThemeDefinition>;
   /** Forces a colour scheme; defaults to the system scheme (light when unknown). */
   scheme?: ColorScheme;
+  /**
+   * False when the host couldn't load the Archivo files, so text falls back to the system font.
+   * Defaults to the enclosing provider's value, or true.
+   */
+  fontsLoaded?: boolean;
   children: ReactNode;
 }
 
@@ -35,9 +42,12 @@ export function ThemeProvider<HostThemeId extends string = never>({
   theme: id,
   themes,
   scheme,
+  fontsLoaded,
   children,
 }: ThemeProviderProps<HostThemeId>) {
   const systemScheme = useColorScheme();
+  const parent = useContext(ThemeContext);
+  const archivo = fontsLoaded ?? parent?.archivo ?? true;
   const activeScheme: ColorScheme = scheme ?? (systemScheme === 'dark' ? 'dark' : 'light');
   const definition: ThemeDefinition | undefined =
     (themes as Record<string, ThemeDefinition> | undefined)?.[id] ??
@@ -50,8 +60,9 @@ export function ThemeProvider<HostThemeId extends string = never>({
       scheme: activeScheme,
       colors: definition[activeScheme],
       elevation: activeScheme === 'light' ? elevation : null,
+      archivo,
     }),
-    [id, activeScheme, definition],
+    [id, activeScheme, definition, archivo],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

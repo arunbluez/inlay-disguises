@@ -1,26 +1,47 @@
-// OKLCH -> sRGB hex conversion for the accent colours.
+// OKLCH -> sRGB hex conversion for the accent and danger colours.
 //
 // React Native does not parse `oklch()` colour strings, so the accents that the design source gives
 // in OKLCH are converted here once and committed as hex in `src/tokens.ts`. The tokens test re-runs
-// this conversion against `oklchSource` so a committed hex value can never drift from its source.
+// this conversion against `oklchSource` and `oklchGrounds` so a committed hex value can never drift from its source.
 // Run `pnpm accents` to print the table.
 
 export type Oklch = readonly [l: number, c: number, h: number];
 
-/** Accent values exactly as the design source (`Inlay System.dc.html`, `A`) gives them in OKLCH. */
+type Scheme = 'light' | 'dark';
+
+/**
+ * Accent values in OKLCH: as the design source (`Inlay System.dc.html`, `A`) gives them, except
+ * where D-33 lowers the lightness so `on` text over the fill reaches 4.5:1 (hue kept; chroma kept
+ * where the sRGB gamut allows). Compress is a hex value in the source; only its adjusted light
+ * accent is listed here.
+ */
 export const oklchSource = {
+  compress: {
+    // Source #ec3013 = oklch(0.611 0.225 31.5); lower lightness pulls the gamut's chroma limit in.
+    light: { accent: [0.575, 0.221, 31.5] },
+  },
   sudoku: {
     light: { accent: [0.55, 0.19, 260], deep: [0.42, 0.16, 260] },
     dark: { accent: [0.66, 0.16, 260], deep: [0.8, 0.1, 260] },
   },
   brief: {
-    light: { accent: [0.55, 0.14, 150], deep: [0.42, 0.11, 150] },
+    // Source accent oklch(0.55 0.14 150).
+    light: { accent: [0.535, 0.14, 150], deep: [0.42, 0.11, 150] },
     dark: { accent: [0.68, 0.14, 150], deep: [0.8, 0.1, 150] },
   },
 } as const satisfies Record<
   string,
-  Record<'light' | 'dark', Record<'accent' | 'deep', Oklch>>
+  Partial<Record<Scheme, Partial<Record<'accent' | 'deep', Oklch>>>>
 >;
+
+/**
+ * Ground colours that aren't in the design source (D-33): the destructive fill and its pressed
+ * fill. Crimson (hue 15) so it never reads as the Compress red (hue 31.5).
+ */
+export const oklchGrounds = {
+  light: { danger: [0.5, 0.19, 15], dangerDeep: [0.4, 0.16, 15] },
+  dark: { danger: [0.7, 0.15, 15], dangerDeep: [0.8, 0.1, 15] },
+} as const satisfies Record<Scheme, Record<'danger' | 'dangerDeep', Oklch>>;
 
 /** Formats a source value the way CSS writes it, for comments and the printed table. */
 export function formatOklch([l, c, h]: Oklch): string {

@@ -35,52 +35,80 @@ export const fontFamily = {
 
 export type FontWeight = keyof typeof fontFamily;
 
+/** A family and/or weight, ready to spread into a React Native text style. */
+export interface FontStyleToken {
+  fontFamily?: string;
+  fontWeight?: `${FontWeight}`;
+}
+
+/**
+ * The Archivo family for `weight`. When the host couldn't load Archivo (`archivo` false), the
+ * platform system font at the same weight instead: no family, so iOS and Android pick their own.
+ */
+export function fontStyle(weight: FontWeight, archivo = true): FontStyleToken {
+  return archivo ? { fontFamily: fontFamily[weight] } : { fontWeight: `${weight}` };
+}
+
 /** Tabular figures, for every numeric field, size, count and timer. */
 export const tabularNums = ['tabular-nums'] as const;
 
 /**
  * Type scale: size range (px), weight, tracking (fraction of the size, CSS `em`), line height
- * (multiple of the size). Unset line heights are not given by the source.
+ * (multiple of the size). Display, Title and Body line heights are the source's; Heading, Action,
+ * Caption and Label aren't given there and are set so every size in the range lands on the 4-pt
+ * grid (D-33). `textStyle` rounds each line height up to the next multiple of 4.
  */
 export const typeScale = {
   display: { sizes: [56, 112], weight: 800, tracking: -0.04, lineHeight: 1 },
   title: { sizes: [32, 32], weight: 800, tracking: -0.025, lineHeight: 1.05 },
-  heading: { sizes: [18, 22], weight: 800 },
-  action: { sizes: [15, 16], weight: 800 },
+  heading: { sizes: [18, 22], weight: 800, lineHeight: 1.2 },
+  action: { sizes: [15, 16], weight: 800, lineHeight: 1.25 },
   body: { sizes: [15, 15], weight: 400, lineHeight: 1.5 },
-  caption: { sizes: [12, 13], weight: 400 },
-  label: { sizes: [10, 11], weight: 600, tracking: 0.1, uppercase: true },
+  caption: { sizes: [12, 13], weight: 400, lineHeight: 1.2 },
+  /** Uppercase only, so no descenders: the line can sit just over the size. */
+  label: { sizes: [10, 11], weight: 600, tracking: 0.1, lineHeight: 1.05, uppercase: true },
 } as const satisfies Record<
   string,
   {
     sizes: readonly [number, number];
     weight: FontWeight;
     tracking?: number;
-    lineHeight?: number;
+    lineHeight: number;
     uppercase?: boolean;
   }
 >;
 
+/** Line heights snap up to this grid (the 4-pt spacing scale). */
+const LINE_GRID = 4;
+
 export type TypeRole = keyof typeof typeScale;
 
 /** A React Native compatible text style. */
-export interface TextStyleToken {
-  fontFamily: string;
+export interface TextStyleToken extends FontStyleToken {
   fontSize: number;
   letterSpacing?: number;
-  lineHeight?: number;
+  lineHeight: number;
   textTransform?: 'uppercase';
 }
 
 /**
  * Resolves a type role to a text style at `size` (defaults to the smallest size in the role's
- * range). Tracking and line height are converted from relative to absolute points.
+ * range). Tracking is converted to absolute points; the line height to points on the 4-pt grid.
+ * `archivo` false falls back to the system font (see `fontStyle`); themed components pass
+ * `useTheme().archivo`.
  */
-export function textStyle(role: TypeRole, size: number = typeScale[role].sizes[0]): TextStyleToken {
+export function textStyle(
+  role: TypeRole,
+  size: number = typeScale[role].sizes[0],
+  archivo = true,
+): TextStyleToken {
   const spec: (typeof typeScale)[TypeRole] = typeScale[role];
-  const style: TextStyleToken = { fontFamily: fontFamily[spec.weight], fontSize: size };
+  const style: TextStyleToken = {
+    ...fontStyle(spec.weight, archivo),
+    fontSize: size,
+    lineHeight: Math.ceil((spec.lineHeight * size) / LINE_GRID - 1e-9) * LINE_GRID,
+  };
   if ('tracking' in spec) style.letterSpacing = spec.tracking * size;
-  if ('lineHeight' in spec) style.lineHeight = spec.lineHeight * size;
   if ('uppercase' in spec) style.textTransform = 'uppercase';
   return style;
 }
@@ -133,10 +161,18 @@ export const motion = {
   toastHold: 2400,
 } as const;
 
-/** Interaction states shared by every control. */
+/**
+ * Interaction states shared by every control.
+ * - Pressed: accent fills step to `deep`, danger fills to `dangerDeep` (`motion.press`); outlined,
+ *   text, chip, segment and row controls lay the palette's `press` tint over their ground.
+ * - Disabled: `disabledOpacity`, no pressed feedback, no focus, `accessibilityState.disabled`.
+ * - Focused (keyboard or switch access): an ink ring `focusRing.width` wide, `focusRing.offset`
+ *   outside the control's edge (inside it for full-width rows, tabs and segments).
+ */
 export const states = {
-  /** Disabled controls drop to 45% opacity. */
+  /** Disabled controls drop to 45% opacity (the prototype's not-ready Continue button). */
   disabledOpacity: 0.45,
+  focusRing: { width: 2, offset: 2 },
 } as const;
 
 /** Dims the screen behind a sheet; the same in both schemes. */
@@ -144,63 +180,93 @@ export const scrim = 'rgba(0,0,0,.5)';
 
 /**
  * Control dimensions that the base scale doesn't name, read from the design source's Themes panel
- * and the prototype screens that use each control.
+ * and the prototype screens that use each control. Where the two disagree the Themes panel wins,
+ * unless the System panel states the size in words (row 52, primary action 56, hit target 44) or
+ * a named type role covers the text (D-33).
  */
 export const controls = {
   /** Trailing glyph in buttons; tab icons. */
   icon: 22,
   /** Chevron at the end of a pressable row. */
   chevron: 18,
-  /** Text inset inside a field. */
-  fieldInset: 14,
-  /** Space between a field's label and its box. */
-  labelGap: 10,
+  /** Field box height; text inset inside it. */
+  field: 46,
+  fieldInset: 12,
+  /** Field label size (extra bold, outside the named roles) and its space above the box. */
+  fieldLabel: 13,
+  labelGap: 6,
   /** Type size of text and number input (regular and semibold, outside the named roles). */
   fieldText: 17,
-  numberText: 20,
+  numberText: 17,
+  /** Outlined (secondary) button height and inset. */
+  secondary: { height: 44, inset: 12 },
   chip: { height: 34, inset: 12 },
-  toggle: { width: 46, height: 28, knob: 18, knobInset: 3, border: 2 },
+  /** Segments of a ChipRow; the hit target is padded out to `layout.minHit`. */
+  segment: { height: 36, inset: 10 },
+  toggle: { width: 44, height: 26, knob: 18, knobInset: 2, border: 2 },
   slider: { fill: 4, thumb: 20 },
   progress: 4,
   tab: { height: 58, heightNoIcon: 50, gap: 4 },
   sheet: { top: 6, headerTop: 12, headerBottom: 14 },
-  toast: { vertical: 14 },
-  emptyState: { vertical: 18 },
+  /** Toast padding and type size (semibold, outside the named roles). */
+  toast: { vertical: 12, horizontal: 14, text: 13 },
+  emptyState: { padding: 14 },
 } as const;
 
 export type ColorScheme = 'light' | 'dark';
 
-/** Neutral ground colours, named as in the source. */
+/** Neutral ground colours, named as in the source; shared by every theme. */
 export interface Ground {
   bg: string;
   surface: string;
+  /** Tab bars and sheets (the prototype's `--bar`). */
+  bar: string;
   ink: string;
   muted: string;
   rule: string;
   hair2: string;
   /** Ink on top of an accent fill. */
   on: string;
+  /** Tint laid over any ground while an outlined, text, chip, segment or row control is pressed. */
+  press: string;
+  /** Fill of a destructive action, distinct from every accent; `dangerDeep` is its pressed fill. */
+  danger: string;
+  dangerDeep: string;
+  /** Ink on top of a danger fill. */
+  onDanger: string;
 }
 
+// `muted` light alpha .62 -> .65 and the danger colours are D-33 additions to the source; the
+// danger values are the committed conversion of `oklchGrounds` in `scripts/oklch.ts`.
 export const LIGHT = {
   bg: '#ebe9e6',
   surface: '#f9f8f6',
+  bar: '#f9f8f6',
   ink: '#25221f',
-  muted: 'rgba(37,34,31,.62)',
+  muted: 'rgba(37,34,31,.65)',
   rule: 'rgba(37,34,31,.16)',
   hair2: 'rgba(37,34,31,.17)',
   on: '#f9f8f6',
+  press: 'rgba(37,34,31,.08)',
+  danger: '#b6143f', // oklch(0.5 0.19 15)
+  dangerDeep: '#89002a', // oklch(0.4 0.16 15)
+  onDanger: '#f9f8f6',
 } as const satisfies Ground;
 
 /** Graphite, not black. */
 export const DARK = {
   bg: '#1f1e1d',
   surface: '#2b2927',
+  bar: '#262423',
   ink: '#eeebe7',
   muted: 'rgba(238,235,231,.62)',
   rule: 'rgba(238,235,231,.16)',
   hair2: 'rgba(238,235,231,.17)',
   on: '#1f1e1d',
+  press: 'rgba(238,235,231,.08)',
+  danger: '#ec7380', // oklch(0.7 0.15 15)
+  dangerDeep: '#f7a3a9', // oklch(0.8 0.1 15)
+  onDanger: '#1f1e1d',
 } as const satisfies Ground;
 
 export interface Accent {
@@ -221,11 +287,16 @@ export interface ThemeDefinition {
 
 /**
  * The three built-in accents. Sudoku and Brief share one OKLCH lightness and chroma and only turn
- * the hue; the source gives them in OKLCH, converted to sRGB hex by `scripts/oklch.ts`.
+ * the hue; the source gives them in OKLCH, converted to sRGB hex by `scripts/oklch.ts`. The light
+ * Compress and Brief accents sit lower in OKLCH lightness than the source (D-33) so `on` text over
+ * them reaches 4.5:1.
  */
 export const accents = {
   compress: {
-    light: { accent: '#ec3013', deep: '#ae1800' },
+    light: {
+      accent: '#dd2200', // oklch(0.575 0.221 31.5); source #ec3013
+      deep: '#ae1800',
+    },
     dark: { accent: '#ff563c', deep: '#ff9783' },
   },
   sudoku: {
@@ -240,7 +311,7 @@ export const accents = {
   },
   brief: {
     light: {
-      accent: '#1c8742', // oklch(0.55 0.14 150)
+      accent: '#14833e', // oklch(0.535 0.14 150); source oklch(0.55 0.14 150)
       deep: '#0b5d2a', // oklch(0.42 0.11 150)
     },
     dark: {

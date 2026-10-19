@@ -1,4 +1,5 @@
 export * from './tokens';
+export { contrastFailures, contrastPairs, contrastRatio, type ContrastPair } from './contrast';
 export { ThemeProvider, useTheme, type Theme, type ThemeProviderProps } from './theme';
 export { Button, type ButtonProps, type ButtonVariant } from './components/Button';
 export { TextField, type TextFieldProps } from './components/TextField';

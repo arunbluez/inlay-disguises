@@ -1,4 +1,5 @@
-import { controls, fontFamily, tabularNums } from '../tokens';
+import { useTheme } from '../theme';
+import { controls, fontStyle, tabularNums } from '../tokens';
 import { Field, type FieldProps } from './Field';
 
 export interface NumberFieldProps extends Omit<FieldProps, 'keyboardType' | 'inputMode'> {
@@ -8,6 +9,7 @@ export interface NumberFieldProps extends Omit<FieldProps, 'keyboardType' | 'inp
 
 /** A labelled digits-only input in tabular figures, with an optional unit. */
 export function NumberField({ onChangeText, ...props }: NumberFieldProps) {
+  const { archivo } = useTheme();
   return (
     <Field
       {...props}
@@ -15,7 +17,7 @@ export function NumberField({ onChangeText, ...props }: NumberFieldProps) {
       inputMode="numeric"
       onChangeText={(text) => onChangeText?.(text.replace(/\D/g, ''))}
       inputStyle={{
-        fontFamily: fontFamily[600],
+        ...fontStyle(600, archivo),
         fontSize: controls.numberText,
         fontVariant: [...tabularNums],
       }}

@@ -3,6 +3,7 @@ import { Pressable, Text, type PressableProps, type StyleProp, type ViewStyle } 
 
 import { useTheme } from '../theme';
 import { controls, layout, motion, radii, spacing, states, strokes, textStyle } from '../tokens';
+import { focusRing, useFocused } from './focus';
 import { Arrow } from './glyphs';
 
 /**
@@ -10,7 +11,7 @@ import { Arrow } from './glyphs';
  * - `secondary`: outlined in the rule colour.
  * - `text`: a text action in the deep accent.
  * - `destructive`: confirms something that can't be undone (the confirm button of a delete
- *   dialog); accent fill, no arrow.
+ *   dialog); danger fill, no arrow.
  */
 export type ButtonVariant = 'primary' | 'secondary' | 'text' | 'destructive';
 
@@ -37,9 +38,14 @@ export function Button({
   style,
   ...pressable
 }: ButtonProps) {
-  const { colors } = useTheme();
-  const filled = variant === 'primary' || variant === 'destructive';
-  const fg = filled ? colors.on : variant === 'secondary' ? colors.ink : colors.deep;
+  const { colors, archivo } = useTheme();
+  const [focused, focusHandlers] = useFocused();
+  const fg = {
+    primary: colors.on,
+    destructive: colors.onDanger,
+    secondary: colors.ink,
+    text: colors.deep,
+  }[variant];
   const end =
     trailing === undefined && variant === 'primary' ? (
       <Arrow size={controls.icon} color={fg} />
@@ -50,6 +56,7 @@ export function Button({
   return (
     <Pressable
       {...pressable}
+      {...focusHandlers}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled }}
@@ -72,37 +79,32 @@ export function Button({
         variant === 'destructive' && {
           height: layout.row,
           paddingHorizontal: spacing[16],
-          backgroundColor: pressed ? colors.deep : colors.accent,
+          backgroundColor: pressed ? colors.dangerDeep : colors.danger,
         },
         variant === 'secondary' && {
-          height: layout.row,
-          paddingHorizontal: spacing[16],
+          height: controls.secondary.height,
+          paddingHorizontal: controls.secondary.inset,
           borderWidth: strokes.hairline,
           borderColor: colors.rule,
-          backgroundColor: pressed ? colors.surface : 'transparent',
+          backgroundColor: pressed ? colors.press : 'transparent',
         },
         variant === 'text' && {
           alignSelf: 'flex-start',
           height: layout.minHit,
           paddingHorizontal: spacing[4],
+          backgroundColor: pressed ? colors.press : 'transparent',
         },
+        focused && focusRing(colors.ink),
         style,
       ]}
     >
-      {({ pressed }) => (
-        <>
-          <Text
-            numberOfLines={1}
-            style={[
-              textStyle('action', variant === 'primary' ? 16 : 15),
-              { color: variant === 'text' && pressed ? colors.accent : fg },
-            ]}
-          >
-            {label}
-          </Text>
-          {end}
-        </>
-      )}
+      <Text
+        numberOfLines={1}
+        style={[textStyle('action', variant === 'primary' ? 16 : 15, archivo), { color: fg }]}
+      >
+        {label}
+      </Text>
+      {end}
     </Pressable>
   );
 }

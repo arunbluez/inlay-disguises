@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { useTheme } from '../theme';
-import { controls, fontFamily, motion, radii, spacing, textStyle } from '../tokens';
+import { controls, fontStyle, motion, radii } from '../tokens';
 
 export interface ToastProps {
   message: string;
@@ -14,7 +14,7 @@ export interface ToastProps {
 
 /** A short confirmation in ground-coloured text on an ink block. The host positions it. */
 export function Toast({ message, visible, onDismiss, testID }: ToastProps) {
-  const { colors } = useTheme();
+  const { colors, archivo } = useTheme();
 
   useEffect(() => {
     if (!visible || !onDismiss) return;
@@ -33,10 +33,10 @@ export function Toast({ message, visible, onDismiss, testID }: ToastProps) {
         borderRadius: radii.button,
         backgroundColor: colors.ink,
         paddingVertical: controls.toast.vertical,
-        paddingHorizontal: spacing[16],
+        paddingHorizontal: controls.toast.horizontal,
       }}
     >
-      <Text style={{ ...textStyle('body', 14), fontFamily: fontFamily[600], color: colors.bg }}>
+      <Text style={{ ...fontStyle(600, archivo), fontSize: controls.toast.text, color: colors.bg }}>
         {message}
       </Text>
     </View>

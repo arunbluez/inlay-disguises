@@ -7,6 +7,7 @@ import {
   Button,
   Chip,
   ChipRow,
+  controls,
   EmptyState,
   layout,
   LIGHT,
@@ -54,9 +55,9 @@ describe('Button', () => {
   });
 
   it.each([
-    ['secondary', { borderColor: compress.rule, height: layout.row }],
+    ['secondary', { borderColor: compress.rule, height: controls.secondary.height }],
     ['text', { height: layout.minHit }],
-    ['destructive', { backgroundColor: compress.accent, height: layout.row }],
+    ['destructive', { backgroundColor: compress.danger, height: layout.row }],
   ] as const)('renders the %s variant from the theme', async (variant, expected) => {
     await renderThemed(<Button label="Go" variant={variant} testID="b" />);
     expect(flat(screen.getByTestId('b'))).toMatchObject(expected);
@@ -395,5 +396,130 @@ describe('ProgressBar', () => {
     expect(
       screen.getByRole('progressbar', { name: 'Compressing' }).props.accessibilityValue.now,
     ).toBe(100);
+  });
+});
+
+describe('interaction states', () => {
+  const ring = {
+    outlineColor: compress.ink,
+    outlineStyle: 'solid',
+    outlineWidth: states.focusRing.width,
+  };
+
+  it.each([
+    ['Button', <Button key="b" label="Go" testID="c" />, states.focusRing.offset],
+    [
+      'Toggle',
+      <Toggle key="t" value onValueChange={() => {}} accessibilityLabel="On" testID="c" />,
+      states.focusRing.offset,
+    ],
+    [
+      'Chip',
+      <Chip key="c" label="Photos" onPress={() => {}} testID="c" />,
+      states.focusRing.offset,
+    ],
+    [
+      'ListRow',
+      <ListRow key="r" title="Help" onPress={() => {}} testID="c" />,
+      -states.focusRing.width,
+    ],
+    [
+      'ChipRow segment',
+      <ChipRow
+        key="s"
+        options={[{ value: 'a', label: 'A' }]}
+        value="a"
+        onChange={() => {}}
+        testID="row"
+      />,
+      -states.focusRing.width,
+    ],
+    [
+      'TabBar tab',
+      <TabBar
+        key="tb"
+        tabs={[{ key: 'a', label: 'A' }]}
+        value="a"
+        onChange={() => {}}
+        testID="tabs"
+      />,
+      -states.focusRing.width,
+    ],
+  ] as const)(
+    '%s draws the ink focus ring while focused, and drops it on blur',
+    async (_, ui, offset) => {
+      await renderThemed(ui);
+      const id = screen.queryByTestId('c')
+        ? 'c'
+        : screen.queryByTestId('row-a')
+          ? 'row-a'
+          : 'tabs-a';
+      expect(flat(screen.getByTestId(id)).outlineWidth).toBeUndefined();
+      await fireEvent(screen.getByTestId(id), 'focus');
+      expect(flat(screen.getByTestId(id))).toMatchObject({ ...ring, outlineOffset: offset });
+      await fireEvent(screen.getByTestId(id), 'blur');
+      expect(flat(screen.getByTestId(id)).outlineWidth).toBeUndefined();
+    },
+  );
+
+  it('a field rings its box while the input has focus and still calls the caller', async () => {
+    const onFocus = jest.fn();
+    await renderThemed(<TextField label="Name" onFocus={onFocus} testID="f" />);
+    const box = screen.getByTestId('f').parent!;
+    await fireEvent(screen.getByTestId('f'), 'focus');
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(flat(box)).toMatchObject({ ...ring, outlineOffset: states.focusRing.offset });
+    await fireEvent(screen.getByTestId('f'), 'blur');
+    expect(flat(box).outlineWidth).toBeUndefined();
+  });
+
+  it('every disabled control reports disabled and drops to the shared opacity', async () => {
+    await renderThemed(
+      <>
+        <Button label="Button" disabled testID="button" />
+        <Toggle
+          value
+          disabled
+          onValueChange={() => {}}
+          accessibilityLabel="Toggle"
+          testID="toggle"
+        />
+        <Chip label="Chip" disabled testID="chip" />
+        <ChipRow
+          options={[{ value: 'a', label: 'Seg' }]}
+          value="a"
+          onChange={() => {}}
+          disabled
+          testID="row"
+        />
+        <ListRow title="Row" onPress={() => {}} disabled testID="listrow" />
+        <Slider
+          value={0}
+          onValueChange={() => {}}
+          disabled
+          accessibilityLabel="Slider"
+          testID="slider"
+        />
+      </>,
+    );
+    for (const name of ['Button', 'Toggle', 'Chip', 'Seg', 'Row', 'Slider']) {
+      expect(screen.getByLabelText(name)).toBeDisabled();
+    }
+    for (const id of ['button', 'toggle', 'chip', 'row', 'listrow', 'slider']) {
+      expect(flat(screen.getByTestId(id)).opacity).toBe(states.disabledOpacity);
+    }
+  });
+
+  it('uses the system font at the role weight when the host says Archivo is not loaded', async () => {
+    await render(
+      <ThemeProvider theme="compress" scheme="light" fontsLoaded={false}>
+        <ThemeProvider theme="sudoku">
+          <Button label="Continue" />
+        </ThemeProvider>
+      </ThemeProvider>,
+    );
+    const label = flat(screen.getByText('Continue'));
+    expect(label.fontFamily).toBeUndefined();
+    expect(label.fontWeight).toBe('800');
   });
 });

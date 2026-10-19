@@ -14,21 +14,25 @@ export interface EmptyStateProps {
 
 /** A surface card saying there is nothing here yet, and what to do about it. */
 export function EmptyState({ title, body, action, testID }: EmptyStateProps) {
-  const { colors } = useTheme();
+  const { colors, archivo } = useTheme();
   return (
     <View
       testID={testID}
       style={{
         borderRadius: radii.card,
         backgroundColor: colors.surface,
-        paddingVertical: controls.emptyState.vertical,
-        paddingHorizontal: spacing[16],
+        padding: controls.emptyState.padding,
       }}
     >
       <View accessible accessibilityLabel={body ? `${title}. ${body}` : title}>
-        <Text style={[textStyle('action', 15), { color: colors.ink }]}>{title}</Text>
+        <Text style={[textStyle('action', 15, archivo), { color: colors.ink }]}>{title}</Text>
         {body ? (
-          <Text style={[textStyle('caption', 13), { color: colors.muted, marginTop: spacing[4] }]}>
+          <Text
+            style={[
+              textStyle('caption', 12, archivo),
+              { color: colors.muted, marginTop: spacing[4] },
+            ]}
+          >
             {body}
           </Text>
         ) : null}
