@@ -23,6 +23,9 @@ importers:
 
   apps/playground:
     dependencies:
+      '@expo-google-fonts/archivo':
+        specifier: ~0.4.2
+        version: 0.4.2
       '@inlay/disguise-template':
         specifier: workspace:*
         version: link:../../disguises/_template
@@ -32,6 +35,9 @@ importers:
       expo:
         specifier: ~58.0.14
         version: 58.0.14(@babel/core@7.29.7)(@expo/dom-webview@58.0.2)(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      expo-font:
+        specifier: ~58.0.8
+        version: 58.0.8(expo@58.0.14)(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -86,6 +92,39 @@ importers:
       '@inlay/disguise-sdk':
         specifier: workspace:*
         version: link:../disguise-sdk
+    devDependencies:
+      '@testing-library/react-native':
+        specifier: ~14.1.0
+        version: 14.1.0(jest@30.5.2(@types/node@26.6.5))(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)(test-renderer@1.3.1(@types/react@19.3.0)(react@19.3.0))
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/react':
+        specifier: ~19.3.0
+        version: 19.3.0
+      expo:
+        specifier: ~58.0.14
+        version: 58.0.14(@babel/core@7.29.7)(@expo/dom-webview@58.0.2)(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+      jest:
+        specifier: ~30.5.2
+        version: 30.5.2(@types/node@26.6.5)
+      jest-expo:
+        specifier: ~58.0.11
+        version: 58.0.11(@babel/core@7.29.7)(@react-native/jest-preset@0.88.0(@babel/core@7.29.7)(react@19.3.0))(@types/react@19.3.0)(expo@58.0.14)(jest@30.5.2(@types/node@26.6.5))(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-native:
+        specifier: 0.88.0
+        version: 0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0)
+      test-renderer:
+        specifier: ~1.3.1
+        version: 1.3.1(@types/react@19.3.0)(react@19.3.0)
+      typescript:
+        specifier: ~6.0.3
+        version: 6.0.3
+
+  packages/ui:
     devDependencies:
       '@testing-library/react-native':
         specifier: ~14.1.0
@@ -627,6 +666,9 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@expo-google-fonts/archivo@0.4.2':
+    resolution: {integrity: sha512-FLhI4/ZVIFSHHxx15Z7Rr4QX/4ZrJozEebBEFSdHSRRwULGCuSIpbb3dz56Hslux6LZEnJ1mVpZ6CyVpUzLwIg==}
 
   '@expo/cli@58.1.11':
     resolution: {integrity: sha512-wkFTSLXXYqLkRT5oy4DnLuTOtbFIu3qTiXHSHkFSqUBTHiE92y3bOIwM3UN7Y1ys18qVJge8lXjezaEfsHmijQ==}
@@ -4950,6 +4992,8 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
+  '@expo-google-fonts/archivo@0.4.2': {}
+
   '@expo/cli@58.1.11(@expo/dom-webview@58.0.2)(expo-constants@58.0.12(expo@58.0.14)(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(typescript@6.0.3))(expo-font@58.0.8(expo@58.0.14)(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(react@19.3.0))(expo@58.0.14)(react-native@0.88.0(@babel/core@7.29.7)(@types/react@19.3.0)(react@19.3.0))(react@19.3.0)(typescript@6.0.3)':
     dependencies:
       2g: 1.0.1(typescript@6.0.3)
@@ -6842,9 +6886,9 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 8.71.2(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5)(typescript@6.0.3)
       '@typescript-eslint/parser': 8.71.2(eslint@9.39.5)(typescript@6.0.3)
       eslint: 9.39.5
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.5)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5)
       eslint-plugin-expo: 1.2.1(eslint@9.39.5)(typescript@6.0.3)
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5)
       eslint-plugin-react: 7.37.5(eslint@9.39.5)
       eslint-plugin-react-hooks: 7.1.1(eslint@9.39.5)
       globals: 16.5.0
@@ -6866,7 +6910,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.5):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
@@ -6877,18 +6921,18 @@ snapshots:
       tinyglobby: 0.2.17
       unrs-resolver: 1.12.2
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5)
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.14.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5):
+  eslint-module-utils@2.14.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.71.2(eslint@9.39.5)(typescript@6.0.3)
       eslint: 9.39.5
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.5)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5)
     transitivePeerDependencies:
       - supports-color
 
@@ -6901,7 +6945,7 @@ snapshots:
       - supports-color
       - typescript
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.2.0
@@ -6912,7 +6956,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.5
       eslint-import-resolver-node: 0.3.10
-      eslint-module-utils: 2.14.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5)
+      eslint-module-utils: 2.14.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.2(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5)
       hasown: 2.0.4
       is-core-module: 2.17.0
       is-glob: 4.0.3
