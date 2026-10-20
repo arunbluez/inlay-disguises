@@ -122,6 +122,25 @@ describe('check-imports', () => {
       '14 react-native-mmkv',
     ]);
   });
+
+  test('__tests__ may import test tooling; a shipped file importing from __tests__ fails', () => {
+    const root = fixtureRoot({
+      'disguises/tested/package.json': JSON.stringify({ name: 'tested' }),
+      'disguises/tested/__tests__/root.test.tsx': [
+        "import { renderDisguise } from '@inlay/testkit';",
+        "import { screen } from '@testing-library/react-native';",
+        'export const helper = [renderDisguise, screen];',
+      ].join('\n'),
+      'disguises/tested/src/index.tsx': [
+        "import { helper } from '../__tests__/root.test';",
+        'export default helper;',
+      ].join('\n'),
+    });
+    const result = run(['--root', root]);
+    assert.equal(result.status, 1);
+    const lines = result.stderr.split('\n').filter((line) => line.startsWith('disguises/'));
+    assert.deepEqual(lines, ['disguises/tested/src/index.tsx:1 ../__tests__/root.test']);
+  });
 });
 
 describe('ESLint disguise block (built from the same allowlist.json)', () => {
@@ -147,5 +166,22 @@ describe('ESLint disguise block (built from the same allowlist.json)', () => {
       '4 no-restricted-syntax',
       '5 no-restricted-syntax',
     ]);
+  });
+
+  test('leaves test tooling imports in a disguise __tests__ directory alone', async () => {
+    const eslint = new ESLint({ cwd: REPO_ROOT });
+    const code = [
+      "import { renderDisguise } from '@inlay/testkit';",
+      "import { screen } from '@testing-library/react-native';",
+      'export default [renderDisguise, screen];',
+    ].join('\n');
+    const [result] = await eslint.lintText(code, {
+      filePath: path.join(REPO_ROOT, 'disguises', '_template', '__tests__', 'fixture.test.tsx'),
+    });
+    const boundary = result.messages.filter(
+      (m) => m.ruleId === 'no-restricted-imports' || m.ruleId === 'no-restricted-syntax',
+    );
+    console.log('ESLint boundary messages:', boundary);
+    assert.deepEqual(boundary, []);
   });
 });

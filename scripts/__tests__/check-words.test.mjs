@@ -157,6 +157,14 @@ describe('check-words', () => {
     assert.match(result.stderr, /^disguises\/compress\/i18n\/en\.json:2 "locked"/m);
   });
 
+  test('Markdown files are scanned as text', () => {
+    const result = checkFixture({
+      'disguises/compress/README.md': '# Compress\n\nShrink photos.\n\nKeeps files secret.\n',
+    });
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /^disguises\/compress\/README\.md:5 "secret"/m);
+  });
+
   test('a bare-word allow entry is rejected', () => {
     const result = checkFixture(
       { 'disguises/compress/src/a.ts': "export const a = 'b';" },

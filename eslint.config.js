@@ -27,6 +27,8 @@ module.exports = defineConfig([
   },
   {
     files: ['disguises/**'],
+    // Tests never ship and import the testkit; check-imports stops shipped files importing them.
+    ignores: ['disguises/*/__tests__/**'],
     rules: {
       'no-restricted-imports': [
         'error',

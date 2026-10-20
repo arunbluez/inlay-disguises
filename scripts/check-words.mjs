@@ -5,9 +5,9 @@
 // ("unlocked", "hideKeyboard", "IS_HIDDEN"), case-insensitively.
 //
 // Scanned: TS/JS string literals, template text, JSX text and every identifier (components,
-// props, style keys, config keys), whole JSON/XML/plist/.strings files, and file and directory
-// names. Comments are not scanned. A false positive is fixed with an exact-pattern entry in the
-// allow file, never by dropping the style or the field (D-32).
+// props, style keys, config keys), whole JSON/XML/plist/.strings and Markdown files (public docs),
+// and file and directory names. Comments are not scanned. A false positive is fixed with an
+// exact-pattern entry in the allow file, never by dropping the style or the field (D-32).
 //
 // Usage: node check-words.mjs --config <file>
 // Config (paths relative to the config file): { "root": "..", "include": ["<glob>", …], "allow": "<file>" }
@@ -37,7 +37,7 @@ const SCRIPT_KINDS = {
   '.cjs': ts.ScriptKind.JS,
   '.jsx': ts.ScriptKind.JSX,
 };
-const TEXT_EXTENSIONS = new Set(['.json', '.xml', '.plist', '.strings']);
+const TEXT_EXTENSIONS = new Set(['.json', '.xml', '.plist', '.strings', '.md']);
 const SCANNED_KINDS = new Set([
   ts.SyntaxKind.Identifier,
   ts.SyntaxKind.PrivateIdentifier,

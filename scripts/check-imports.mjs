@@ -3,8 +3,9 @@
 // react, react-native, @inlay/disguise-sdk, @inlay/ui, packages in
 // packages/disguise-sdk/allowlist.json (subpaths included) and relative paths inside the package.
 // Its package.json dependencies, peerDependencies and optionalDependencies must be on the same
-// list (devDependencies are build tooling and never ship). Prints `file:line specifier` per hit
-// and exits 1.
+// list (devDependencies are build tooling and never ship). Tests in `__tests__/` are build tooling
+// too: they may import the testkit and test libraries, and no shipped file may import them.
+// Prints `file:line specifier` per hit and exits 1.
 //
 // Usage: node scripts/check-imports.mjs [--root <repo root>]
 import fs from 'node:fs';
@@ -15,11 +16,13 @@ import boundary from './import-boundary.cjs';
 
 const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs']);
 const DEPENDENCY_FIELDS = ['dependencies', 'peerDependencies', 'optionalDependencies'];
+const TESTS_DIR = '__tests__';
+const SKIPPED_DIRS = new Set(['node_modules', TESTS_DIR]);
 
 function sourceFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) return entry.name === 'node_modules' ? [] : sourceFiles(full);
+    if (entry.isDirectory()) return SKIPPED_DIRS.has(entry.name) ? [] : sourceFiles(full);
     return entry.isFile() && SOURCE_EXTENSIONS.has(path.extname(entry.name)) ? [full] : [];
   });
 }
@@ -63,7 +66,11 @@ function specifiers(file) {
 function isAllowed(specifier, file, packageDir, allowed) {
   if (specifier.startsWith('./') || specifier.startsWith('../')) {
     const target = path.relative(packageDir, path.resolve(path.dirname(file), specifier));
-    return !target.startsWith('..') && !path.isAbsolute(target);
+    return (
+      !target.startsWith('..') &&
+      !path.isAbsolute(target) &&
+      !target.split(path.sep).includes(TESTS_DIR)
+    );
   }
   return boundary.isAllowedPackage(specifier, allowed);
 }
