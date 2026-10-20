@@ -1,0 +1,5 @@
+{
+  "root": "..",
+  "include": ["disguises/**", "packages/ui/**", "packages/disguise-sdk/**"],
+  "allow": "../check-words.allow.json"
+}
