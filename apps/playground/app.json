@@ -10,6 +10,24 @@
     },
     "android": {
       "package": "dev.inlay.playground"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to choose photos to compress or save.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to choose photos to compress or save.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save compressed photos.",
+          "granularPermissions": ["photo"]
+        }
+      ]
+    ]
   }
 }

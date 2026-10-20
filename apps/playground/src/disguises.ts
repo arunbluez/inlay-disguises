@@ -1,4 +1,5 @@
 import type { DisguiseManifest } from '@inlay/disguise-sdk';
+import compress from '@inlay/disguise-compress';
 import template from '@inlay/disguise-template';
 
 /**
@@ -7,4 +8,5 @@ import template from '@inlay/disguise-template';
  */
 export const disguises: readonly DisguiseManifest[] = [
   template, // _template
+  compress, // compress
 ];
