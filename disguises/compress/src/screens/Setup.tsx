@@ -209,6 +209,8 @@ export function Setup() {
           label={strings.setup.run(count)}
           trailing={<CompressGlyph size={controls.icon} color={colors.on} />}
           onPress={store.compress}
+          onHold={store.hold}
+          onHoldEnd={store.release}
           testID="compress-run"
         />
       </View>

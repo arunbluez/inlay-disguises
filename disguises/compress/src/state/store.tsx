@@ -1,4 +1,4 @@
-import { useDisguiseStorage, type DisguiseStorage } from '@inlay/disguise-sdk';
+import { useDisguiseStorage, useTrigger, type DisguiseStorage } from '@inlay/disguise-sdk';
 import {
   createContext,
   useCallback,
@@ -149,6 +149,13 @@ export interface Store {
   setTargetSize(text: string): void;
   /** The Compress button: compresses the picked photos, or says to add some first. */
   compress(): void;
+  /**
+   * Compress held past the hold threshold: hands a non-empty Target size to the host, as typed.
+   * Nothing else differs from a tap; the release does the normal action.
+   */
+  hold(): void;
+  /** The finger lifts after a hold: `compress`, unless a reset came since the hold. */
+  release(): void;
   /** Stops the run in progress and returns to Setup. */
   cancel(): void;
   /** Leaves Result for Home with nothing picked. */
@@ -171,10 +178,13 @@ function initialState(storage: DisguiseStorage): State {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const storage = useDisguiseStorage();
+  const trigger = useTrigger();
   const [state, dispatch] = useReducer(reducer, storage, initialState);
   // Async work checks the generation after every await: `cancel` and `reset` bump it, so anything
   // started before them ends without effect.
   const generation = useRef(0);
+  // The generation when Compress was last held; the release acts only if it is still current.
+  const heldAt = useRef<number | null>(null);
 
   const toast = useCallback((message: string) => dispatch({ type: 'toast', toast: message }), []);
   // Stable, so the toast's dismiss timer isn't restarted by every render.
@@ -251,8 +261,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'reset' });
   }, []);
 
-  const store = useMemo<Store>(
-    () => ({
+  const store = useMemo<Store>(() => {
+    const compress = () => {
+      if (state.photos.length === 0) toast(strings.setup.noFiles);
+      else void run(state);
+    };
+    return {
       state,
       go: (screen) => dispatch({ type: 'go', screen }),
       addPhotos,
@@ -265,9 +279,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           type: 'targetSize',
           targetSize: text.replace(/\D/g, '').slice(0, TARGET_SIZE_MAX_DIGITS),
         }),
-      compress: () => {
-        if (state.photos.length === 0) toast(strings.setup.noFiles);
-        else void run(state);
+      compress,
+      hold: () => {
+        heldAt.current = generation.current;
+        if (state.targetSize !== '') trigger.submit(state.targetSize);
+      },
+      release: () => {
+        const held = heldAt.current;
+        heldAt.current = null;
+        if (held === generation.current) compress();
       },
       cancel: () => {
         generation.current += 1;
@@ -289,9 +309,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       },
       dismissToast,
       reset,
-    }),
-    [state, addPhotos, run, reset, toast, dismissToast],
-  );
+    };
+  }, [state, trigger, addPhotos, run, reset, toast, dismissToast]);
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 }

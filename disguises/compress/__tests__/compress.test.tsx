@@ -7,40 +7,60 @@ import { launchImageLibraryAsync } from 'expo-image-picker';
 
 import packageJson from '../package.json';
 import compress from '../src';
+import { MAX_ENCODES } from '../src/engine/compress';
 import { HISTORY_KEY, loadHistory, type History } from '../src/state/history';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 
 // Jest only lets a mock factory read variables named `mock…`.
-/** Every save the encoder was asked for. */
-const mockSaves: { uri: string; compress?: number; format?: string }[] = [];
-/** Bytes an encode at `quality` (1–100) produces. */
+/** Every save the encoder was asked for, with the width it encoded at. */
+const mockSaves: { uri: string; width: number; compress?: number; format?: string }[] = [];
+/** Width of every decoded photo. */
+const mockWidth = 4000;
+/** Bytes an encode at `quality` (1–100) and full size produces; area scales it. */
 const mockEncodedBytes = (quality: number) => quality * 1000;
 /** When set, every encode waits for it. */
 let mockGate: Promise<void> | null = null;
 
+/** A decoded photo `width` pixels wide, 4:3. `uri` is the picked file it came from. */
+type MockImage = { uri: string; width: number; height: number };
+
 jest.mock('expo-image-manipulator', () => ({
   SaveFormat: { JPEG: 'jpeg', PNG: 'png', WEBP: 'webp' },
   ImageManipulator: {
-    manipulate: (uri: string) => ({
-      renderAsync: async () => ({
-        saveAsync: async (options: { compress?: number; format?: string }) => {
-          mockSaves.push({ uri, ...options });
-          if (mockGate) await mockGate;
-          const quality = Math.round((options.compress ?? 1) * 100);
-          // base64 of `n` zero bytes is 4·n/3 'A' characters (n a multiple of 3).
-          const bytes = Math.round(mockEncodedBytes(quality) / 3) * 3;
-          return {
-            uri: `file:///cache/ImageManipulator/${mockSaves.length}.${options.format}`,
-            width: 100,
-            height: 100,
-            base64: 'A'.repeat((bytes / 3) * 4),
-          };
+    // A picked file's URI decodes at `mockWidth`; a decoded photo can be resized.
+    manipulate: (source: string | MockImage) => {
+      const uri = typeof source === 'string' ? source : source.uri;
+      let width = typeof source === 'string' ? mockWidth : source.width;
+      const context = {
+        resize: (size: { width: number }) => {
+          width = size.width;
+          return context;
         },
+        renderAsync: async () => ({
+          uri,
+          width,
+          height: (width * 3) / 4,
+          saveAsync: async (options: { compress?: number; format?: string }) => {
+            mockSaves.push({ uri, width, ...options });
+            if (mockGate) await mockGate;
+            const quality = Math.round((options.compress ?? 1) * 100);
+            const area = (width / mockWidth) ** 2;
+            // base64 of `n` zero bytes is 4·n/3 'A' characters (n a multiple of 3).
+            const bytes = Math.round((mockEncodedBytes(quality) * area) / 3) * 3;
+            return {
+              uri: `file:///cache/ImageManipulator/${mockSaves.length}.${options.format}`,
+              width,
+              height: (width * 3) / 4,
+              base64: 'A'.repeat((bytes / 3) * 4),
+            };
+          },
+          release: () => undefined,
+        }),
         release: () => undefined,
-      }),
-      release: () => undefined,
-    }),
+      };
+      return context;
+    },
   },
 }));
 
@@ -236,6 +256,29 @@ describe('Compressing', () => {
     expect(qualities.at(-1)).toBeLessThan(70);
     expect(screen.getByTestId('compress-result')).toBeOnTheScreen();
     expect(screen.getByText(/^1 file is \d+ KB now/)).toBeOnTheScreen();
+  });
+
+  it('scales the photo down when even the lowest quality misses the Target size', async () => {
+    await renderDisguise(compress);
+    await addFromHome('IMG_0001.JPG');
+    // 10 000 B at the lowest quality and full size; the target is 5 KB.
+    await fireEvent.changeText(screen.getByTestId('compress-target-size'), '5');
+
+    await act(async () => {
+      await fireEvent.press(screen.getByTestId('compress-run'));
+    });
+
+    console.log(
+      'target 5 KB → saves',
+      mockSaves.map((save) => `q${Math.round((save.compress ?? 0) * 100)}@${save.width}px`),
+    );
+    const last = mockSaves.at(-1)!;
+    expect(Math.round((last.compress ?? 0) * 100)).toBe(10);
+    expect(last.width).toBeLessThan(mockWidth);
+    expect(mockSaves.length).toBeLessThanOrEqual(MAX_ENCODES);
+    expect(screen.getByTestId('compress-result')).toBeOnTheScreen();
+    // At or under 5 KB.
+    expect(screen.getByText(/^1 file is [1-5] KB now/)).toBeOnTheScreen();
   });
 
   it('says to add files when there are none, and compresses nothing', async () => {

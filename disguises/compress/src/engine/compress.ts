@@ -1,6 +1,6 @@
-import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { ImageManipulator, SaveFormat, type ImageRef } from 'expo-image-manipulator';
 
-import { fitToTarget, type Encoded } from './targetSize';
+import { fitToTarget, type Encoder } from './targetSize';
 
 /** A photo the user picked: the picker's copy in the cache, never the library original. */
 export interface Photo {
@@ -34,11 +34,13 @@ export interface Compressed {
 export const QUALITY_FLOOR = 10;
 /** Encodes after the first while searching for a target size: enough to cover 10–100 exactly. */
 export const TARGET_SEARCH_STEPS = 7;
+/** Scale-downs after the search, when even `QUALITY_FLOOR` misses the target. */
+export const TARGET_RESIZES = 3;
 /** Longest edge of an output, in pixels. Larger photos are scaled down while decoding. */
 export const MAX_EDGE = 4096;
 
-/** Encodes per photo at most: the first plus the search steps. */
-export const MAX_ENCODES = 1 + TARGET_SEARCH_STEPS;
+/** Encodes per photo at most: the first, the search steps and the scale-downs. */
+export const MAX_ENCODES = 1 + TARGET_SEARCH_STEPS + TARGET_RESIZES;
 
 /** Bytes of the data a base64 string encodes. */
 export function base64Bytes(base64: string): number {
@@ -54,8 +56,9 @@ function outputFormat(photo: Photo, format: OutputFormat): SaveFormat {
 /**
  * Re-encodes one photo: decoded at most `MAX_EDGE` on its longest side, written without its
  * metadata (the encoder never copies EXIF or location), at the chosen quality, or lower until it
- * fits the target size. PNG is lossless, so it is written once. Resolves `null` once `isCancelled`
- * returns true.
+ * fits the target size, then smaller in pixels if even `QUALITY_FLOOR` doesn't fit. PNG is
+ * lossless, so with a target it is only scaled down. Resolves `null` once `isCancelled` returns
+ * true.
  */
 export async function compressPhoto(
   photo: Photo,
@@ -70,16 +73,33 @@ export async function compressPhoto(
   try {
     const image = await context.renderAsync();
     try {
-      const encode = async (quality: number): Promise<Encoded> => {
-        const saved = await image.saveAsync({ compress: quality / 100, format, base64: true });
+      const save = async (source: ImageRef, quality: number) => {
+        const saved = await source.saveAsync({ compress: quality / 100, format, base64: true });
         return { uri: saved.uri, bytes: base64Bytes(saved.base64 ?? '') };
+      };
+      const encode: Encoder = async (quality, scale) => {
+        if (scale >= 1) return save(image, quality);
+        const width = Math.max(1, Math.round(image.width * scale));
+        const resizing = ImageManipulator.manipulate(image).resize({ width });
+        try {
+          const scaled = await resizing.renderAsync();
+          try {
+            return await save(scaled, quality);
+          } finally {
+            scaled.release();
+          }
+        } finally {
+          resizing.release();
+        }
       };
       const lossless = format === SaveFormat.PNG;
       const fit = await fitToTarget(encode, {
         quality: settings.quality,
-        targetBytes: lossless ? undefined : settings.targetBytes,
-        floor: QUALITY_FLOOR,
+        targetBytes: settings.targetBytes,
+        // PNG ignores quality: no quality search, only scaling down.
+        floor: lossless ? settings.quality : QUALITY_FLOOR,
         maxSteps: TARGET_SEARCH_STEPS,
+        maxResizes: TARGET_RESIZES,
         onEncode,
         isCancelled,
       });
