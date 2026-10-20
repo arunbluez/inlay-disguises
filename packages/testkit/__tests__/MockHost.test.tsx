@@ -9,7 +9,10 @@ const manifest: DisguiseManifest = {
   name: 'Test',
   version: '0.0.0',
   minSdk: '0.0.0',
-  icon: './assets/icon.png',
+  icon: {
+    ios: { light: 1, dark: 1, tinted: 1 },
+    android: { foreground: 1, background: 1, monochrome: 1 },
+  },
   root: () => <Text>Test root</Text>,
   triggerDescription: 'Type a code.',
   allowedHosts: [],

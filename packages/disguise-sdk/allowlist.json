@@ -1,0 +1,13 @@
+{
+  "packages": [
+    { "name": "react", "reason": "UI runtime" },
+    { "name": "react-native", "reason": "Native UI primitives" },
+    { "name": "@inlay/disguise-sdk", "reason": "Host hooks, manifest type and the shared UI kit" },
+    { "name": "@inlay/ui", "reason": "Shared design tokens and components" },
+    { "name": "expo-image-picker", "reason": "System photo picker (camera off)" },
+    { "name": "expo-image-manipulator", "reason": "Resize and re-encode photos to compress them" },
+    { "name": "expo-media-library", "reason": "Save results to the photo library" },
+    { "name": "expo-sharing", "reason": "System share sheet" },
+    { "name": "react-native-gesture-handler", "reason": "Hold gesture on buttons" }
+  ]
+}
