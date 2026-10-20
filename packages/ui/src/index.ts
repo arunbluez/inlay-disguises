@@ -19,3 +19,6 @@ export { Toast, type ToastProps } from './components/Toast';
 export { TabBar, type TabBarProps, type TabBarTab } from './components/TabBar';
 export { EmptyState, type EmptyStateProps } from './components/EmptyState';
 export { ProgressBar, type ProgressBarProps } from './components/ProgressBar';
+export { ScreenHeader, type ScreenHeaderProps } from './components/ScreenHeader';
+export { FileRow, type FileRowProps } from './components/FileRow';
+export { ActionCard, type ActionCardProps } from './components/ActionCard';

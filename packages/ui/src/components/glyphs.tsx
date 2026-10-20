@@ -62,3 +62,52 @@ export function Chevron({ size, color }: GlyphProps) {
     </View>
   );
 }
+
+/** "m15 18-6-6 6-6": the back chevron, the row chevron turned to face left. */
+export function Back({ size, color }: GlyphProps) {
+  return (
+    <View style={{ transform: [{ scaleX: -1 }] }}>
+      <Chevron size={size} color={color} />
+    </View>
+  );
+}
+
+// A round-capped stroke `length` units long, centred on the grid and turned by `angle` degrees.
+function Stroke({ size, color, length, angle }: GlyphProps & { length: number; angle: number }) {
+  const unit = size / GRID;
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        left: ((GRID - length) / 2) * unit,
+        top: (GRID / 2) * unit - strokes.rule / 2,
+        width: length * unit,
+        height: strokes.rule,
+        borderRadius: strokes.rule / 2,
+        backgroundColor: color,
+        transform: [{ rotate: `${angle}deg` }],
+      }}
+    />
+  );
+}
+
+/** "M5 12h14 M12 5v14": add. */
+export function Plus({ size, color }: GlyphProps) {
+  return (
+    <View style={{ width: size, height: size }}>
+      <Stroke size={size} color={color} length={14} angle={0} />
+      <Stroke size={size} color={color} length={14} angle={90} />
+    </View>
+  );
+}
+
+/** "M18 6 6 18 m6 6 12 12": remove. */
+export function Cross({ size, color }: GlyphProps) {
+  const length = 12 * Math.SQRT2;
+  return (
+    <View style={{ width: size, height: size }}>
+      <Stroke size={size} color={color} length={length} angle={45} />
+      <Stroke size={size} color={color} length={length} angle={-45} />
+    </View>
+  );
+}
