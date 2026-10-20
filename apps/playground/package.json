@@ -1,0 +1,29 @@
+{
+  "name": "@inlay/playground",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Runs a disguise standalone against MockHost.",
+  "license": "Apache-2.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@expo-google-fonts/archivo": "~0.4.2",
+    "@inlay/disguise-template": "workspace:*",
+    "@inlay/testkit": "workspace:*",
+    "expo": "~58.0.14",
+    "expo-font": "~58.0.8",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-safe-area-context": "~5.10.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "typescript": "~6.0.3"
+  }
+}

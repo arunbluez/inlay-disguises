@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Playground",
+    "slug": "inlay-playground",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "dev.inlay.playground"
+    },
+    "android": {
+      "package": "dev.inlay.playground"
+    }
+  }
+}
