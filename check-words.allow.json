@@ -11,5 +11,15 @@
   {
     "pattern": "overflow: 'hidden'",
     "reason": "React Native style value that clips children to rounded corners; never shown"
+  },
+  {
+    "pattern": "close: 'keyboardWillHide'",
+    "path": "disguises/compress/src/state/keyboard.ts",
+    "reason": "React Native keyboard event name; never shown"
+  },
+  {
+    "pattern": "close: 'keyboardDidHide'",
+    "path": "disguises/compress/src/state/keyboard.ts",
+    "reason": "React Native keyboard event name; never shown"
   }
 ]

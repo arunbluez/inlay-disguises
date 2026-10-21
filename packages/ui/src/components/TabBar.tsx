@@ -16,6 +16,8 @@ export interface TabBarProps<Key extends string> {
   tabs: readonly TabBarTab<Key>[];
   value: Key;
   onChange: (key: Key) => void;
+  /** Space under the tabs, in the bar colour, so the bar reaches the screen's bottom edge. */
+  bottomInset?: number;
   testID?: string;
 }
 
@@ -23,13 +25,19 @@ export interface TabBarProps<Key extends string> {
  * Bottom tabs on the bar colour; the active tab is accent with an inset bar along its top. Tabs
  * switch on release with no pressed tint: a tint under the 11-point label would drop it below AA.
  */
-export function TabBar<Key extends string>({ tabs, value, onChange, testID }: TabBarProps<Key>) {
+export function TabBar<Key extends string>({
+  tabs,
+  value,
+  onChange,
+  bottomInset = 0,
+  testID,
+}: TabBarProps<Key>) {
   const { colors } = useTheme();
   return (
     <View
       testID={testID}
       accessibilityRole="tablist"
-      style={{ flexDirection: 'row', backgroundColor: colors.bar }}
+      style={{ flexDirection: 'row', backgroundColor: colors.bar, paddingBottom: bottomInset }}
     >
       {tabs.map((tab) => (
         <Tab

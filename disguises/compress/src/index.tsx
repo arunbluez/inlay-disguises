@@ -1,4 +1,10 @@
-import { spacing, Toast, useLifecycle, type DisguiseManifest } from '@inlay/disguise-sdk';
+import {
+  spacing,
+  Toast,
+  useBottomInset,
+  useLifecycle,
+  type DisguiseManifest,
+} from '@inlay/disguise-sdk';
 import { useEffect, type ComponentType } from 'react';
 import { View } from 'react-native';
 
@@ -10,6 +16,7 @@ import { Progress } from './screens/Progress';
 import { Result } from './screens/Result';
 import { Settings } from './screens/Settings';
 import { Setup } from './screens/Setup';
+import { useKeyboardHeight } from './state/keyboard';
 import { StoreProvider, useStore, type Screen } from './state/store';
 import { strings } from './strings';
 
@@ -24,29 +31,34 @@ const screens: Record<Screen, ComponentType> = {
 
 /**
  * Space between the toast and the bottom of the screen (the UI Source's 96): clear of the tab bar
- * and the Compress button, and on Result above Save to Photos and Share.
+ * and the Compress button, and on Result above Save to Photos and Share. It is measured from the
+ * top of the open keyboard or of the system area at the bottom edge, whichever is higher.
  */
-function toastBottom(screen: Screen): number {
-  return screen === 'result' ? 148 : 96;
+function toastBottom(screen: Screen, below: number): number {
+  return (screen === 'result' ? 148 : 96) + below;
 }
 
 function Screens() {
   const { state, go, reset, dismissToast } = useStore();
   const lifecycle = useLifecycle();
   useEffect(() => lifecycle.onReset(reset), [lifecycle, reset]);
+  const bottomInset = useBottomInset();
+  const keyboardHeight = useKeyboardHeight();
 
   const Current = screens[state.screen];
   return (
     <View style={{ flex: 1 }}>
       <Current />
-      {isTab(state.screen) ? <Tabs value={state.screen} onChange={go} /> : null}
+      {isTab(state.screen) ? (
+        <Tabs value={state.screen} onChange={go} bottomInset={bottomInset} />
+      ) : null}
       <View
         style={{
           pointerEvents: 'none',
           position: 'absolute',
           left: spacing[16],
           right: spacing[16],
-          bottom: toastBottom(state.screen),
+          bottom: toastBottom(state.screen, Math.max(keyboardHeight, bottomInset)),
         }}
       >
         <Toast

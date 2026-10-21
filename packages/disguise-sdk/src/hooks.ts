@@ -40,3 +40,12 @@ export function useHostTheme(): HostTheme {
 export function useLifecycle(): Lifecycle {
   return useHostValue('useLifecycle').lifecycle;
 }
+
+/**
+ * The height of the system area along the screen's bottom edge (home indicator, navigation bar).
+ * The host draws the disguise down to that edge: a bar at the bottom pads its content by this much
+ * so its colour reaches the edge, and anything else at the bottom keeps clear of it.
+ */
+export function useBottomInset(): number {
+  return useHostValue('useBottomInset').bottomInset;
+}

@@ -1,6 +1,6 @@
 # SDK reference
 
-`@inlay/disguise-sdk` is everything a disguise uses to talk to the app that runs it (the host): a manifest type, five hooks and the shared UI kit. The source is in `packages/disguise-sdk/src`; every exported name has a doc comment there.
+`@inlay/disguise-sdk` is everything a disguise uses to talk to the app that runs it (the host): a manifest type, six hooks and the shared UI kit. The source is in `packages/disguise-sdk/src`; every exported name has a doc comment there.
 
 ```ts
 import {
@@ -9,6 +9,7 @@ import {
   useDisguiseStorage,
   useDisguiseFetch,
   useHostTheme,
+  useBottomInset,
   Button,
   NumberField,
   type DisguiseManifest,
@@ -108,6 +109,18 @@ type DisguiseFetch = (input: string, init?: RequestInit) => Promise<Response>;
 ### `useHostTheme(): HostTheme`
 
 The theme the host resolved for the disguise: the colours for the current light or dark scheme (including the disguise's accent), the elevation tokens, the scheme and whether the Archivo font is loaded. It is the same value `useTheme()` returns inside `@inlay/ui` components.
+
+### `useBottomInset(): number`
+
+The height of the system area along the screen's bottom edge: the home indicator on iOS, the navigation bar on Android, 0 where there is none. The host draws the disguise down to that edge, so the disguise decides what sits behind it:
+
+- a bar at the bottom (tabs, a button bar) adds the inset as padding under its content, so its colour reaches the edge; `TabBar` takes it as `bottomInset`;
+- other content at the bottom (a button on the ground, a toast) keeps at least this far from the edge.
+
+```tsx
+const bottomInset = useBottomInset();
+return <TabBar tabs={tabs} value={tab} onChange={setTab} bottomInset={bottomInset} />;
+```
 
 ## UI kit
 

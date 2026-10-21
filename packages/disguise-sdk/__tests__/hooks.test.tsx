@@ -6,6 +6,7 @@ import {
   DisguiseHostProvider,
   elevation,
   themes,
+  useBottomInset,
   useDisguiseFetch,
   useDisguiseStorage,
   useHostTheme,
@@ -53,6 +54,7 @@ function createHostValue(): TestHost {
     fetch: (input) => Promise.reject(new TypeError(`Request to ${input} is not permitted`)),
     theme,
     lifecycle: createLifecycle(),
+    bottomInset: 34,
   };
 }
 
@@ -69,6 +71,7 @@ describe('hooks outside DisguiseHostProvider', () => {
     ['useDisguiseFetch', useDisguiseFetch],
     ['useHostTheme', useHostTheme],
     ['useLifecycle', useLifecycle],
+    ['useBottomInset', useBottomInset],
   ] as const)('%s throws one neutral error', async (name, hook) => {
     await expect(renderHook(() => hook())).rejects.toThrow(
       `${name} must be used inside DisguiseHostProvider`,
@@ -86,6 +89,7 @@ describe('hooks inside DisguiseHostProvider', () => {
         fetch: useDisguiseFetch(),
         theme: useHostTheme(),
         lifecycle: useLifecycle(),
+        bottomInset: useBottomInset(),
       }),
       { wrapper: wrapperFor(value) },
     );
@@ -95,6 +99,7 @@ describe('hooks inside DisguiseHostProvider', () => {
     expect(result.current.fetch).toBe(value.fetch);
     expect(result.current.theme).toBe(value.theme);
     expect(result.current.lifecycle).toBe(value.lifecycle);
+    expect(result.current.bottomInset).toBe(34);
   });
 
   it('submit hands the code to the host and returns nothing', async () => {

@@ -2,6 +2,7 @@
 // system photo picker and the image encoder); the SDK, storage and every screen are real.
 import { createMockHost, MockHost, renderDisguise } from '@inlay/testkit';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
+import { Keyboard, type KeyboardEvent } from 'react-native';
 import type { ImagePickerResult } from 'expo-image-picker';
 import { launchImageLibraryAsync } from 'expo-image-picker';
 
@@ -9,6 +10,7 @@ import packageJson from '../package.json';
 import compress from '../src';
 import { MAX_ENCODES } from '../src/engine/compress';
 import { HISTORY_KEY, loadHistory, type History } from '../src/state/history';
+import { keyboardEvents } from '../src/state/keyboard';
 
 jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
 
@@ -381,5 +383,61 @@ describe('Reset', () => {
     });
     expect(screen.getByText('Files · 1')).toBeOnTheScreen();
     expect(screen.getByTestId('compress-target-size')).toHaveDisplayValue('');
+  });
+});
+
+describe('Bottom edge', () => {
+  /** Captures the keyboard listeners Compress registers, so a test can open and close it. */
+  function keyboard() {
+    const handlers = new Set<{ name: string; handler: (event: KeyboardEvent) => void }>();
+    jest.spyOn(Keyboard, 'addListener').mockImplementation((name, handler) => {
+      const entry = { name, handler: handler as (event: KeyboardEvent) => void };
+      handlers.add(entry);
+      return { remove: () => handlers.delete(entry) } as ReturnType<typeof Keyboard.addListener>;
+    });
+    const send = (name: string, height: number) =>
+      act(() => {
+        for (const entry of handlers) {
+          if (entry.name === name) entry.handler({ endCoordinates: { height } } as KeyboardEvent);
+        }
+      });
+    return {
+      open: (height: number) => send(keyboardEvents.open, height),
+      close: () => send(keyboardEvents.close, 0),
+    };
+  }
+
+  /** The toast's distance from the bottom edge (its positioned parent's `bottom`). */
+  function toastBottom() {
+    const slot = screen.getByTestId('compress-toast').parent;
+    return (slot?.props.style as { bottom: number }).bottom;
+  }
+
+  afterEach(() => jest.restoreAllMocks());
+
+  it('the tab bar pads by the bottom inset, so its colour reaches the edge', async () => {
+    await renderDisguise(compress, { bottomInset: 34 });
+    expect(screen.getByTestId('compress-tabs')).toHaveStyle({ paddingBottom: 34 });
+  });
+
+  it('the toast clears the bottom inset, and sits above the open keyboard', async () => {
+    const keys = keyboard();
+    await renderDisguise(compress, { bottomInset: 34 });
+    await addFromHome('a.jpg');
+    await fireEvent.press(screen.getByTestId('compress-setup-header-action'));
+    await fireEvent.press(screen.getByTestId('compress-run'));
+    console.log('toast bottom, keyboard closed:', toastBottom());
+    expect(toastBottom()).toBe(96 + 34);
+
+    await keys.open(300);
+    console.log('toast bottom, keyboard open:', toastBottom());
+    expect(toastBottom()).toBe(96 + 300);
+
+    await keys.close();
+    expect(toastBottom()).toBe(96 + 34);
+
+    // A keyboard that reaches no higher than the system area leaves the toast where it was.
+    await keys.open(-23);
+    expect(toastBottom()).toBe(96 + 34);
   });
 });
