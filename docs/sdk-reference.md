@@ -29,7 +29,7 @@ A disguise package's default export is a `DisguiseManifest`:
 | `root`               | `React.ComponentType` | The disguise's root screen. The host renders it inside its provider; it takes no props.                                                               |
 | `triggerDescription` | `string`              | One sentence, shown to the user when they set up the disguise, saying how a code is entered: "Type your code as the target size, then hold Compress." |
 | `allowedHosts`       | `readonly string[]`   | Exact host names the disguise may fetch from. Empty when it needs no network, which is the norm.                                                      |
-| `tier`               | `'free' \| 'pro'`     | Whether the disguise ships free or in the paid Pro tier. Community disguises set `'pro'` (see [Review process](review-process.md#tier)).              |
+| `tier`               | `'free' \| 'pro'`     | Whether the disguise ships free or in the paid Pro tier. Community disguises may set either (see [Review process](review-process.md#tier)).           |
 
 ### Icon
 

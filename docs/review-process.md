@@ -43,4 +43,4 @@ Merged disguises are compiled into the next app release, with their code, icons 
 
 ## Tier
 
-Each manifest sets `tier: 'free' | 'pro'`. The current **proposal** is that community disguises ship as Pro (the app's paid tier), with `tier: 'pro'` in the manifest, as `_template` sets it. This is not final: maintainers will confirm or revise it after the first community disguises are reviewed, and this page will say so when they do.
+Each manifest sets `tier: 'free' | 'pro'`. A community disguise can ship either way: free for everyone, or in the app's paid Pro tier. The contributor picks one and says so in the pull request; `_template` starts at `'pro'`, so change it to `'free'` if that is what you want.

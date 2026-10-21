@@ -32,7 +32,7 @@ Use your real name. Pull requests with unsigned commits can't be merged. To sign
 
 ## Community disguises
 
-Community disguises are **proposed** to ship as Pro disguises in the app: set `tier: 'pro'` in your manifest, as `_template` does. This is a proposal, not a final decision; see [Review process](docs/review-process.md#tier).
+A community disguise can ship free or in the app's paid Pro tier: set `tier: 'free'` or `tier: 'pro'` in your manifest. Say which one you want in the pull request; see [Review process](docs/review-process.md#tier).
 
 ## Before you open a pull request
 
