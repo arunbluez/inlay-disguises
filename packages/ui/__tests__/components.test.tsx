@@ -577,6 +577,20 @@ describe('TabBar', () => {
     await fireEvent.press(screen.getByRole('tab', { name: 'Stats' }));
     expect(onChange).toHaveBeenCalledWith('stats');
   });
+
+  it('pads under the tabs by bottomInset, on the bar colour', async () => {
+    await renderThemed(
+      <TabBar
+        tabs={[{ key: 'today', label: 'Today' }]}
+        value="today"
+        onChange={() => {}}
+        bottomInset={34}
+        testID="tabs"
+      />,
+    );
+
+    expect(screen.getByTestId('tabs')).toHaveStyle({ paddingBottom: 34 });
+  });
 });
 
 describe('EmptyState', () => {

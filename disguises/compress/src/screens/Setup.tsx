@@ -12,6 +12,7 @@ import {
   strokes,
   tabularNums,
   textStyle,
+  useBottomInset,
   useHostTheme,
 } from '@inlay/disguise-sdk';
 import { useRef, useState, type ReactNode } from 'react';
@@ -19,6 +20,7 @@ import { KeyboardAvoidingView, ScrollView, Text, View, type HostInstance } from 
 
 import { QUALITY_FLOOR, type OutputFormat } from '../engine/compress';
 import { estimateBytes, formatBytes, targetBytes } from '../state/format';
+import { useKeyboardHeight } from '../state/keyboard';
 import { TARGET_SIZE_MAX_DIGITS, useStore } from '../state/store';
 import { strings } from '../strings';
 import { CompressGlyph, PlusGlyph } from './glyphs';
@@ -86,6 +88,11 @@ export function Setup() {
   // the keyboard would still cover the button by that much: tell it where the screen starts.
   const frame = useRef<HostInstance>(null);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+  // The button bar reaches the bottom edge; a keyboard that covers more than the system area there
+  // lifts the bar, which then sits on it with no extra space. A floating keyboard toolbar covers
+  // nothing, so the screen stays as it is.
+  const bottomInset = useBottomInset();
+  const keyboardOpen = useKeyboardHeight() > bottomInset;
 
   return (
     <View
@@ -96,6 +103,7 @@ export function Setup() {
       <KeyboardAvoidingView
         testID="compress-setup"
         behavior="padding"
+        enabled={keyboardOpen}
         keyboardVerticalOffset={keyboardOffset}
         style={{ flex: 1 }}
       >
@@ -217,7 +225,8 @@ export function Setup() {
         <View
           style={{
             paddingHorizontal: layout.gutter,
-            paddingVertical: spacing[12],
+            paddingTop: spacing[12],
+            paddingBottom: spacing[12] + (keyboardOpen ? 0 : bottomInset),
             backgroundColor: colors.bar,
           }}
         >

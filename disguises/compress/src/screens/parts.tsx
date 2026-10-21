@@ -110,6 +110,22 @@ export function isTab(screen: Screen): screen is Tab {
   return tabs.some((tab) => tab.key === screen);
 }
 
-export function Tabs({ value, onChange }: { value: Tab; onChange: (tab: Tab) => void }) {
-  return <TabBar tabs={tabs} value={value} onChange={onChange} testID="compress-tabs" />;
+export function Tabs({
+  value,
+  onChange,
+  bottomInset,
+}: {
+  value: Tab;
+  onChange: (tab: Tab) => void;
+  bottomInset: number;
+}) {
+  return (
+    <TabBar
+      tabs={tabs}
+      value={value}
+      onChange={onChange}
+      bottomInset={bottomInset}
+      testID="compress-tabs"
+    />
+  );
 }

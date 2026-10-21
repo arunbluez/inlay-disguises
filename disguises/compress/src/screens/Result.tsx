@@ -7,6 +7,7 @@ import {
   spacing,
   tabularNums,
   textStyle,
+  useBottomInset,
   useHostTheme,
 } from '@inlay/disguise-sdk';
 import { ScrollView, Text, View } from 'react-native';
@@ -62,6 +63,7 @@ function Bar({
 export function Result() {
   const { state, done, save, share } = useStore();
   const { colors, archivo } = useHostTheme();
+  const bottomInset = useBottomInset();
   const result = state.result ?? { photos: 0, before: 0, after: 0, outputs: [] };
   const before = formatBytes(result.before);
   const after = formatBytes(result.after);
@@ -126,7 +128,7 @@ export function Result() {
           marginTop: 'auto',
           paddingTop: spacing[24],
           paddingHorizontal: layout.gutter,
-          paddingBottom: spacing[20],
+          paddingBottom: spacing[20] + bottomInset,
           gap: spacing[8],
         }}
       >

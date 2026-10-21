@@ -58,6 +58,8 @@ export interface DisguiseHostValue {
   theme: HostTheme;
   /** Read by `useLifecycle()`. */
   lifecycle: Lifecycle;
+  /** Read by `useBottomInset()`. */
+  bottomInset: number;
 }
 
 export const DisguiseHostContext = createContext<DisguiseHostValue | null>(null);

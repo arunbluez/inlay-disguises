@@ -10,7 +10,11 @@ import { ThemeProvider, useTheme, type DisguiseManifest } from '@inlay/disguise-
 import { createMockHost, MockHost, themeIdFor, type MockHostValue } from '@inlay/testkit/MockHost';
 import { useEffect, useState, type ReactNode } from 'react';
 import { BackHandler, useColorScheme } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import {
+  initialWindowMetrics,
+  SafeAreaProvider,
+  SafeAreaView,
+} from 'react-native-safe-area-context';
 
 import { DisguiseList } from './src/DisguiseList';
 import { disguises } from './src/disguises';
@@ -51,6 +55,7 @@ export default function App() {
         allowedHosts: manifest.allowedHosts,
         theme: themeIdFor(manifest),
         scheme,
+        bottomInset: initialWindowMetrics?.insets.bottom ?? 0,
       }),
     });
 
@@ -75,5 +80,10 @@ export default function App() {
 
 function Screen({ children }: { children: ReactNode }) {
   const { colors } = useTheme();
-  return <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>{children}</SafeAreaView>;
+  // The bottom edge is left to the disguise, as in the app: its bars pad by `bottomInset`.
+  return (
+    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: colors.bg }}>
+      {children}
+    </SafeAreaView>
+  );
 }
