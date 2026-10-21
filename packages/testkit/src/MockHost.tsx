@@ -33,6 +33,8 @@ export interface MockHostOptions {
   theme?: BuiltInThemeId;
   /** Default: `light`. */
   scheme?: ColorScheme;
+  /** The system area under the disguise, as `useBottomInset()` reports it (default: 0). */
+  bottomInset?: number;
 }
 
 /** A complete stand-in for the host app: every `DisguiseHostValue` member, plus inspection. */
@@ -60,6 +62,7 @@ export function createMockHost({
   respond,
   theme = 'compress',
   scheme = 'light',
+  bottomInset = 0,
 }: MockHostOptions = {}): MockHostValue {
   let submittedCodes: readonly string[] = [];
   const listeners = new Set<() => void>();
@@ -93,6 +96,7 @@ export function createMockHost({
       archivo: true,
     },
     lifecycle,
+    bottomInset,
     reset: () => lifecycle.reset(),
   };
 }

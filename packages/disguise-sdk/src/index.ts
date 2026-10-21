@@ -16,6 +16,7 @@ export {
   type Trigger,
 } from './context';
 export {
+  useBottomInset,
   useDisguiseFetch,
   useDisguiseStorage,
   useHostTheme,
