@@ -211,6 +211,12 @@ export const controls = {
   /** Toast padding and type size (semibold, outside the named roles). */
   toast: { vertical: 12, horizontal: 14, text: 13 },
   emptyState: { padding: 14 },
+  /** Leading file-type tile of a file row; its label sits `inset` from the bottom-left corner. */
+  fileBadge: { size: 40, inset: 4 },
+  /** Remove action at the end of a file row and its glyph; the hit target pads out to 44. */
+  rowAction: { size: 36, glyph: 18 },
+  /** The accent card that starts a screen's main task ("Add files"), and its leading glyph. */
+  actionCard: { height: 120, vertical: 14, horizontal: 16, icon: 26 },
 } as const;
 
 export type ColorScheme = 'light' | 'dark';
@@ -227,7 +233,10 @@ export interface Ground {
   hair2: string;
   /** Ink on top of an accent fill. */
   on: string;
-  /** Tint laid over any ground while an outlined, text, chip, segment or row control is pressed. */
+  /**
+   * Tint laid over any ground while an outlined, text, chip, segment or row control is pressed;
+   * also the resting fill of a file row's type tile, which reads as a recess on any ground.
+   */
   press: string;
   /** Fill of a destructive action, distinct from every accent; `dangerDeep` is its pressed fill. */
   danger: string;

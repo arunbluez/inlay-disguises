@@ -1,14 +1,22 @@
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 import { StyleSheet, Text, type StyleProp, type TextStyle } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  createGestureController,
+  getByGestureTestId,
+} from 'react-native-gesture-handler/jest-utils';
 
 import {
   accents,
+  ActionCard,
   Button,
+  type ButtonProps,
   Chip,
   ChipRow,
   controls,
   EmptyState,
+  FileRow,
   layout,
   LIGHT,
   ListGroup,
@@ -16,6 +24,7 @@ import {
   motion,
   NumberField,
   ProgressBar,
+  ScreenHeader,
   Sheet,
   Slider,
   states,
@@ -73,12 +82,200 @@ describe('Button', () => {
     await fireEvent.press(button);
     expect(onPress).not.toHaveBeenCalled();
   });
+});
 
-  it('fires onLongPress for a hold', async () => {
-    const onLongPress = jest.fn();
-    await renderThemed(<Button label="Play" onLongPress={onLongPress} />);
-    await fireEvent(screen.getByRole('button', { name: 'Play' }), 'longPress');
-    expect(onLongPress).toHaveBeenCalledTimes(1);
+// The hold is Gesture Handler's native long press: the native side measures the 600 ms and the
+// drift, so these tests check the gesture's config and drive its states the way the native
+// recognizer reports them (BEGAN on touch down, ACTIVE once held, END on release).
+describe('Button hold', () => {
+  async function renderHold(props: Partial<ButtonProps> = {}) {
+    const handlers = { onPress: jest.fn(), onHold: jest.fn(), onHoldEnd: jest.fn() };
+    await render(
+      <GestureHandlerRootView>
+        <ThemeProvider theme="compress" scheme="light">
+          <Button label="Compress 2 files" testID="cta" {...handlers} {...props} />
+        </ThemeProvider>
+      </GestureHandlerRootView>,
+    );
+    return { ...handlers, hold: createGestureController('cta-hold') };
+  }
+
+  const config = (testID: string) =>
+    (getByGestureTestId(testID) as unknown as { config: Record<string, unknown> }).config;
+
+  it('is a native long press of motion.longPressCommit (600 ms) that tolerates finger drift', async () => {
+    await renderHold();
+    expect(motion.longPressCommit).toBe(600);
+    expect(config('cta-hold')).toMatchObject({
+      minDurationMs: 600,
+      // Half a hit target, up from Gesture Handler's 10-point default.
+      maxDist: layout.minHit / 2,
+      shouldCancelWhenOutside: false,
+      enabled: true,
+    });
+  });
+
+  it('honours a custom holdMs', async () => {
+    await renderHold({ holdMs: 900 });
+    expect(config('cta-hold').minDurationMs).toBe(900);
+  });
+
+  it('fires onHold once the hold activates, then onHoldEnd on release, and never onPress', async () => {
+    const { onPress, onHold, onHoldEnd, hold } = await renderHold();
+    await act(() => hold.begin());
+    expect(onHold).not.toHaveBeenCalled();
+
+    await act(() => hold.activate());
+    expect(onHold).toHaveBeenCalledTimes(1);
+    expect(onHoldEnd).not.toHaveBeenCalled();
+
+    await act(() => hold.end());
+    expect(onHoldEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).not.toHaveBeenCalled();
+  });
+
+  it('a tap fires onPress and not onHold or onHoldEnd', async () => {
+    const { onPress, onHold, onHoldEnd, hold } = await renderHold();
+    // A tap: the long press begins on touch down and fails when the finger lifts early.
+    await act(() => hold.begin());
+    await fireEvent.press(screen.getByRole('button', { name: 'Compress 2 files' }));
+    await act(() => hold.fail());
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onHold).not.toHaveBeenCalled();
+    expect(onHoldEnd).not.toHaveBeenCalled();
+  });
+
+  it('a scroll or a drift past the slop cancels the hold before it fires', async () => {
+    const { onHold, onHoldEnd, hold } = await renderHold();
+    await act(() => hold.begin());
+    await act(() => hold.cancel());
+    expect(onHold).not.toHaveBeenCalled();
+    expect(onHoldEnd).not.toHaveBeenCalled();
+  });
+
+  it('is off while the button is disabled', async () => {
+    const { onHold, hold } = await renderHold({ disabled: true });
+    expect(config('cta-hold').enabled).toBe(false);
+    await act(() => hold.begin());
+    await act(() => hold.activate());
+    expect(onHold).not.toHaveBeenCalled();
+  });
+
+  it('without onHold the button needs no gesture root and registers no gesture', async () => {
+    await renderThemed(<Button label="Go" testID="plain" />);
+    expect(() => getByGestureTestId('plain-hold')).toThrow();
+  });
+});
+
+describe('ScreenHeader', () => {
+  it('a pushed screen has a back chevron, a heading title and a text action', async () => {
+    const onBack = jest.fn();
+    const onClear = jest.fn();
+    await renderThemed(
+      <ScreenHeader
+        title="New compression"
+        onBack={onBack}
+        action={{ label: 'Clear', onPress: onClear }}
+        testID="h"
+      />,
+    );
+
+    const title = screen.getByRole('header', { name: 'New compression' });
+    expect(flat(title)).toMatchObject({ fontSize: 18, color: compress.ink });
+    expect(flat(screen.getByTestId('h-back'))).toMatchObject({
+      width: layout.minHit,
+      height: layout.minHit,
+    });
+    await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
+    expect(onBack).toHaveBeenCalledTimes(1);
+    await fireEvent.press(screen.getByRole('button', { name: 'Clear' }));
+    expect(onClear).toHaveBeenCalledTimes(1);
+    expect(flat(screen.getByText('Clear')).color).toBe(compress.deep);
+  });
+
+  it('a root screen has a large title and no back', async () => {
+    await renderThemed(<ScreenHeader title="History" testID="h" />);
+    expect(flat(screen.getByRole('header', { name: 'History' }))).toMatchObject({ fontSize: 32 });
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+});
+
+describe('FileRow', () => {
+  it('shows the type tile, title, meta and the figures, read as one element', async () => {
+    await renderThemed(
+      <FileRow
+        badge="JPG"
+        title="12 photos"
+        meta="9 Oct · Camera roll"
+        value="−72%"
+        subValue="61 MB → 17 MB"
+        testID="r"
+      />,
+    );
+
+    expect(flat(screen.getByTestId('r'))).toMatchObject({ minHeight: layout.row });
+    expect(screen.getByLabelText('12 photos, 9 Oct · Camera roll, −72%, 61 MB → 17 MB')).toBe(
+      screen.getByTestId('r'),
+    );
+    const tile = screen.getByText('JPG').parent!;
+    expect(flat(tile)).toMatchObject({
+      width: controls.fileBadge.size,
+      height: controls.fileBadge.size,
+      backgroundColor: compress.press,
+    });
+    expect(flat(screen.getByText('−72%'))).toMatchObject({
+      color: compress.deep,
+      fontVariant: ['tabular-nums'],
+    });
+    expect(flat(screen.getByText('61 MB → 17 MB')).color).toBe(compress.muted);
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('a row with onRemove shows a remove action instead of the figures', async () => {
+    const onRemove = jest.fn();
+    await renderThemed(
+      <FileRow
+        badge="PNG"
+        title="IMG_2041.png"
+        meta="2.4 MB"
+        value="−50%"
+        onRemove={onRemove}
+        testID="r"
+      />,
+    );
+
+    expect(screen.queryByText('−50%')).toBeNull();
+    const remove = screen.getByRole('button', { name: 'Remove IMG_2041.png' });
+    expect(remove.props.hitSlop).toBe((layout.minHit - controls.rowAction.size) / 2);
+    await fireEvent.press(remove);
+    expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('ActionCard', () => {
+  it('is a 120-point accent button labelled by its title and subtitle', async () => {
+    const onPress = jest.fn();
+    await renderThemed(
+      <ActionCard title="Add files" subtitle="Photos" onPress={onPress} testID="a" />,
+    );
+
+    expect(flat(screen.getByTestId('a'))).toMatchObject({
+      height: controls.actionCard.height,
+      backgroundColor: compress.accent,
+    });
+    expect(flat(screen.getByText('Add files')).color).toBe(compress.on);
+    await fireEvent.press(screen.getByRole('button', { name: 'Add files, Photos' }));
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not fire when disabled', async () => {
+    const onPress = jest.fn();
+    await renderThemed(<ActionCard title="Add files" onPress={onPress} disabled testID="a" />);
+    const card = screen.getByRole('button', { name: 'Add files' });
+    expect(card).toBeDisabled();
+    expect(flat(screen.getByTestId('a')).opacity).toBe(states.disabledOpacity);
+    await fireEvent.press(card);
+    expect(onPress).not.toHaveBeenCalled();
   });
 });
 
@@ -243,6 +440,32 @@ describe('Chip and ChipRow', () => {
     });
     await fireEvent.press(screen.getByRole('radio', { name: 'Hard' }));
     expect(onChange).toHaveBeenCalledWith('hard');
+  });
+
+  it('renders a two-option Format row as one joined segment, 36 high with a 44 hit target', async () => {
+    await renderThemed(
+      <ChipRow
+        options={[
+          { value: 'original', label: 'Original' },
+          { value: 'jpeg', label: 'JPEG' },
+        ]}
+        value="original"
+        onChange={() => {}}
+        testID="format"
+      />,
+    );
+
+    expect(flat(screen.getByTestId('format'))).toMatchObject({ flexDirection: 'row' });
+    const slop = (layout.minHit - controls.segment.height) / 2;
+    for (const name of ['Original', 'JPEG']) {
+      const segment = screen.getByRole('radio', { name });
+      expect(flat(segment)).toMatchObject({ flex: 1, height: controls.segment.height });
+      expect(segment.props.hitSlop).toEqual({ top: slop, bottom: slop });
+    }
+    expect(flat(screen.getByTestId('format-jpeg'))).toMatchObject({
+      borderLeftWidth: 1,
+      backgroundColor: 'transparent',
+    });
   });
 });
 

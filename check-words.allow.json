@@ -1,0 +1,15 @@
+[
+  {
+    "path": "**/node_modules",
+    "reason": "Third-party packages installed by pnpm, not our code"
+  },
+  {
+    "pattern": "\"private\": true",
+    "path": "**/package.json",
+    "reason": "npm field that stops a workspace package from being published; never shown to anyone"
+  },
+  {
+    "pattern": "overflow: 'hidden'",
+    "reason": "React Native style value that clips children to rounded corners; never shown"
+  }
+]

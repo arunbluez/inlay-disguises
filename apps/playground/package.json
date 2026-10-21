@@ -6,20 +6,28 @@
   "license": "Apache-2.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."
   },
   "dependencies": {
     "@expo-google-fonts/archivo": "~0.4.2",
+    "@inlay/disguise-compress": "workspace:*",
+    "@inlay/disguise-sdk": "workspace:*",
     "@inlay/disguise-template": "workspace:*",
     "@inlay/testkit": "workspace:*",
     "expo": "~58.0.14",
+    "expo-dev-client": "~58.0.14",
     "expo-font": "~58.0.8",
+    "expo-image-manipulator": "~58.0.14",
+    "expo-image-picker": "~58.0.10",
+    "expo-media-library": "~58.0.10",
+    "expo-sharing": "~58.0.19",
     "react": "19.3.0",
     "react-native": "0.88.0",
+    "react-native-gesture-handler": "~3.3.0",
     "react-native-safe-area-context": "~5.10.1"
   },
   "devDependencies": {
