@@ -245,6 +245,9 @@ describe('Compressing', () => {
     expect(mockSaves.map((save) => save.format)).toEqual(['jpeg', 'jpeg']);
     // 300 000 + 600 000 bytes in, 2 × 69 999 out (the stand-in rounds to whole base64 groups).
     expect(screen.getByTestId('compress-result')).toBeOnTheScreen();
+    // The eyebrow names the screen; "Done" is only the action that leaves it.
+    expect(screen.getByText('Result')).toBeOnTheScreen();
+    expect(screen.getAllByText('Done')).toHaveLength(1);
     expect(screen.getByText('−84%')).toBeOnTheScreen();
     expect(screen.getByText('2 files are 137 KB now, down from 879 KB.')).toBeOnTheScreen();
 

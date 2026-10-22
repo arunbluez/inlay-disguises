@@ -48,7 +48,7 @@ export const strings = {
     cancel: 'Cancel',
   },
   result: {
-    title: 'Done',
+    title: 'Result',
     done: 'Done',
     summary: (n: number, after: string, before: string) =>
       `${count(n, 'file', 'files')} ${n === 1 ? 'is' : 'are'} ${after} now, down from ${before}.`,
