@@ -13,14 +13,17 @@ export interface ActionCardProps {
   /** Top-left glyph, drawn in `colors.on`; defaults to a plus. */
   icon?: ReactNode;
   disabled?: boolean;
+  /** A shorter card for inside a screen: glyph, title and subtitle, and the arrow in one row. */
+  compact?: boolean;
   /** Defaults to the title and subtitle. */
   accessibilityLabel?: string;
   testID?: string;
 }
 
 /**
- * A large accent card that starts the screen's main task, e.g. "Add files": glyph and arrow on
- * top, title and subtitle at the bottom. Steps to the deep accent while pressed.
+ * A large accent card that starts the screen's main task, e.g. "Compress now": glyph and arrow on
+ * top, title and subtitle at the bottom; `compact` puts them in one shorter row. Steps to the deep
+ * accent while pressed.
  */
 export function ActionCard({
   title,
@@ -28,11 +31,26 @@ export function ActionCard({
   onPress,
   icon,
   disabled = false,
+  compact = false,
   accessibilityLabel,
   testID,
 }: ActionCardProps) {
   const { colors, archivo } = useTheme();
   const [focused, focusHandlers] = useFocused();
+  const glyph = icon ?? <Plus size={controls.actionCard.icon} color={colors.on} />;
+  const arrow = <Arrow size={controls.icon} color={colors.on} />;
+  const text = (
+    <View style={compact ? { flex: 1 } : undefined}>
+      <Text numberOfLines={1} style={[textStyle('heading', 21, archivo), { color: colors.on }]}>
+        {title}
+      </Text>
+      {subtitle ? (
+        <Text numberOfLines={1} style={[textStyle('caption', 13, archivo), { color: colors.on }]}>
+          {subtitle}
+        </Text>
+      ) : null}
+    </View>
+  );
   return (
     <Pressable
       {...focusHandlers}
@@ -44,7 +62,10 @@ export function ActionCard({
       onPress={onPress}
       style={({ pressed }) => [
         {
-          height: controls.actionCard.height,
+          height: compact ? controls.actionCard.compactHeight : controls.actionCard.height,
+          flexDirection: compact ? 'row' : 'column',
+          alignItems: compact ? 'center' : 'stretch',
+          gap: compact ? controls.actionCard.horizontal : 0,
           justifyContent: 'space-between',
           paddingVertical: controls.actionCard.vertical,
           paddingHorizontal: controls.actionCard.horizontal,
@@ -55,20 +76,21 @@ export function ActionCard({
         focused && focusRing(colors.ink),
       ]}
     >
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        {icon ?? <Plus size={controls.actionCard.icon} color={colors.on} />}
-        <Arrow size={controls.icon} color={colors.on} />
-      </View>
-      <View>
-        <Text numberOfLines={1} style={[textStyle('heading', 21, archivo), { color: colors.on }]}>
-          {title}
-        </Text>
-        {subtitle ? (
-          <Text numberOfLines={1} style={[textStyle('caption', 13, archivo), { color: colors.on }]}>
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
+      {compact ? (
+        <>
+          {glyph}
+          {text}
+          {arrow}
+        </>
+      ) : (
+        <>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            {glyph}
+            {arrow}
+          </View>
+          {text}
+        </>
+      )}
     </Pressable>
   );
 }
