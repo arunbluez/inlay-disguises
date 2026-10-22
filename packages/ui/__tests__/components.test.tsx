@@ -268,6 +268,22 @@ describe('ActionCard', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
+  it('compact is the shorter one-row card', async () => {
+    const onPress = jest.fn();
+    await renderThemed(
+      <ActionCard compact title="Add files" subtitle="Photos" onPress={onPress} testID="a" />,
+    );
+
+    expect(flat(screen.getByTestId('a'))).toMatchObject({
+      height: controls.actionCard.compactHeight,
+      flexDirection: 'row',
+      backgroundColor: compress.accent,
+    });
+    expect(controls.actionCard.compactHeight).toBeLessThan(controls.actionCard.height);
+    await fireEvent.press(screen.getByRole('button', { name: 'Add files, Photos' }));
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
   it('does not fire when disabled', async () => {
     const onPress = jest.fn();
     await renderThemed(<ActionCard title="Add files" onPress={onPress} disabled testID="a" />);

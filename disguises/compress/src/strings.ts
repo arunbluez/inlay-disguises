@@ -11,8 +11,8 @@ export const strings = {
   home: {
     savedLabel: 'Saved so far',
     across: (runs: number) => `across ${count(runs, 'compression', 'compressions')}`,
-    addTitle: 'Add files',
-    addSubtitle: 'Photos from your library',
+    startTitle: 'Compress now',
+    startSubtitle: 'Pick photos, set quality and size',
     recent: 'Recent',
     seeAll: 'See all',
   },
@@ -21,8 +21,8 @@ export const strings = {
     clear: 'Clear',
     files: (n: number) => `Files · ${n}`,
     add: 'Add',
-    emptyTitle: 'No files selected',
-    emptyBody: 'Add photos to begin.',
+    addTitle: 'Add files',
+    addSubtitle: 'Photos from your library',
     quality: 'Quality',
     smaller: 'Smaller files',
     sharper: 'Sharper',
@@ -48,7 +48,7 @@ export const strings = {
     cancel: 'Cancel',
   },
   result: {
-    title: 'Done',
+    title: 'Result',
     done: 'Done',
     summary: (n: number, after: string, before: string) =>
       `${count(n, 'file', 'files')} ${n === 1 ? 'is' : 'are'} ${after} now, down from ${before}.`,

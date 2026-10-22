@@ -73,13 +73,15 @@ afterEach(() => {
   jest.useRealTimers();
 });
 
-/** Home → picker → Setup with `names` picked; with none, picks one and clears it. */
+/** Home → Compress now → Setup, then the picker with `names` picked; with none, no files. */
 async function openSetup(...names: string[]) {
-  pick.mockResolvedValueOnce(picked(...(names.length > 0 ? names : ['a.jpg'])));
-  await act(async () => {
-    await fireEvent.press(screen.getByTestId('compress-add-files'));
-  });
-  if (names.length === 0) await fireEvent.press(screen.getByTestId('compress-setup-header-action'));
+  await fireEvent.press(screen.getByTestId('compress-now'));
+  if (names.length > 0) {
+    pick.mockResolvedValueOnce(picked(...names));
+    await act(async () => {
+      await fireEvent.press(screen.getByTestId('compress-add-files'));
+    });
+  }
   expect(screen.getByTestId('compress-setup')).toBeOnTheScreen();
 }
 

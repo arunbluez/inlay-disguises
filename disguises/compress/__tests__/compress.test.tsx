@@ -111,8 +111,9 @@ beforeEach(() => {
   pick.mockReset();
 });
 
-/** Opens the picker from Home and waits for Setup with the picked photos. */
+/** Home → Compress now → Setup; then the picker, waiting for the picked photos. */
 async function addFromHome(...names: string[]) {
+  await fireEvent.press(screen.getByTestId('compress-now'));
   pick.mockResolvedValueOnce(picked(...names));
   await act(async () => {
     await fireEvent.press(screen.getByTestId('compress-add-files'));
@@ -140,8 +141,20 @@ describe('Home', () => {
     expect(screen.getByTestId('compress-home')).toBeOnTheScreen();
     expect(within(screen.getByTestId('compress-saved')).getByText('0 KB')).toBeOnTheScreen();
     expect(screen.getByText('across 0 compressions')).toBeOnTheScreen();
-    expect(screen.getByText('Photos from your library')).toBeOnTheScreen();
+    expect(screen.getByText('Pick photos, set quality and size')).toBeOnTheScreen();
     expect(screen.queryByTestId('compress-recent')).not.toBeOnTheScreen();
+  });
+
+  it('Compress now opens Setup with no files, without the picker', async () => {
+    await renderDisguise(compress);
+    await fireEvent.press(screen.getByRole('button', { name: /^Compress now/ }));
+
+    expect(pick).not.toHaveBeenCalled();
+    expect(screen.getByTestId('compress-setup')).toBeOnTheScreen();
+    expect(screen.getByText('Files · 0')).toBeOnTheScreen();
+    expect(screen.getByTestId('compress-add-files')).toHaveStyle({ height: 72 });
+    expect(screen.queryByTestId('compress-add')).not.toBeOnTheScreen();
+    expect(screen.getByText('Compress')).toBeOnTheScreen();
   });
 
   it('renders the saved total and recent runs from seeded storage', async () => {
@@ -177,13 +190,15 @@ describe('Setup', () => {
     expect(screen.getByText('Compress 2 files')).toBeOnTheScreen();
   });
 
-  it('stays on Home when the picker is dismissed', async () => {
+  it('stays on the empty Setup when the picker is dismissed', async () => {
     await renderDisguise(compress);
+    await fireEvent.press(screen.getByTestId('compress-now'));
     pick.mockResolvedValueOnce({ canceled: true, assets: null });
     await act(async () => {
       await fireEvent.press(screen.getByTestId('compress-add-files'));
     });
-    expect(screen.getByTestId('compress-home')).toBeOnTheScreen();
+    expect(screen.getByText('Files · 0')).toBeOnTheScreen();
+    expect(screen.getByTestId('compress-add-files')).toBeOnTheScreen();
   });
 
   it('removes one photo, and Clear empties the list', async () => {
@@ -196,8 +211,9 @@ describe('Setup', () => {
 
     await fireEvent.press(screen.getByTestId('compress-setup-header-action'));
     expect(screen.getByText('Files · 0')).toBeOnTheScreen();
-    expect(screen.getByText('No files selected')).toBeOnTheScreen();
-    expect(screen.getByText('Add photos to begin.')).toBeOnTheScreen();
+    expect(
+      screen.getByRole('button', { name: 'Add files, Photos from your library' }),
+    ).toBeOnTheScreen();
     expect(screen.queryByTestId('compress-setup-header-action')).not.toBeOnTheScreen();
     expect(screen.getByText('Compress')).toBeOnTheScreen();
   });
@@ -229,6 +245,9 @@ describe('Compressing', () => {
     expect(mockSaves.map((save) => save.format)).toEqual(['jpeg', 'jpeg']);
     // 300 000 + 600 000 bytes in, 2 × 69 999 out (the stand-in rounds to whole base64 groups).
     expect(screen.getByTestId('compress-result')).toBeOnTheScreen();
+    // The eyebrow names the screen; "Done" is only the action that leaves it.
+    expect(screen.getByText('Result')).toBeOnTheScreen();
+    expect(screen.getAllByText('Done')).toHaveLength(1);
     expect(screen.getByText('−84%')).toBeOnTheScreen();
     expect(screen.getByText('2 files are 137 KB now, down from 879 KB.')).toBeOnTheScreen();
 
@@ -377,10 +396,7 @@ describe('Reset', () => {
     await act(async () => host.reset());
     expect(screen.getByTestId('compress-home')).toBeOnTheScreen();
 
-    pick.mockResolvedValueOnce(picked('b.jpg'));
-    await act(async () => {
-      await fireEvent.press(screen.getByTestId('compress-add-files'));
-    });
+    await addFromHome('b.jpg');
     expect(screen.getByText('Files · 1')).toBeOnTheScreen();
     expect(screen.getByTestId('compress-target-size')).toHaveDisplayValue('');
   });

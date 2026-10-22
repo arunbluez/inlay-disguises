@@ -215,8 +215,11 @@ export const controls = {
   fileBadge: { size: 40, inset: 4 },
   /** Remove action at the end of a file row and its glyph; the hit target pads out to 44. */
   rowAction: { size: 36, glyph: 18 },
-  /** The accent card that starts a screen's main task ("Add files"), and its leading glyph. */
-  actionCard: { height: 120, vertical: 14, horizontal: 16, icon: 26 },
+  /**
+   * The accent card that starts a screen's main task ("Compress now"), and its leading glyph;
+   * `compactHeight` is the one-row card inside a screen ("Add files").
+   */
+  actionCard: { height: 120, compactHeight: 72, vertical: 14, horizontal: 16, icon: 26 },
 } as const;
 
 export type ColorScheme = 'light' | 'dark';

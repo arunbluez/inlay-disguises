@@ -36,7 +36,7 @@ export function RunRow({ run, testID }: { run: Run; testID?: string }) {
 }
 
 export function Home() {
-  const { state, addPhotos, go } = useStore();
+  const { state, go } = useStore();
   const { colors, archivo } = useHostTheme();
   const recent = state.history.runs.slice(0, RECENT);
   return (
@@ -89,10 +89,10 @@ export function Home() {
         </View>
         <View style={{ paddingHorizontal: spacing[16], paddingTop: spacing[12] }}>
           <ActionCard
-            title={strings.home.addTitle}
-            subtitle={strings.home.addSubtitle}
-            onPress={addPhotos}
-            testID="compress-add-files"
+            title={strings.home.startTitle}
+            subtitle={strings.home.startSubtitle}
+            onPress={() => go('setup')}
+            testID="compress-now"
           />
         </View>
         {recent.length > 0 ? (

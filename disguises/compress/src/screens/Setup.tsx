@@ -1,8 +1,8 @@
 import {
+  ActionCard,
   Button,
   ChipRow,
   controls,
-  EmptyState,
   FileRow,
   layout,
   NumberField,
@@ -127,20 +127,30 @@ export function Setup() {
             }}
           >
             <SectionLabel>{strings.setup.files(count)}</SectionLabel>
-            <Button
-              variant="text"
-              label={strings.setup.add}
-              trailing={<PlusGlyph size={16} color={colors.deep} />}
-              onPress={store.addPhotos}
-              testID="compress-add"
-            />
+            {count > 0 ? (
+              <Button
+                variant="text"
+                label={strings.setup.add}
+                trailing={<PlusGlyph size={16} color={colors.deep} />}
+                onPress={store.addPhotos}
+                testID="compress-add"
+              />
+            ) : null}
           </View>
           {count === 0 ? (
-            <View style={{ marginHorizontal: layout.gutter, marginBottom: spacing[16] }}>
-              <EmptyState
-                title={strings.setup.emptyTitle}
-                body={strings.setup.emptyBody}
-                testID="compress-no-files"
+            <View
+              style={{
+                marginHorizontal: spacing[16],
+                marginTop: spacing[12],
+                marginBottom: spacing[16],
+              }}
+            >
+              <ActionCard
+                compact
+                title={strings.setup.addTitle}
+                subtitle={strings.setup.addSubtitle}
+                onPress={store.addPhotos}
+                testID="compress-add-files"
               />
             </View>
           ) : (
