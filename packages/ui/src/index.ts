@@ -1,7 +1,13 @@
 export * from './tokens';
 export { contrastFailures, contrastPairs, contrastRatio, type ContrastPair } from './contrast';
 export { ThemeProvider, useTheme, type Theme, type ThemeProviderProps } from './theme';
-export { Button, type ButtonProps, type ButtonVariant } from './components/Button';
+export {
+  Button,
+  HoldArea,
+  type ButtonProps,
+  type ButtonVariant,
+  type HoldAreaProps,
+} from './components/Button';
 export { TextField, type TextFieldProps } from './components/TextField';
 export { NumberField, type NumberFieldProps } from './components/NumberField';
 export { Slider, type SliderProps } from './components/Slider';
