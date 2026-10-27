@@ -1,4 +1,5 @@
 import type { DisguiseManifest } from '@inlay/disguise-sdk';
+import brief from '@inlay/disguise-brief';
 import compress from '@inlay/disguise-compress';
 import sudoku from '@inlay/disguise-sudoku';
 import template from '@inlay/disguise-template';
@@ -11,4 +12,5 @@ export const disguises: readonly DisguiseManifest[] = [
   template, // _template
   compress, // compress
   sudoku, // sudoku
+  brief, // brief
 ];
