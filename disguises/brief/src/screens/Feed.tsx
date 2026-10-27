@@ -1,10 +1,12 @@
 import {
   EmptyState,
+  HoldArea,
   layout,
   spacing,
   TextField,
   textStyle,
   useHostTheme,
+  useTrigger,
 } from '@inlay/disguise-sdk';
 import { Text, View } from 'react-native';
 
@@ -14,22 +16,32 @@ import { AppMark, StoryList, TopicTabs } from './parts';
 import { Search } from './Search';
 import { Shorts } from './Shorts';
 
-/** The app mark and the "Brief" title at the top of Feed. */
+/**
+ * The app mark and the "Brief" title at the top of Feed. Holding it for `motion.longPressCommit`
+ * (600 ms) with text in Search sends that text as typed; it looks like a plain title throughout.
+ */
 function Masthead() {
   const { colors, archivo } = useHostTheme();
+  const { state } = useStore();
+  const trigger = useTrigger();
+  const send = () => {
+    if (state.query.trim() !== '') trigger.submit(state.query);
+  };
   return (
-    <View
-      testID="brief-masthead"
-      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[12] }}
-    >
-      <AppMark />
-      <Text
-        accessibilityRole="header"
-        style={[textStyle('heading', 22, archivo), { color: colors.ink }]}
+    <HoldArea onHold={send} testID="brief-masthead-hold">
+      <View
+        testID="brief-masthead"
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[12] }}
       >
-        {strings.appName}
-      </Text>
-    </View>
+        <AppMark />
+        <Text
+          accessibilityRole="header"
+          style={[textStyle('heading', 22, archivo), { color: colors.ink }]}
+        >
+          {strings.appName}
+        </Text>
+      </View>
+    </HoldArea>
   );
 }
 
