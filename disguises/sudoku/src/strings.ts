@@ -59,12 +59,22 @@ export const strings = {
     date: (date: Date) => `Today · ${longDate(date)}`,
     puzzle: (n: number) => `Puzzle #${grouped(n)}`,
     play: 'Play today’s puzzle',
+    playNumber: 'Play puzzle #',
+    playNumberNote: 'Load any puzzle by its number',
     week: 'This week',
     /** Monday first. */
     weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
     solved: 'Solved',
     best: 'Best',
     average: 'Average',
+  },
+  playNumber: {
+    title: 'Play puzzle #',
+    label: 'Puzzle number',
+    placeholder: '1284',
+    help: (max: number) =>
+      `Every number from 1 to ${grouped(max)} is a puzzle. Share a number with a friend to play the same grid.`,
+    play: 'Play',
   },
   board: {
     back: 'Back',

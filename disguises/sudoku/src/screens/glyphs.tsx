@@ -217,6 +217,22 @@ export function BackGlyph(props: GlyphProps) {
   );
 }
 
+/** A chevron pointing right: a row that opens a screen. */
+export function ChevronGlyph(props: GlyphProps) {
+  return (
+    <Glyph
+      {...props}
+      lines={[
+        [
+          [9, 18],
+          [15, 12],
+          [9, 6],
+        ],
+      ]}
+    />
+  );
+}
+
 const undoLines: Point[][] = [
   [
     [9, 14],

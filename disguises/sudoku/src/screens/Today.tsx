@@ -11,14 +11,14 @@ import {
   textStyle,
   useHostTheme,
 } from '@inlay/disguise-sdk';
-import { ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { dailyPuzzle, dayOf } from '../engine/daily';
 import { LEVELS } from '../engine/grade';
 import { streak, type Stats } from '../state/storage';
 import { useStore } from '../state/store';
 import { clock, strings } from '../strings';
-import { PlayGlyph } from './glyphs';
+import { ChevronGlyph, PlayGlyph } from './glyphs';
 import { AppMark, Figure, SectionLabel } from './parts';
 
 const levelOptions = LEVELS.map((level) => ({ value: level, label: strings.levels[level] }));
@@ -43,7 +43,7 @@ function week(stats: Stats, today: number, date: Date): boolean[] {
 }
 
 export function Today() {
-  const { state, setLevel, playToday } = useStore();
+  const { state, go, setLevel, playToday } = useStore();
   const { colors, archivo } = useHostTheme();
   const date = new Date();
   const today = dayOf(date);
@@ -106,6 +106,46 @@ export function Today() {
             testID="sudoku-play-today"
           />
         </View>
+        <Pressable
+          testID="sudoku-play-number-row"
+          accessibilityRole="button"
+          accessibilityLabel={strings.today.playNumber}
+          accessibilityHint={strings.today.playNumberNote}
+          onPress={() => go('play')}
+          style={({ pressed }) => ({
+            height: 60,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing[12],
+            paddingHorizontal: layout.gutter,
+            borderBottomWidth: strokes.hairline,
+            borderBottomColor: colors.hair2,
+            backgroundColor: pressed ? colors.surface : 'transparent',
+          })}
+        >
+          <View
+            style={{
+              width: 36,
+              height: 36,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: radii.tile,
+              borderWidth: strokes.rule,
+              borderColor: colors.ink,
+            }}
+          >
+            <Text style={[textStyle('action', 16, archivo), { color: colors.ink }]}>#</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[textStyle('action', 16, archivo), { color: colors.ink }]}>
+              {strings.today.playNumber}
+            </Text>
+            <Text style={[textStyle('caption', 12, archivo), { color: colors.muted }]}>
+              {strings.today.playNumberNote}
+            </Text>
+          </View>
+          <ChevronGlyph size={20} color={colors.muted} />
+        </Pressable>
         <View
           style={{
             paddingTop: 18,

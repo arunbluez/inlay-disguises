@@ -6,6 +6,7 @@ import packageJson from '../package.json';
 import { Board } from './screens/Board';
 import { Completion } from './screens/Completion';
 import { isTab, Tabs } from './screens/parts';
+import { PlayNumber } from './screens/PlayNumber';
 import { Settings } from './screens/Settings';
 import { Stats } from './screens/Stats';
 import { Today } from './screens/Today';
@@ -14,6 +15,7 @@ import { strings } from './strings';
 
 const screens: Record<Screen, ComponentType> = {
   today: Today,
+  play: PlayNumber,
   board: Board,
   completion: Completion,
   stats: Stats,

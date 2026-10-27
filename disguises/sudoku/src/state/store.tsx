@@ -1,4 +1,4 @@
-import { useDisguiseStorage, type DisguiseStorage } from '@inlay/disguise-sdk';
+import { useDisguiseStorage, useTrigger, type DisguiseStorage } from '@inlay/disguise-sdk';
 import {
   createContext,
   useCallback,
@@ -11,7 +11,7 @@ import {
 } from 'react';
 
 import { dailyPuzzle, dayOf } from '../engine/daily';
-import { generate, type Puzzle } from '../engine/generator';
+import { generate, MAX_PUZZLE, type Puzzle } from '../engine/generator';
 import type { Level } from '../engine/grade';
 import * as play from './game';
 import {
@@ -27,7 +27,15 @@ import {
   type Stats,
 } from './storage';
 
-export type Screen = 'today' | 'board' | 'completion' | 'stats' | 'settings';
+export type Screen = 'today' | 'play' | 'board' | 'completion' | 'stats' | 'settings';
+
+/** Play puzzle # takes up to 9 digits: every puzzle number. */
+export const PUZZLE_NUMBER_MAX_DIGITS = String(MAX_PUZZLE).length;
+
+/** The puzzle a typed number opens: leading zeros dropped, and 0 opens #1. */
+export function puzzleNumber(text: string): number {
+  return Math.max(1, Number(text));
+}
 
 /** What the Completion screen shows about the puzzle just solved. */
 export interface Solved {
@@ -154,6 +162,13 @@ export interface Store {
   playToday(): void;
   /** Opens puzzle #n, resuming it if it is the game in progress. */
   play(n: number): void;
+  /**
+   * Play on Play puzzle # held past the hold threshold: hands the number to the host, as typed.
+   * Nothing else differs from a tap; the release opens the puzzle.
+   */
+  hold(text: string): void;
+  /** The finger lifts after a hold: opens puzzle `text`, unless a reset came since the hold. */
+  release(text: string): void;
   select(cell: number): void;
   /** A number pad key on the selected cell. */
   press(digit: number): void;
@@ -187,6 +202,7 @@ function initialState(storage: DisguiseStorage): State {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const storage = useDisguiseStorage();
+  const trigger = useTrigger();
   const [state, dispatch] = useReducer(reducer, storage, initialState);
 
   useEffect(() => saveGame(storage, state.game), [storage, state.game]);
@@ -200,8 +216,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => cancelBuild, [cancelBuild]);
 
+  // Whether Play was held and not yet released; a reset in between drops the release.
+  const held = useRef(false);
+
   const reset = useCallback(() => {
     cancelBuild();
+    held.current = false;
     dispatch({ type: 'reset' });
   }, [cancelBuild]);
   const tick = useCallback((ms: number) => dispatch({ type: 'tick', ms }), []);
@@ -251,6 +271,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setLevel: (level) => dispatch({ type: 'level', level }),
       playToday: () => open(dailyPuzzle(dayOf(new Date()), state.level)),
       play: open,
+      hold: (text) => {
+        held.current = true;
+        if (text !== '') trigger.submit(text);
+      },
+      release: (text) => {
+        if (held.current) open(puzzleNumber(text));
+        held.current = false;
+      },
       select: (cell) => dispatch({ type: 'select', cell }),
       press: (digit) => {
         if (game && puzzle && selected !== null) {
@@ -281,7 +309,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setRulesOpen: (open) => dispatch({ type: 'rules', open }),
       reset,
     };
-  }, [state, storage, reset, tick, cancelBuild]);
+  }, [state, storage, trigger, reset, tick, cancelBuild]);
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 }
