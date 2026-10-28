@@ -1,7 +1,8 @@
 // Small pieces the Brief screens share. Generic controls come from `@inlay/ui`.
 import {
   Button,
-  ChipRow,
+  Chip,
+  controls,
   layout,
   radii,
   spacing,
@@ -9,7 +10,6 @@ import {
   TabBar,
   textStyle,
   useHostTheme,
-  type ChipRowOption,
   type TabBarTab,
 } from '@inlay/disguise-sdk';
 import { Children, useCallback, useState, type ReactNode } from 'react';
@@ -18,6 +18,7 @@ import {
   Image,
   Pressable,
   RefreshControl,
+  ScrollView,
   Text,
   View,
   type StyleProp,
@@ -30,6 +31,7 @@ import type { Story } from '../feeds/parse';
 import { useStoryImage } from '../images';
 import { useStore, type Screen, type TopicFilter } from '../state/store';
 import { strings } from '../strings';
+import { FeedGlyph, SavedGlyph, SettingsGlyph } from './glyphs';
 
 /** Stories whose images load before the list reports what is on screen. */
 const FIRST_VISIBLE = 3;
@@ -270,31 +272,57 @@ function Separator() {
   return <View style={{ height: spacing[12] }} />;
 }
 
-const topicOptions: readonly ChipRowOption<TopicFilter>[] = (
-  ['all', 'news', 'tech', 'sport', 'science'] as const
-).map((topic) => ({ value: topic, label: strings.topics[topic] }));
+const topics: readonly TopicFilter[] = ['all', 'news', 'tech', 'sport', 'science'];
 
-/** All / News / Tech / Sport / Science, over Feed in both layouts. */
+/** Space above and below each chip, so its 44-point hit target lies inside the scroll. */
+const topicInset = (layout.minHit - controls.chip.height) / 2;
+
+/**
+ * All / News / Tech / Sport / Science, over Feed in both layouts: chips from the gutter, the
+ * chosen one filled; the row scrolls sideways when it doesn't fit.
+ */
 export function TopicTabs() {
   const { state, setTopic } = useStore();
   return (
-    <View style={{ paddingHorizontal: layout.gutter, paddingBottom: spacing[8] }}>
-      <ChipRow
-        options={topicOptions}
-        value={state.topic}
-        onChange={setTopic}
-        testID="brief-topics"
-      />
-    </View>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      testID="brief-topics"
+      style={{ flexGrow: 0, flexShrink: 0, marginBottom: spacing[8] - topicInset }}
+      contentContainerStyle={{ gap: spacing[12], paddingHorizontal: layout.gutter }}
+    >
+      {topics.map((topic) => (
+        <View key={topic} style={{ paddingVertical: topicInset }}>
+          <Chip
+            label={strings.topics[topic]}
+            selected={state.topic === topic}
+            onPress={() => setTopic(topic)}
+            testID={`brief-topics-${topic}`}
+          />
+        </View>
+      ))}
+    </ScrollView>
   );
 }
 
 type Tab = Extract<Screen, 'feed' | 'saved' | 'settings'>;
 
 const tabs: readonly TabBarTab<Tab>[] = [
-  { key: 'feed', label: strings.tabs.feed },
-  { key: 'saved', label: strings.tabs.saved },
-  { key: 'settings', label: strings.tabs.settings },
+  {
+    key: 'feed',
+    label: strings.tabs.feed,
+    icon: (color) => <FeedGlyph size={controls.icon} color={color} />,
+  },
+  {
+    key: 'saved',
+    label: strings.tabs.saved,
+    icon: (color) => <SavedGlyph size={controls.icon} color={color} />,
+  },
+  {
+    key: 'settings',
+    label: strings.tabs.settings,
+    icon: (color) => <SettingsGlyph size={controls.icon} color={color} />,
+  },
 ];
 
 export function isTab(screen: Screen): screen is Tab {
