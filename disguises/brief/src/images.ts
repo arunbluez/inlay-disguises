@@ -2,15 +2,16 @@
 // applies to images too) and become a `data:` URI for React Native's `Image`; nothing is written
 // to disguise storage or to any file, and `clear` drops every one.
 import type { DisguiseFetch } from '@inlay/disguise-sdk';
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
 import { withDeadline } from './feeds/fetchFeeds';
+import { IMAGE_WIDTH } from './feeds/parse';
 import { httpsHost } from './feeds/url';
 
 /** Larger images are skipped (bytes); their story shows as a text card. */
 export const MAX_IMAGE_BYTES = 1_500_000;
 
-/** Images kept at once; the least recently used goes first. */
+/** Images kept at once; the one loaded first goes first. */
 export const IMAGE_LIMIT = 24;
 
 /** How long one image may take, in ms. */
@@ -26,6 +27,26 @@ export interface Images {
   load(url: string): Promise<void>;
   /** Drops every image and ignores loads still in flight. */
   clear(): void;
+  /** Calls `listener` whenever an image comes in, goes or is cleared; returns the unsubscribe. */
+  subscribe(listener: () => void): () => void;
+}
+
+/**
+ * Larger renditions on the image hosts that name the size in the path, as `[pattern, swap]`:
+ * BBC's `/ace/standard/240/` (the feeds only offer 240) and NPR's `/resize/2666x1777!/` (the
+ * originals, mostly over `MAX_IMAGE_BYTES`) both serve any width.
+ */
+const RENDITIONS: readonly (readonly [RegExp, string])[] = [
+  [/^(https:\/\/ichef\.bbci\.co\.uk\/ace\/standard\/)\d+\//i, `$1${IMAGE_WIDTH}/`],
+  [/^(https:\/\/npr\.brightspotcdn\.com\/dims3\/.*?\/resize\/)[^/]+\//i, `$1${IMAGE_WIDTH}/`],
+];
+
+/** `url` at `IMAGE_WIDTH` when its host serves sizes by path; otherwise `url` as it is. */
+export function rendition(url: string): string {
+  for (const [pattern, swap] of RENDITIONS) {
+    if (pattern.test(url)) return url.replace(pattern, swap);
+  }
+  return url;
 }
 
 /** Bytes to base64, in chunks small enough for `String.fromCharCode`. */
@@ -58,23 +79,21 @@ export function createImages(
   hosts: readonly string[],
   limit = IMAGE_LIMIT,
 ): Images {
-  // A Map keeps insertion order, so re-inserting on use makes the first key the least recent.
+  // A Map keeps insertion order, so its first key is the image loaded first.
   const entries = new Map<string, Entry>();
   const loading = new Map<string, Promise<void>>();
+  const listeners = new Set<() => void>();
   let generation = 0;
 
+  const changed = () => listeners.forEach((listener) => listener());
   const put = (url: string, entry: Entry) => {
-    entries.delete(url);
     entries.set(url, entry);
     while (entries.size > limit) entries.delete(entries.keys().next().value!);
+    changed();
   };
 
   return {
-    get(url) {
-      const entry = entries.get(url);
-      if (entry !== undefined) put(url, entry);
-      return entry;
-    },
+    get: (url) => entries.get(url),
     load(url) {
       if (entries.has(url)) return Promise.resolve();
       const pending = loading.get(url);
@@ -82,7 +101,9 @@ export function createImages(
       const started = generation;
       const host = httpsHost(url);
       const request =
-        host !== undefined && hosts.includes(host) ? fetchImage(fetch, url) : Promise.resolve(null);
+        host !== undefined && hosts.includes(host)
+          ? fetchImage(fetch, rendition(url))
+          : Promise.resolve(null);
       const load = request.then((entry) => {
         if (generation !== started) return;
         loading.delete(url);
@@ -95,30 +116,31 @@ export function createImages(
       generation += 1;
       entries.clear();
       loading.clear();
+      changed();
+    },
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
     },
   };
 }
 
 /**
  * The `data:` URI of a story's image, loading it while `active` (the story is on screen or next
- * to it). `undefined` while not loaded, `null` when it failed or the story has none.
+ * to it). `undefined` while not loaded, `null` when it failed or the story has none. Every card
+ * and page that shows `url` reads the one store and re-renders when the image comes in, whichever
+ * of them asked for it.
  */
 export function useStoryImage(
   images: Images,
   url: string | undefined,
   active: boolean,
 ): Entry | undefined {
-  const [, setLoaded] = useState(0);
-  const entry = url === undefined ? null : images.get(url);
+  const entry = useSyncExternalStore(images.subscribe, () =>
+    url === undefined ? null : images.get(url),
+  );
   useEffect(() => {
-    if (url === undefined || entry !== undefined || !active) return;
-    let mounted = true;
-    void images.load(url).then(() => {
-      if (mounted) setLoaded((count) => count + 1);
-    });
-    return () => {
-      mounted = false;
-    };
+    if (url !== undefined && entry === undefined && active) void images.load(url);
   }, [images, url, entry, active]);
   return entry;
 }

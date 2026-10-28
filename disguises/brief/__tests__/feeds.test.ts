@@ -13,7 +13,7 @@ import {
   storeStories,
 } from '../src/feeds/cache';
 import { allowedHosts, sources, type Source } from '../src/feeds/defaults';
-import { parseDate, parseFeed, type Story } from '../src/feeds/parse';
+import { IMAGE_WIDTH, parseDate, parseFeed, type Story } from '../src/feeds/parse';
 import { decodeEntities, gist, GIST_MAX, plainText } from '../src/feeds/text';
 import { absoluteHttps, httpsHost, isHttps } from '../src/feeds/url';
 
@@ -105,6 +105,62 @@ describe('parseFeed: RSS 2.0', () => {
     expect(byLink('/a/3')!.published).toBe(Date.UTC(2026, 9, 27, 12, 0, 0));
     expect(byLink('/a/8')!.published).toBe(Date.UTC(2026, 9, 26, 9, 30, 0));
     expect(byLink('/a/4')!.published).toBe(0);
+  });
+});
+
+describe('parseFeed: the best image rendition', () => {
+  /** The image chosen for one RSS item carrying `media`. */
+  const imageFor = (media: string) =>
+    parseFeed(
+      `<rss xmlns:media="http://search.yahoo.com/mrss/"><channel><item>
+        <title>One</title><link>https://news.example.org/1</link>${media}
+      </item></channel></rss>`,
+      wire,
+      STORY_LIMIT,
+    )![0]!.image;
+
+  it('takes the larger of media:content and media:thumbnail (Ars Technica)', () => {
+    const image = imageFor(`
+      <media:thumbnail url="https://images.example.org/a-500x500.jpg" width="500" height="500"/>
+      <media:content url="https://images.example.org/a-1024x648.jpg" medium="image" width="1024" height="648"/>`);
+    console.log('chosen:', image);
+    expect(image).toBe('https://images.example.org/a-1024x648.jpg');
+  });
+
+  it(`takes the smallest that is at least ${IMAGE_WIDTH} wide, not the largest`, () => {
+    const image = imageFor(`
+      <media:thumbnail url="https://images.example.org/240.jpg" width="240" height="135"/>
+      <media:content url="https://images.example.org/2400.jpg" medium="image" width="2400"/>
+      <media:content url="https://images.example.org/976.jpg" type="image/jpeg" width="976"/>
+      <enclosure url="https://images.example.org/1200.jpg" type="image/jpeg" length="1"/>`);
+    console.log('chosen:', image);
+    expect(image).toBe('https://images.example.org/976.jpg');
+  });
+
+  it(`takes the largest when none reaches ${IMAGE_WIDTH}, by height when there is no width`, () => {
+    expect(
+      imageFor(`
+        <media:thumbnail url="https://images.example.org/240.jpg" width="240"/>
+        <media:thumbnail url="https://images.example.org/h600.jpg" height="600"/>
+        <media:thumbnail url="https://images.example.org/480.jpg" width="480"/>`),
+    ).toBe('https://images.example.org/h600.jpg');
+  });
+
+  it('takes the first when no candidate gives a size, and skips video', () => {
+    expect(
+      imageFor(`
+        <media:content url="https://images.example.org/clip.mp4" medium="video" width="1920"/>
+        <media:thumbnail url="https://images.example.org/first.jpg?w=800"/>
+        <media:thumbnail url="https://images.example.org/second.jpg"/>`),
+    ).toBe('https://images.example.org/first.jpg?w=800');
+  });
+
+  it('falls back to the first <img> only when there is no media candidate', () => {
+    expect(
+      imageFor(
+        `<description><![CDATA[<img src="https://images.example.org/inline.jpg">]]></description>`,
+      ),
+    ).toBe('https://images.example.org/inline.jpg');
   });
 });
 

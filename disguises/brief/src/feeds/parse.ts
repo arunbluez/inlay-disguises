@@ -126,31 +126,60 @@ function firstImgSrc(html: string): string | undefined {
   return src === undefined ? undefined : decodeEntities(src);
 }
 
+/** Width, in pixels, a story image aims for: enough for a card or a Shorts page, no more. */
+export const IMAGE_WIDTH = 800;
+
+/** A `media:content`, `media:thumbnail` or `enclosure` image and its declared size (0: none). */
+interface Candidate {
+  url: string;
+  size: number;
+}
+
+function candidateOf(node: unknown): Candidate {
+  const size = Number(attribute(node, 'width')) || Number(attribute(node, 'height')) || 0;
+  return { url: attribute(node, 'url'), size };
+}
+
 /**
- * The item's image, first match of: `media:content` that is an image, `media:thumbnail`,
- * an `enclosure` of an image type, the first `<img>` in `content:encoded` (Atom: `content`), then
- * in `description` (Atom: `summary`). Resolved against `base`; `undefined` unless `https:`.
+ * The best of the feed's own image renditions: the smallest that is at least `IMAGE_WIDTH` wide
+ * (by its `width`, else `height`, attribute), else the largest; with no sizes, the first.
+ */
+function largest(candidates: readonly Candidate[]): string | undefined {
+  const usable = candidates.filter((candidate) => candidate.url !== '');
+  const wide = usable.filter((candidate) => candidate.size >= IMAGE_WIDTH);
+  const pool = wide.length > 0 ? wide : usable;
+  const best = pool.reduce<Candidate | undefined>((kept, candidate) => {
+    if (kept === undefined) return candidate;
+    const better = wide.length > 0 ? candidate.size < kept.size : candidate.size > kept.size;
+    return better ? candidate : kept;
+  }, undefined);
+  return best?.url;
+}
+
+/**
+ * The item's image: the best rendition (see `largest`) among `media:content` that is an image,
+ * `media:thumbnail` and an `enclosure` of an image type; else the first `<img>` in
+ * `content:encoded` (Atom: `content`), then in `description` (Atom: `summary`). Resolved against
+ * `base`; `undefined` unless `https:`.
  */
 function imageOf(item: Node, base: string): string | undefined {
   const groups = [item, ...list(item['media:group']).filter(isNode)];
   const media = groups.flatMap((group) => list(group['media:content']));
   const thumbnails = groups.flatMap((group) => list(group['media:thumbnail']));
-  const candidates = [
-    ...media
-      .filter(
-        (node) =>
-          attribute(node, 'medium') === 'image' || attribute(node, 'type').startsWith('image/'),
-      )
-      .map((node) => attribute(node, 'url')),
-    ...thumbnails.map((node) => attribute(node, 'url')),
-    ...list(item.enclosure)
-      .filter((node) => attribute(node, 'type').startsWith('image/'))
-      .map((node) => attribute(node, 'url')),
-    firstImgSrc(text(item['content:encoded']) || text(item.content)),
-    firstImgSrc(text(item.description) || text(item.summary)),
-  ];
-  const found = candidates.find((url) => url !== undefined && url !== '');
-  return found === undefined ? undefined : absoluteHttps(found, base);
+  const found =
+    largest(
+      [
+        ...media.filter(
+          (node) =>
+            attribute(node, 'medium') === 'image' || attribute(node, 'type').startsWith('image/'),
+        ),
+        ...thumbnails,
+        ...list(item.enclosure).filter((node) => attribute(node, 'type').startsWith('image/')),
+      ].map(candidateOf),
+    ) ||
+    firstImgSrc(text(item['content:encoded']) || text(item.content)) ||
+    firstImgSrc(text(item.description) || text(item.summary));
+  return found === undefined || found === '' ? undefined : absoluteHttps(found, base);
 }
 
 /** The Atom entry's article link: `rel="alternate"` or no `rel`. */
