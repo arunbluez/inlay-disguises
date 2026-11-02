@@ -17,6 +17,7 @@ import {
   controls,
   EmptyState,
   FileRow,
+  HoldArea,
   layout,
   LIGHT,
   ListGroup,
@@ -164,6 +165,69 @@ describe('Button hold', () => {
   it('without onHold the button needs no gesture root and registers no gesture', async () => {
     await renderThemed(<Button label="Go" testID="plain" />);
     expect(() => getByGestureTestId('plain-hold')).toThrow();
+  });
+});
+
+// The primitive under Button's hold, for anything that isn't a button (a title, a header).
+describe('HoldArea', () => {
+  async function renderArea(props: { holdMs?: number; enabled?: boolean } = {}) {
+    const handlers = { onHold: jest.fn(), onHoldEnd: jest.fn() };
+    await render(
+      <GestureHandlerRootView>
+        <HoldArea {...handlers} {...props} testID="title-hold">
+          <Text testID="title">Brief</Text>
+        </HoldArea>
+      </GestureHandlerRootView>,
+    );
+    return { ...handlers, hold: createGestureController('title-hold') };
+  }
+
+  const config = () =>
+    (getByGestureTestId('title-hold') as unknown as { config: Record<string, unknown> }).config;
+
+  it('defaults to the same native long press as Button: motion.longPressCommit, half-hit slop', async () => {
+    await renderArea();
+    console.log('HoldArea config', config());
+    expect(config()).toMatchObject({
+      minDurationMs: motion.longPressCommit,
+      maxDist: layout.minHit / 2,
+      shouldCancelWhenOutside: false,
+      enabled: true,
+    });
+  });
+
+  it('honours holdMs and enabled', async () => {
+    await renderArea({ holdMs: 900, enabled: false });
+    expect(config()).toMatchObject({ minDurationMs: 900, enabled: false });
+  });
+
+  it('fires onHold once at activation, onHoldEnd on release', async () => {
+    const { onHold, onHoldEnd, hold } = await renderArea();
+    await act(() => hold.begin());
+    expect(onHold).not.toHaveBeenCalled();
+    await act(() => hold.activate());
+    expect(onHold).toHaveBeenCalledTimes(1);
+    expect(onHoldEnd).not.toHaveBeenCalled();
+    await act(() => hold.end());
+    expect(onHold).toHaveBeenCalledTimes(1);
+    expect(onHoldEnd).toHaveBeenCalledTimes(1);
+  });
+
+  it('a tap (fail) or a scroll (cancel) fires nothing', async () => {
+    const { onHold, onHoldEnd, hold } = await renderArea();
+    await act(() => hold.begin());
+    await act(() => hold.fail());
+    await act(() => hold.begin());
+    await act(() => hold.cancel());
+    expect(onHold).not.toHaveBeenCalled();
+    expect(onHoldEnd).not.toHaveBeenCalled();
+  });
+
+  it('draws its child unchanged: no wrapper view, no pressed style', async () => {
+    await renderArea();
+    const title = screen.getByTestId('title');
+    expect(title).toHaveTextContent('Brief');
+    expect(title.props.style).toBeUndefined();
   });
 });
 

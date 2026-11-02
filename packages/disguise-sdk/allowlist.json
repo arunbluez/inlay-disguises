@@ -8,6 +8,7 @@
     { "name": "expo-image-manipulator", "reason": "Resize and re-encode photos to compress them" },
     { "name": "expo-media-library", "reason": "Save results to the photo library" },
     { "name": "expo-sharing", "reason": "System share sheet" },
-    { "name": "react-native-gesture-handler", "reason": "Hold gesture on buttons" }
+    { "name": "react-native-gesture-handler", "reason": "Hold gesture on buttons" },
+    { "name": "fast-xml-parser", "reason": "Parse RSS and Atom feeds (pure JS, no native code)" }
   ]
 }

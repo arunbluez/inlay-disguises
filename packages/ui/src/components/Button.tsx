@@ -128,7 +128,7 @@ export function Button({
   );
 
   return onHold ? (
-    <Hold
+    <HoldArea
       onHold={onHold}
       holdMs={holdMs}
       onHoldEnd={onHoldEnd}
@@ -136,30 +136,48 @@ export function Button({
       testID={pressable.testID ? `${pressable.testID}-hold` : undefined}
     >
       {button}
-    </Hold>
+    </HoldArea>
   ) : (
     button
   );
 }
 
-interface HoldProps {
+export interface HoldAreaProps {
+  /**
+   * Fires once the area has been held for `holdMs`, through Gesture Handler's native long press,
+   * so it is the same on iOS and Android. A scroll or a drift past half a hit target before
+   * `holdMs` cancels it. No haptic and no pressed look: the child draws exactly as it would
+   * unwrapped. Renders inside the host's `GestureHandlerRootView`; Jest suites add
+   * `react-native-gesture-handler/jestSetup` to `setupFiles`.
+   */
   onHold: () => void;
-  holdMs: number;
+  /** Hold threshold in ms. */
+  holdMs?: number;
+  /** Fires when the finger lifts (or the system cancels the touch) after `onHold` fired. */
   onHoldEnd?: () => void;
-  enabled: boolean;
+  enabled?: boolean;
+  /** The gesture's test ID, for `react-native-gesture-handler/jest-utils`. */
   testID?: string;
+  /** One native view (a `View`, `Text` or `Pressable`). */
   children: ReactElement;
 }
 
 /**
- * Wraps the button in a native long press. When it activates, Gesture Handler cancels the
- * button's own touch, so the release after a hold doesn't also press it.
+ * Wraps one view in a native long press. When it activates, Gesture Handler cancels the child's
+ * own touch, so the release after a hold doesn't also press it.
  */
-function Hold({ onHold, holdMs, onHoldEnd, enabled, testID, children }: HoldProps) {
+export function HoldArea({
+  onHold,
+  holdMs = motion.longPressCommit,
+  onHoldEnd,
+  enabled = true,
+  testID,
+  children,
+}: HoldAreaProps) {
   const gesture = useLongPressGesture({
     minDuration: holdMs,
     maxDistance: holdSlop,
-    // A finger that slides off the button after the hold still ends it normally.
+    // A finger that slides off the area after the hold still ends it normally.
     shouldCancelWhenOutside: false,
     disableReanimated: true,
     enabled,
