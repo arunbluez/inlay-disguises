@@ -1,20 +1,20 @@
 # inlay-disguises
 
-The open-source half of **Inlay**, a private media vault for iOS and Android that lives inside an ordinary, fully working app. The ordinary app is the *disguise*: a photo compressor, a daily Sudoku, a news reader. This repository holds everything a disguise is built from, and every disguise that ships.
+The open-source half of **Inlay**, a private media vault for iOS and Android that lives inside an ordinary, fully working app. The ordinary app is the _disguise_: a photo compressor, a daily Sudoku, a news reader. This repository holds everything a disguise is built from, and every disguise that ships.
 
 A disguise is a small React Native package that does one normal job well and has exactly one extra behaviour: somewhere it would ask for a number anyway, the user can type a code and hold a button, and the package hands that value to the app that runs it. The package never learns whether the code meant anything. That is the whole contract.
 
 ## What is here
 
-| Path | What it is |
-|---|---|
-| `packages/disguise-sdk` | The SDK: the `DisguiseManifest` type, six hooks (`useTrigger`, `useLifecycle`, `useDisguiseStorage`, `useDisguiseFetch`, `useHostTheme`, `useBottomInset`) and the import allowlist |
-| `packages/ui` | The shared UI kit and design tokens, used by every disguise and by the app itself |
-| `packages/testkit` | `MockHost` and `renderDisguise()`: run a disguise in Jest or the playground without the app |
-| `apps/playground` | An Expo dev app that runs any disguise standalone against `MockHost` |
-| `disguises/compress`, `sudoku`, `brief` | The three disguises that ship in the app |
-| `disguises/_template` | The starting point for a new one, with a complete test suite |
-| `docs/` | [Getting started](docs/getting-started.md) · [SDK reference](docs/sdk-reference.md) · [Trigger design](docs/trigger-design.md) · [Review process](docs/review-process.md) |
+| Path                                    | What it is                                                                                                                                                                          |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/disguise-sdk`                 | The SDK: the `DisguiseManifest` type, six hooks (`useTrigger`, `useLifecycle`, `useDisguiseStorage`, `useDisguiseFetch`, `useHostTheme`, `useBottomInset`) and the import allowlist |
+| `packages/ui`                           | The shared UI kit and design tokens, used by every disguise and by the app itself                                                                                                   |
+| `packages/testkit`                      | `MockHost` and `renderDisguise()`: run a disguise in Jest or the playground without the app                                                                                         |
+| `apps/playground`                       | An Expo dev app that runs any disguise standalone against `MockHost`                                                                                                                |
+| `disguises/compress`, `sudoku`, `brief` | The three disguises that ship in the app                                                                                                                                            |
+| `disguises/_template`                   | The starting point for a new one, with a complete test suite                                                                                                                        |
+| `docs/`                                 | [Getting started](docs/getting-started.md) · [SDK reference](docs/sdk-reference.md) · [Trigger design](docs/trigger-design.md) · [Review process](docs/review-process.md)           |
 
 ## Build a disguise
 
