@@ -16,6 +16,7 @@
     "@expo-google-fonts/archivo": "~0.4.2",
     "@inlay/disguise-brief": "workspace:*",
     "@inlay/disguise-compress": "workspace:*",
+    "@inlay/disguise-dial": "workspace:*",
     "@inlay/disguise-sdk": "workspace:*",
     "@inlay/disguise-sudoku": "workspace:*",
     "@inlay/disguise-template": "workspace:*",
