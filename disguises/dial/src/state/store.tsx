@@ -1,5 +1,7 @@
 // Dial's state: the screen, the settings, and set mode for the second time. The centre of the
-// dial is the only control with a hold; its tap and its hold both end in the same action.
+// dial is the only control with a hold; its tap and its hold both end in the same action. Each
+// time the hour hand comes to rest in set mode, the digit it points at is kept and shown, faintly,
+// under the readout; a hold hands the digits kept so far to the host.
 import { useDisguiseStorage, useLifecycle, useTrigger } from '@inlay/disguise-sdk';
 import {
   createContext,
@@ -14,7 +16,7 @@ import {
 
 import type { DialTime } from '../Dial';
 import type { ThemeId } from '../themes';
-import { minutesOf, mod, MINUTES_PER_DAY, offsetTo, readoutDigits, SET_START } from '../time';
+import { hourDigit, minutesOf, mod, MINUTES_PER_DAY, offsetTo, SET_START } from '../time';
 import { useNow } from './now';
 import {
   loadSettings,
@@ -48,6 +50,12 @@ export interface Store {
   /** `null` in live mode. */
   set: SetState | null;
   turnHands: (minutes: number) => void;
+  /** The hour hand came to rest: keeps the digit it points at. */
+  restHourHand: () => void;
+  /** The digits kept this time in set mode; empty in live mode. */
+  digits: string;
+  /** Drops the last digit kept. */
+  deleteDigit: () => void;
   /** 24-hour readout only: adds or takes away 12 hours. */
   toggleHalf: () => void;
   cancelSet: () => void;
@@ -80,10 +88,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // as they are, whichever render the gesture last saw.
   const [set, setSetState] = useState<SetState | null>(null);
   const setRef = useRef<SetState | null>(null);
-  const updateSet = useCallback((next: SetState | null) => {
-    setRef.current = next;
-    setSetState(next);
+  // The hour hand's digits this time in set mode, in memory only; never stored.
+  const [digits, setDigits] = useState('');
+  const digitsRef = useRef('');
+  const updateDigits = useCallback((next: string) => {
+    digitsRef.current = next;
+    setDigits(next);
   }, []);
+  const updateSet = useCallback(
+    (next: SetState | null) => {
+      if (next === null || setRef.current === null) updateDigits('');
+      setRef.current = next;
+      setSetState(next);
+    },
+    [updateDigits],
+  );
   const settingsRef = useRef(settings);
   const updateSettings = useCallback((change: Partial<Settings>) => {
     settingsRef.current = { ...settingsRef.current, ...change };
@@ -160,6 +179,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (setRef.current === null) return;
         updateSet({ minutes, moved: true });
       },
+      restHourHand: () => {
+        const current = setRef.current;
+        if (current === null) return;
+        const digit = hourDigit(current.minutes);
+        if (digit !== null) updateDigits(digitsRef.current + digit);
+      },
+      digits,
+      deleteDigit: () => updateDigits(digitsRef.current.slice(0, -1)),
       toggleHalf: () => {
         const current = setRef.current;
         if (current === null) return;
@@ -169,10 +196,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       centrePress: centreAction,
       centreHold: () => {
         releasePending.current = true;
-        const current = setRef.current;
-        if (current?.moved) {
-          trigger.submit(readoutDigits(current.minutes, settingsRef.current.twentyFourHour));
-        }
+        if (digitsRef.current !== '') trigger.submit(digitsRef.current);
       },
       centreHoldEnd: () => {
         if (!releasePending.current) return;
@@ -187,10 +211,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     screen,
     settings,
     set,
+    digits,
     clearOpen,
     storage,
     trigger,
     updateSet,
+    updateDigits,
     updateSettings,
     centreAction,
   ]);

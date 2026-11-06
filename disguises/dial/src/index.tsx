@@ -87,7 +87,8 @@ const manifest: DisguiseManifest = {
     },
   },
   root: Root,
-  triggerDescription: 'Tap the centre, turn the hands to your code, then hold the centre.',
+  triggerDescription:
+    'Tap the centre, point the hour hand at each digit of your code in turn (12 for 0), then hold the centre.',
   allowedHosts: [],
   tier: 'pro',
 };

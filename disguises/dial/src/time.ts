@@ -83,9 +83,15 @@ export function formatTime(minutesOfDay: number, twentyFourHour: boolean): strin
   return twentyFourHour ? `${pad2(h)}:${pad2(m)}` : `${h % 12 === 0 ? 12 : h % 12}:${pad2(m)}`;
 }
 
-/** The readout's digits without the colon, always four: `7:45` → `0745`, `19:05` → `1905`. */
-export function readoutDigits(minutesOfDay: number, twentyFourHour: boolean): string {
-  return formatTime(minutesOfDay, twentyFourHour).replace(':', '').padStart(4, '0');
+/** Where the hour hand points, 0 (12) to 11, ignoring the minutes. */
+export function hourPosition(minutesOfDay: number): number {
+  return Math.floor(mod(minutesOfDay, MINUTES_PER_DAY) / 60) % 12;
+}
+
+/** The digit the hour hand points at: 1 to 9 on those numerals, 0 on 12; 10 and 11 give none. */
+export function hourDigit(minutesOfDay: number): string | null {
+  const position = hourPosition(minutesOfDay);
+  return position <= 9 ? String(position) : null;
 }
 
 /** Minutes since midnight of `date`, local time. */

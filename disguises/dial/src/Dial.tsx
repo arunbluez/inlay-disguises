@@ -15,7 +15,15 @@ import {
 } from 'react-native';
 
 import { paletteFor, type DialPalette, type DialTheme, type HandShape } from './themes';
-import { angleToTime, numeral, pointToAngle, ringAt, timeToAngles, type Ring } from './time';
+import {
+  angleToTime,
+  hourPosition,
+  numeral,
+  pointToAngle,
+  ringAt,
+  timeToAngles,
+  type Ring,
+} from './time';
 
 /** Diameter of the centre's hit area, drawn as the hands' cap. */
 export const CENTRE_HIT = 56;
@@ -40,6 +48,8 @@ export interface DialInteraction {
   setTime: number | null;
   /** A drag turned a hand to a new time. */
   onSetTime: (minutes: number) => void;
+  /** A drag of the hour hand ended, the hand where the finger left it. */
+  onHourRest: () => void;
   onCentrePress: () => void;
   onCentreHold: () => void;
   onCentreHoldEnd: () => void;
@@ -162,6 +172,8 @@ export function Dial({
   );
 
   const sub = detail === 'sub';
+  // In set mode, the hour the hour hand points at (0 is 12): its place on the face lights up.
+  const pointed = setting ? hourPosition(setTime) : null;
   const rimWidth = Math.max(sub ? 1 : 2, radius * 0.025);
 
   return (
@@ -180,6 +192,9 @@ export function Dial({
       <View
         style={{ position: 'absolute', left: -rimWidth, top: -rimWidth, width: size, height: size }}
       >
+        {pointed !== null ? (
+          <Pointed theme={theme} palette={palette} radius={radius} position={pointed} />
+        ) : null}
         <Ticks theme={theme} palette={palette} radius={radius} sub={sub} />
         {!sub && theme.numerals !== 'none' ? (
           <Numerals
@@ -189,6 +204,7 @@ export function Dial({
             archivo={archivo}
             // The sub-dial sits where 6 would be, as on a dual-time watch.
             skipSix={!!interactive?.secondTime && !setting}
+            pointed={pointed}
           />
         ) : null}
         {interactive?.secondTime && !setting ? (
@@ -205,7 +221,12 @@ export function Dial({
           <SecondHand theme={theme} palette={palette} radius={radius} angle={hands.second} />
         ) : null}
         {interactive && setting ? (
-          <DragSurface size={size} setTime={setTime} onSetTime={interactive.onSetTime} />
+          <DragSurface
+            size={size}
+            setTime={setTime}
+            onSetTime={interactive.onSetTime}
+            onHourRest={interactive.onHourRest}
+          />
         ) : null}
         {interactive ? (
           <Centre radius={radius} palette={palette} interaction={interactive} />
@@ -298,22 +319,62 @@ function Ticks({
   );
 }
 
+/** How far out the numerals sit, and the set-mode highlight with them. */
+function numeralDistance(theme: DialTheme, radius: number): number {
+  return radius * (theme.ticks === 'hours' ? 0.7 : 0.72);
+}
+
+/** Set mode: a soft disc, in the seconds hand's colour, where the hour hand points. */
+function Pointed({
+  theme,
+  palette,
+  radius,
+  position,
+}: {
+  theme: DialTheme;
+  palette: DialPalette;
+  radius: number;
+  position: number;
+}) {
+  const distance = numeralDistance(theme, radius);
+  const disc = radius * 0.3;
+  const angle = (position * Math.PI) / 6;
+  return (
+    <View
+      testID={`dial-pointed-${position}`}
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        left: radius + distance * Math.sin(angle) - disc / 2,
+        top: radius - distance * Math.cos(angle) - disc / 2,
+        width: disc,
+        height: disc,
+        borderRadius: disc / 2,
+        backgroundColor: palette.second,
+        opacity: 0.18,
+      }}
+    />
+  );
+}
+
 function Numerals({
   theme,
   palette,
   radius,
   archivo,
   skipSix,
+  pointed,
 }: {
   theme: DialTheme;
   palette: DialPalette;
   radius: number;
   archivo: boolean;
   skipSix: boolean;
+  pointed: number | null;
 }) {
   const roman = theme.numerals === 'roman';
   const fontSize = radius * (roman ? 0.13 : 0.16);
-  const distance = radius * (theme.ticks === 'hours' ? 0.7 : 0.72);
+  const distance = numeralDistance(theme, radius);
   const box = { width: radius * 0.44, height: fontSize * 1.4 };
   return (
     <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0 }}>
@@ -333,7 +394,7 @@ function Numerals({
               lineHeight: box.height,
               textAlign: 'center',
               fontSize,
-              color: palette.numerals,
+              color: i === pointed ? palette.second : palette.numerals,
               fontVariant: [...tabularNums],
               ...fontStyle(roman ? 500 : 600, archivo),
             }}
@@ -545,10 +606,12 @@ function DragSurface({
   size,
   setTime,
   onSetTime,
+  onHourRest,
 }: {
   size: number;
   setTime: number;
   onSetTime: (minutes: number) => void;
+  onHourRest: () => void;
 }) {
   const radius = size / 2;
   const ring = useRef<Ring | null>(null);
@@ -583,6 +646,7 @@ function DragSurface({
       onResponderGrant={(event) => turn(event, false)}
       onResponderMove={(event) => turn(event, true)}
       onResponderRelease={() => {
+        if (ring.current === 'hour') onHourRest();
         ring.current = null;
       }}
       onResponderTerminate={() => {

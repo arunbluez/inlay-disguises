@@ -6,10 +6,10 @@ import { useNow } from '../src/state/now';
 import {
   angleToTime,
   formatTime,
+  hourDigit,
   longDate,
   offsetTo,
   pointToAngle,
-  readoutDigits,
   ringAt,
   timeToAngles,
 } from '../src/time';
@@ -98,19 +98,29 @@ describe('pointToAngle and ringAt', () => {
 
 describe('readout', () => {
   it.each([
-    ['7:45', false, '7:45', '0745'],
-    ['19:45', false, '7:45', '0745'],
-    ['12:00', false, '12:00', '1200'],
-    ['0:00', false, '12:00', '1200'],
-    ['7:05', false, '7:05', '0705'],
-    ['19:05', true, '19:05', '1905'],
-    ['0:00', true, '00:00', '0000'],
-    ['7:05', true, '07:05', '0705'],
-    ['12:00', true, '12:00', '1200'],
-  ] as const)('%s (24-hour %s) reads %s, code %s', (time, h24, text, code) => {
+    ['7:45', false, '7:45'],
+    ['19:45', false, '7:45'],
+    ['12:00', false, '12:00'],
+    ['0:00', false, '12:00'],
+    ['7:05', false, '7:05'],
+    ['19:05', true, '19:05'],
+    ['0:00', true, '00:00'],
+    ['7:05', true, '07:05'],
+    ['12:00', true, '12:00'],
+  ] as const)('%s (24-hour %s) reads %s', (time, h24, text) => {
     expect(formatTime(t(time), h24)).toBe(text);
-    expect(readoutDigits(t(time), h24)).toBe(code);
-    expect(code).toMatch(/^\d{4}$/);
+  });
+
+  it.each([
+    ['12:00', '0'],
+    ['0:30', '0'],
+    ['1:00', '1'],
+    ['9:59', '9'],
+    ['21:15', '9'],
+    ['10:00', null],
+    ['23:00', null],
+  ] as const)('the hour hand at %s gives %s', (time, digit) => {
+    expect(hourDigit(t(time))).toBe(digit);
   });
 
   it('dates read in words', () => {

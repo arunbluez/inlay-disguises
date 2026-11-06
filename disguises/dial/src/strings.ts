@@ -9,6 +9,7 @@ export const strings = {
     date: (date: Date) => longDate(date),
     secondTime: (time: string) => `Second time ${time}`,
     cancel: 'Cancel',
+    deleteDigit: 'Delete',
     setHint: 'Turn the hands to the second time',
     clearTitle: 'Clear second time?',
     clearNote: 'The small dial goes away. You can set it again from the centre of the dial.',

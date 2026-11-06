@@ -1,5 +1,6 @@
 import {
   Button,
+  controls,
   layout,
   ScreenHeader,
   Sheet,
@@ -11,6 +12,7 @@ import {
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 
 import { Dial } from '../Dial';
+import { BackspaceGlyph } from './glyphs';
 import { useStore } from '../state/store';
 import { strings } from '../strings';
 import { themeById } from '../themes';
@@ -20,6 +22,8 @@ import { formatTime } from '../time';
 const MAX_DIAL = 380;
 /** The set-mode readout before a hand is turned. */
 const DIMMED = 0.4;
+/** The digits kept in set mode: there for the one setting the hands, faint to anyone else. */
+const FAINT = 0.28;
 
 /** Home: the dial, the date and the second time; set mode for the second time. */
 export function Clock() {
@@ -44,6 +48,7 @@ export function Clock() {
           interactive={{
             setTime: set?.minutes ?? null,
             onSetTime: store.turnHands,
+            onHourRest: store.restHourHand,
             onCentrePress: store.centrePress,
             onCentreHold: store.centreHold,
             onCentreHoldEnd: store.centreHoldEnd,
@@ -75,6 +80,43 @@ export function Clock() {
                   {formatTime(set.minutes, settings.twentyFourHour)}
                 </Text>
               </Pressable>
+              <View
+                testID="dial-digits"
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: spacing[8],
+                  minHeight: layout.minHit,
+                  opacity: FAINT,
+                }}
+              >
+                <Text
+                  testID="dial-digits-text"
+                  style={[
+                    textStyle('heading', 22, archivo),
+                    { color: colors.ink, letterSpacing: 4, fontVariant: [...tabularNums] },
+                  ]}
+                >
+                  {store.digits}
+                </Text>
+                {store.digits ? (
+                  <Pressable
+                    testID="dial-delete"
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.clock.deleteDigit}
+                    onPress={store.deleteDigit}
+                    hitSlop={spacing[8]}
+                    style={{
+                      minWidth: layout.minHit,
+                      minHeight: layout.minHit,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <BackspaceGlyph size={controls.icon} color={colors.ink} />
+                  </Pressable>
+                ) : null}
+              </View>
               <Text style={[textStyle('caption', 13, archivo), { color: colors.muted }]}>
                 {strings.clock.setHint}
               </Text>

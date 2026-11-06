@@ -97,7 +97,8 @@ describe('Dial manifest', () => {
       name: 'Dial',
       version: '0.0.0',
       minSdk: sdkPackage.version,
-      triggerDescription: 'Tap the centre, turn the hands to your code, then hold the centre.',
+      triggerDescription:
+        'Tap the centre, point the hour hand at each digit of your code in turn (12 for 0), then hold the centre.',
       allowedHosts: [],
       tier: 'pro',
     });
@@ -163,14 +164,14 @@ describe('Dial trigger', () => {
     expect(screen.getByTestId('mock-host-banner')).toHaveTextContent('Last code: (none)');
   });
 
-  it('in set mode, a hold submits the readout once; the release pins the second time', async () => {
+  it('in set mode, a hold submits the hour digit once; the release pins the second time', async () => {
     const { host } = await renderDisguise(manifest);
     await tapCentre();
     await turnTo(7, 45);
 
     const { release } = await holdCentre();
-    expect(host.submittedCodes).toEqual(['0745']);
-    expect(screen.getByTestId('mock-host-banner')).toHaveTextContent('Last code: 0745');
+    expect(host.submittedCodes).toEqual(['7']);
+    expect(screen.getByTestId('mock-host-banner')).toHaveTextContent('Last code: 7');
     // Nothing else yet: still in set mode, nothing pinned.
     expect(readout()).toBe('7:45');
     expect(screen.queryByTestId('dial-second-time')).toBeNull();
@@ -178,7 +179,7 @@ describe('Dial trigger', () => {
     await release();
     expect(screen.queryByTestId('dial-readout')).toBeNull();
     expect(screen.getByTestId('dial-second-time')).toHaveTextContent('Second time 7:45');
-    expect(host.submittedCodes).toEqual(['0745']);
+    expect(host.submittedCodes).toEqual(['7']);
   });
 
   it('a hold and a tap end in the same screen', async () => {
@@ -236,47 +237,128 @@ describe('Dial trigger', () => {
     expect(host.submittedCodes).toEqual([]);
   });
 
-  it('24-hour mode yields four digits', async () => {
+  it('each rest of the hour hand keeps its digit: 12 is 0, 10 and 11 give none', async () => {
+    const { host } = await renderDisguise(manifest);
+    await tapCentre();
+    for (const h of [2, 4, 6, 8, 1, 12, 10, 11]) await touchRing('hour', (h % 12) * 30);
+    const { release } = await holdCentre();
+    expect(host.submittedCodes).toEqual(['246810']);
+    await release();
+    expect(host.submittedCodes).toEqual(['246810']);
+  });
+
+  it('a second touch on the same numeral repeats the digit; minute drags keep none', async () => {
+    const { host } = await renderDisguise(manifest);
+    await tapCentre();
+    await touchRing('hour', 90);
+    await touchRing('minute', 180);
+    await touchRing('hour', 90);
+    await touchRing('minute', 300, [330, 354, 12]);
+    const { release } = await holdCentre();
+    await release();
+    expect(host.submittedCodes).toEqual(['33']);
+  });
+
+  it('a sweep of the hour hand keeps only where it stops', async () => {
+    const { host } = await renderDisguise(manifest);
+    await tapCentre();
+    await touchRing('hour', 30, [60, 90, 120]);
+    expect(readout()).toBe('4:00');
+    const { release } = await holdCentre();
+    await release();
+    expect(host.submittedCodes).toEqual(['4']);
+  });
+
+  it('a hold with only the minute hand turned submits nothing and still pins', async () => {
+    const { host } = await renderDisguise(manifest);
+    await tapCentre();
+    await touchRing('minute', 90);
+    const { release } = await holdCentre();
+    await release();
+    expect(host.submittedCodes).toEqual([]);
+    expect(screen.getByTestId('dial-second-time')).toHaveTextContent('Second time 12:15');
+  });
+
+  it('the digits start afresh each time set mode opens', async () => {
+    const { host } = await renderDisguise(manifest);
+    await tapCentre();
+    await touchRing('hour', 150);
+    await press('dial-cancel');
+    await tapCentre();
+    await touchRing('hour', 180);
+    await tapCentre();
+    await tapCentre();
+    await touchRing('hour', 210);
+    const { release } = await holdCentre();
+    await release();
+    expect(host.submittedCodes).toEqual(['7']);
+  });
+
+  it('the digits kept show faintly under the readout; Delete drops the last', async () => {
+    const { host } = await renderDisguise(manifest);
+    const digits = () => String(screen.getByTestId('dial-digits-text').props.children);
+    await tapCentre();
+    expect(digits()).toBe('');
+    expect(screen.queryByTestId('dial-delete')).toBeNull();
+    expect(StyleSheet.flatten(screen.getByTestId('dial-digits').props.style).opacity).toBeLessThan(
+      0.5,
+    );
+
+    for (const h of [2, 4, 6]) await touchRing('hour', h * 30);
+    expect(digits()).toBe('246');
+
+    await press('dial-delete');
+    expect(digits()).toBe('24');
+    await touchRing('hour', 270);
+    expect(digits()).toBe('249');
+    await press('dial-delete');
+    await press('dial-delete');
+    await press('dial-delete');
+    expect(digits()).toBe('');
+    expect(screen.queryByTestId('dial-delete')).toBeNull();
+
+    await touchRing('hour', 30);
+    const { release } = await holdCentre();
+    await release();
+    expect(host.submittedCodes).toEqual(['1']);
+    expect(screen.queryByTestId('dial-digits')).toBeNull();
+    // Only the pinned offset is stored, never the digits.
+    expect([...host.storage.entries.keys()]).toEqual(['secondTimeOffsetMinutes']);
+  });
+
+  it('the place the hour hand points at lights up in set mode only', async () => {
+    await renderDisguise(manifest);
+    expect(screen.queryByTestId(/^dial-pointed-/)).toBeNull();
+
+    await tapCentre();
+    expect(screen.getByTestId('dial-pointed-0')).toBeOnTheScreen();
+    await touchRing('hour', 90, [120]);
+    expect(screen.getByTestId('dial-pointed-4')).toBeOnTheScreen();
+    expect(screen.queryByTestId('dial-pointed-0')).toBeNull();
+    // Turning the minute hand moves the readout, not the light.
+    await touchRing('minute', 180);
+    expect(screen.getByTestId('dial-pointed-4')).toBeOnTheScreen();
+
+    await press('dial-cancel');
+    expect(screen.queryByTestId(/^dial-pointed-/)).toBeNull();
+  });
+
+  it('24-hour mode keeps the same digits; a tap on the readout adds or takes away 12 hours', async () => {
     // 24-hour: 12:00, hour hand to 7 keeps the afternoon half, minutes to 05.
     const { host } = await renderWith({ twentyFourHour: 'true' });
     await tapCentre();
     expect(readout()).toBe('12:00');
     await turnTo(7, 5);
     expect(readout()).toBe('19:05');
-    let { release } = await holdCentre();
-    await release();
-    expect(host.submittedCodes).toEqual(['1905']);
-
-    // A tap on the readout adds or takes away 12 hours.
-    await tapCentre();
-    await turnTo(7, 5);
     await press('dial-readout');
     expect(readout()).toBe('07:05');
-    ({ release } = await holdCentre());
+    const { release } = await holdCentre();
     await release();
-    expect(host.submittedCodes).toEqual(['1905', '0705']);
+    expect(host.submittedCodes).toEqual(['7']);
   });
 
-  it('12-hour mode yields four digits', async () => {
-    const { host } = await renderDisguise(manifest);
-
-    // 12:00, with the minute hand set on 12.
-    await tapCentre();
-    await touchRing('minute', 0);
-    expect(readout()).toBe('12:00');
-    expect(readoutOpacity()).toBe(1);
-    let { release } = await holdCentre();
-    await release();
-    expect(host.submittedCodes).toEqual(['1200']);
-
-    await tapCentre();
-    await turnTo(7, 5);
-    expect(readout()).toBe('7:05');
-    ({ release } = await holdCentre());
-    await release();
-    expect(host.submittedCodes).toEqual(['1200', '0705']);
-
-    // The readout does nothing on a 12-hour dial.
+  it('the readout does nothing on a 12-hour dial', async () => {
+    await renderDisguise(manifest);
     await tapCentre();
     await turnTo(7, 5);
     await press('dial-readout');
@@ -300,7 +382,7 @@ describe('Dial trigger', () => {
     const { release } = await holdCentre();
     await release();
 
-    expect(host.submittedCodes).toEqual(['0745']);
+    expect(host.submittedCodes).toEqual(['7']);
     const entries = [...host.storage.entries];
     expect(entries.map(([key]) => key)).toEqual(['secondTimeOffsetMinutes']);
     for (const [key, value] of entries) {
@@ -350,14 +432,14 @@ describe('Dial reset', () => {
     await turnTo(7, 45);
 
     const { release } = await holdCentre();
-    expect(host.submittedCodes).toEqual(['0745']);
+    expect(host.submittedCodes).toEqual(['7']);
     await act(() => host.reset());
     await release();
 
     expect(screen.queryByTestId('dial-readout')).toBeNull();
     expect(screen.queryByTestId('dial-second-time')).toBeNull();
     expect(host.storage.entries.size).toBe(0);
-    expect(host.submittedCodes).toEqual(['0745']);
+    expect(host.submittedCodes).toEqual(['7']);
   });
 
   it('a release after a reset in live mode does not enter set mode', async () => {

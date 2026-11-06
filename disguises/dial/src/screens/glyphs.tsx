@@ -102,3 +102,37 @@ export function SettingsGlyph({ size, color }: GlyphProps) {
     </View>
   );
 }
+
+/** A backspace key: a tag pointing left with a cross inside, drawn as round-ended strokes. */
+export function BackspaceGlyph({ size, color }: GlyphProps) {
+  const u = size / 24;
+  // Each stroke runs between two grid points, lengthened by its width so corners close.
+  const stroke = ([x1, y1, x2, y2]: readonly [number, number, number, number], key: number) => {
+    const length = (Math.hypot(x2 - x1, y2 - y1) + STROKE) * u;
+    return (
+      <View
+        key={key}
+        style={{
+          position: 'absolute',
+          left: ((x1 + x2) / 2) * u - length / 2,
+          top: ((y1 + y2) / 2 - STROKE / 2) * u,
+          width: length,
+          height: STROKE * u,
+          borderRadius: u,
+          backgroundColor: color,
+          transform: [{ rotate: `${(Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI}deg` }],
+        }}
+      />
+    );
+  };
+  const strokes = [
+    [3, 12, 9, 6],
+    [3, 12, 9, 18],
+    [9, 6, 21, 6],
+    [21, 6, 21, 18],
+    [21, 18, 9, 18],
+    [12.5, 9.5, 17.5, 14.5],
+    [12.5, 14.5, 17.5, 9.5],
+  ] as const;
+  return <View style={{ width: size, height: size }}>{strokes.map(stroke)}</View>;
+}

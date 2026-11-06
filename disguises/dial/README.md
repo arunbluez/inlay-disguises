@@ -40,7 +40,9 @@ The centre of the dial (a 56 pt hit area drawn as the hands' cap) is a `Pressabl
 - A tap in live mode starts set mode: both hands sweep to 12:00 (500 ms, `motion.ease`), the seconds hand goes, and a readout shows `12:00`, dimmed until a hand is turned, with Cancel under it.
 - A drag in the outer ring turns the minute hand (60 positions); passing 12 while the finger moves turns the hour on or back. A drag inside 55% of the radius turns the hour hand (12 positions) and keeps the minutes. `angleToTime` does the snapping.
 - The readout is `H:MM`, or `HH:MM` on a 24-hour readout, where a tap on it adds or takes away 12 hours.
-- A tap on the centre pins the readout as the second time and returns to live mode. A hold of 600 ms with a turned hand hands the readout's four digits to the host (`7:45` → `0745`); the release then does what a tap does. With no hand turned, either just leaves set mode.
+- Each time a drag of the hour hand ends, the digit it points at is kept: 1 to 9 on those numerals, 0 on 12, none on 10 or 11 (`hourDigit`). A touch without a move counts, so a digit can repeat. While setting, the place the hour hand points at lights up (a soft disc in the seconds hand's colour, and that numeral in the same colour), so each stop is easy to see.
+- The digits kept show under the readout at 28% opacity, plain to the person setting the hands and faint to anyone else, with a backspace that drops the last one. They live in memory only, are never stored, and are dropped whenever set mode ends.
+- A tap on the centre pins the readout as the second time and returns to live mode. A hold of 600 ms hands the digits kept so far to the host (hour hand to 2, 4, 6, 8, 1, then 12 → `246810`); the release then does what a tap does. With no digit kept the hold submits nothing; with no hand turned, either just leaves set mode.
 - Only the offset from the current time is stored (`secondTimeOffsetMinutes`), when the pin happens. Other keys: `theme`, `twentyFourHour`, `showSeconds`, `showDate`.
 - `onReset` voids a pending release, leaves set mode and returns to Clock; settings and a pinned second time stay.
 
