@@ -298,7 +298,7 @@ export interface ThemeDefinition {
 }
 
 /**
- * The three built-in accents. Sudoku and Brief share one OKLCH lightness and chroma and only turn
+ * The built-in accents. Dial's is a neutral graphite (light grey in dark), the colours of its face. Sudoku and Brief share one OKLCH lightness and chroma and only turn
  * the hue; the source gives them in OKLCH, converted to sRGB hex by `scripts/oklch.ts`. The light
  * Compress and Brief accents sit lower in OKLCH lightness than the source (D-33) so `on` text over
  * them reaches 4.5:1.
@@ -331,6 +331,10 @@ export const accents = {
       deep: '#8ed09c', // oklch(0.8 0.1 150)
     },
   },
+  dial: {
+    light: { accent: '#57524d', deep: '#34312e' },
+    dark: { accent: '#bdb7b0', deep: '#e2ded9' },
+  },
 } as const satisfies Record<string, Record<ColorScheme, Accent>>;
 
 export type BuiltInThemeId = keyof typeof accents;
@@ -344,4 +348,5 @@ export const themes: Record<BuiltInThemeId, ThemeDefinition> = {
   compress: defineTheme(accents.compress),
   sudoku: defineTheme(accents.sudoku),
   brief: defineTheme(accents.brief),
+  dial: defineTheme(accents.dial),
 };

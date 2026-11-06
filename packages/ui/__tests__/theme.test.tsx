@@ -25,7 +25,7 @@ async function resolve(element: (probe: React.ReactNode) => React.ReactElement):
   return seen as Theme;
 }
 
-const ids: BuiltInThemeId[] = ['compress', 'sudoku', 'brief'];
+const ids: BuiltInThemeId[] = ['compress', 'sudoku', 'brief', 'dial'];
 
 // The React Native Jest preset replaces `useColorScheme` with a `jest.fn` returning 'light';
 // each test sets the system scheme it needs through it.

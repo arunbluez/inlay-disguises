@@ -13,7 +13,7 @@ import {
   type ColorScheme,
 } from '../src';
 
-const ids: BuiltInThemeId[] = ['compress', 'sudoku', 'brief'];
+const ids: BuiltInThemeId[] = ['compress', 'sudoku', 'brief', 'dial'];
 const schemes: ColorScheme[] = ['light', 'dark'];
 
 describe('OKLCH colours', () => {
