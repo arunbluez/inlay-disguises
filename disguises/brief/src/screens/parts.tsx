@@ -1,4 +1,4 @@
-// Small pieces the Brief screens share. Generic controls come from `@inlay/ui`.
+// Small pieces the Brief screens share. Generic controls come from `@inlay-app/ui`.
 import {
   Button,
   Chip,
@@ -11,7 +11,7 @@ import {
   textStyle,
   useHostTheme,
   type TabBarTab,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { Children, useCallback, useState, type ReactNode } from 'react';
 import {
   FlatList,

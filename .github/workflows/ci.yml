@@ -1,8 +1,7 @@
 # Headless checks on every PR to develop/main and every push. Each step is a root pnpm script, so
 # `pnpm typecheck && pnpm lint && pnpm check-imports && pnpm check-words && pnpm format:check &&
 # pnpm test` reproduces it locally.
-# DCO sign-off (see DCO, CONTRIBUTING.md) is not enforced here: whether to install the DCO GitHub
-# App or add a `git log` Signed-off-by check is the maintainer's choice.
+# DCO sign-off (see DCO, CONTRIBUTING.md) is checked by dco.yml on pull requests to develop.
 name: CI
 
 on:

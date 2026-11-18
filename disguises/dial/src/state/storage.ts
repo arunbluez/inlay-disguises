@@ -1,7 +1,7 @@
 // What Dial keeps between launches: the face and three switches, and the second time as an
 // offset from the current time. Every value is a string; anything missing or unreadable reads as
 // the default.
-import type { DisguiseStorage } from '@inlay/disguise-sdk';
+import type { DisguiseStorage } from '@inlay-app/disguise-sdk';
 
 import { DEFAULT_THEME, themeById, type ThemeId } from '../themes';
 

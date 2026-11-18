@@ -1,4 +1,4 @@
-import { useBottomInset } from '@inlay/disguise-sdk';
+import { useBottomInset } from '@inlay-app/disguise-sdk';
 import { useEffect, useState } from 'react';
 import { Keyboard, Platform } from 'react-native';
 

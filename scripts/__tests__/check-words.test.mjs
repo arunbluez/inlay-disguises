@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
 `;
 
 const compressPackage = JSON.stringify(
-  { name: '@inlay/disguise-compress', private: true, main: 'src/index.tsx' },
+  { name: '@inlay-app/disguise-compress', private: true, main: 'src/index.tsx' },
   null,
   2,
 );

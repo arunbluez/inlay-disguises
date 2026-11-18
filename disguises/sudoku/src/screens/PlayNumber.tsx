@@ -10,7 +10,7 @@ import {
   textStyle,
   useBottomInset,
   useHostTheme,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { useRef, useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, Text, View, type HostInstance } from 'react-native';
 

@@ -1,6 +1,6 @@
 // Dial faces as data. A face's palette is its own (a railway clock is white with a red seconds
 // hand whatever the phone's scheme); everything around the dial uses the host theme's colours.
-import type { ColorScheme } from '@inlay/disguise-sdk';
+import type { ColorScheme } from '@inlay-app/disguise-sdk';
 
 export type ThemeId = 'classic' | 'minimal' | 'station' | 'night' | 'roman';
 

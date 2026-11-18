@@ -10,7 +10,7 @@ import {
   tabularNums,
   textStyle,
   useHostTheme,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { dailyPuzzle, dayOf } from '../engine/daily';

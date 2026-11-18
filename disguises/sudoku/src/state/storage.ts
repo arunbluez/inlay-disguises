@@ -1,6 +1,6 @@
 // What Sudoku keeps between launches, as JSON under versioned keys: the game in progress, the
 // stats and the settings. Anything missing or unreadable reads as a fresh install.
-import type { DisguiseStorage } from '@inlay/disguise-sdk';
+import type { DisguiseStorage } from '@inlay-app/disguise-sdk';
 
 import { dayOfPuzzle } from '../engine/daily';
 import { LEVELS, type Level } from '../engine/grade';

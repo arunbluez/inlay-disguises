@@ -8,7 +8,7 @@ import {
   useTheme,
   useTrigger,
   type DisguiseManifest,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
@@ -215,7 +215,7 @@ describe('MockHost', () => {
     expect(onExit).toHaveBeenCalledTimes(1);
   });
 
-  it('useHostTheme and @inlay/ui components see the same theme', async () => {
+  it('useHostTheme and @inlay-app/ui components see the same theme', async () => {
     const host = createMockHost({ theme: 'brief', scheme: 'dark' });
     await render(<MockHost manifest={manifestWith()} host={host} />);
 

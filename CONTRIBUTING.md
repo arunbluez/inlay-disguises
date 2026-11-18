@@ -25,7 +25,7 @@ Use your real name. Pull requests with unsigned commits can't be merged. To sign
 
 ## Rules every disguise follows
 
-- **Imports.** A disguise imports only `react`, `react-native`, `@inlay/disguise-sdk`, `@inlay/ui` and the packages in [`packages/disguise-sdk/allowlist.json`](packages/disguise-sdk/allowlist.json). `pnpm check-imports` enforces it. Ask for an addition in an issue first ([how](docs/sdk-reference.md#requesting-an-addition)).
+- **Imports.** A disguise imports only `react`, `react-native`, `@inlay-app/disguise-sdk`, `@inlay-app/ui` and the packages in [`packages/disguise-sdk/allowlist.json`](packages/disguise-sdk/allowlist.json). `pnpm check-imports` enforces it. Ask for an addition in an issue first ([how](docs/sdk-reference.md#requesting-an-addition)).
 - **No telltale words.** A disguise must never hint at what it covers: not in its strings, identifiers, file names, icon or package metadata. `pnpm check-words` holds the word list and checks every disguise, the UI kit and these docs; run it and reword anything it reports. If a hit is a platform keyword rather than text (a style value, a config field), add an exact-pattern entry with a reason to `check-words.allow.json`.
 - **The trigger.** A tap never submits; a hold submits; a wrong code does exactly the normal thing; `onReset` clears the field and cancels pending work. See [Trigger design](docs/trigger-design.md).
 - **No network by default.** `allowedHosts` stays empty unless the disguise needs a service, and every host is justified in the pull request.

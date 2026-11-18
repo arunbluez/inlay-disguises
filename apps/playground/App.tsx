@@ -5,9 +5,14 @@ import {
   Archivo_800ExtraBold,
   useFonts,
 } from '@expo-google-fonts/archivo';
-import { ThemeProvider, useTheme, type DisguiseManifest } from '@inlay/disguise-sdk';
+import { ThemeProvider, useTheme, type DisguiseManifest } from '@inlay-app/disguise-sdk';
 // The runtime-only entry: the package root also exports the Jest helper.
-import { createMockHost, MockHost, themeIdFor, type MockHostValue } from '@inlay/testkit/MockHost';
+import {
+  createMockHost,
+  MockHost,
+  themeIdFor,
+  type MockHostValue,
+} from '@inlay-app/testkit/MockHost';
 import { useEffect, useState, type ReactNode } from 'react';
 import { BackHandler, useColorScheme } from 'react-native';
 import {
@@ -25,7 +30,7 @@ interface Running {
 }
 
 export default function App() {
-  // The font files ship inside the build; the keys are the family names `@inlay/ui` uses.
+  // The font files ship inside the build; the keys are the family names `@inlay-app/ui` uses.
   const [fontsLoaded] = useFonts({
     Archivo_400Regular,
     Archivo_500Medium,

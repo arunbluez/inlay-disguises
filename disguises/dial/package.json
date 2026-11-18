@@ -1,9 +1,15 @@
 {
-  "name": "@inlay/disguise-dial",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@inlay-app/disguise-dial",
+  "version": "1.0.0",
   "description": "Dial: an analog clock with themes.",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arunbluez/inlay-disguises.git",
+    "directory": "disguises/dial"
+  },
+  "homepage": "https://github.com/arunbluez/inlay-disguises/tree/main/disguises/dial#readme",
+  "bugs": "https://github.com/arunbluez/inlay-disguises/issues",
   "main": "src/index.tsx",
   "types": "src/index.tsx",
   "files": [
@@ -23,7 +29,7 @@
     ]
   },
   "dependencies": {
-    "@inlay/disguise-sdk": "workspace:*"
+    "@inlay-app/disguise-sdk": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",
@@ -31,7 +37,7 @@
     "react-native-gesture-handler": "*"
   },
   "devDependencies": {
-    "@inlay/testkit": "workspace:*",
+    "@inlay-app/testkit": "workspace:*",
     "@testing-library/react-native": "~14.1.0",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.3.0",
@@ -43,5 +49,8 @@
     "react-native-gesture-handler": "~3.3.0",
     "test-renderer": "~1.3.1",
     "typescript": "~6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

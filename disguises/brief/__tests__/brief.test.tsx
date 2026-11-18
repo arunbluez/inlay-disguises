@@ -1,7 +1,7 @@
 // Brief under the testkit's MockHost: the feeds and images are answered by the MockHost fetch
 // stub (which applies `allowedHosts` exactly like the host app), storage is the MockHost's. The
 // SDK, the parser, the store and every screen are real; only `Linking.openURL` is observed.
-import { createMockHost, MockHost, type MockHostValue } from '@inlay/testkit';
+import { createMockHost, MockHost, type MockHostValue } from '@inlay-app/testkit';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { Linking } from 'react-native';
 
@@ -145,7 +145,7 @@ async function refresh(listTestID = 'brief-list') {
 describe('Brief manifest', () => {
   it('is a pro disguise named Brief whose allowedHosts are the presets and their image hosts', () => {
     console.log('allowedHosts:', brief.allowedHosts);
-    expect(brief).toMatchObject({ id: 'brief', name: 'Brief', tier: 'pro', minSdk: '0.0.0' });
+    expect(brief).toMatchObject({ id: 'brief', name: 'Brief', tier: 'pro', minSdk: '1.0.0' });
     expect(brief.allowedHosts).toEqual(allowedHosts);
     expect(brief.triggerDescription).toMatch(/Search/);
     for (const asset of [...Object.values(brief.icon.ios), ...Object.values(brief.icon.android)]) {

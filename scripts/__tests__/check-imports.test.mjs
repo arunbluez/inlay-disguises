@@ -62,7 +62,10 @@ describe('check-imports', () => {
   test('a disguise importing expo-file-system fails (PRD gate)', () => {
     const root = fixtureRoot({
       'disguises/leaky/package.json': JSON.stringify(
-        { name: 'leaky', dependencies: { 'expo-file-system': '*', '@inlay/disguise-sdk': '*' } },
+        {
+          name: 'leaky',
+          dependencies: { 'expo-file-system': '*', '@inlay-app/disguise-sdk': '*' },
+        },
         null,
         2,
       ),
@@ -80,7 +83,7 @@ describe('check-imports', () => {
       /^disguises\/leaky\/package\.json:4 expo-file-system \(dependencies\)$/m,
     );
     const hitLines = result.stderr.split('\n').filter((line) => line.startsWith('disguises/'));
-    assert.equal(hitLines.length, 2, 'react-native and @inlay/disguise-sdk are allowed');
+    assert.equal(hitLines.length, 2, 'react-native and @inlay-app/disguise-sdk are allowed');
   });
 
   test('every import form is checked; allowed packages, subpaths and inside paths pass', () => {
@@ -90,7 +93,7 @@ describe('check-imports', () => {
       'disguises/forms/src/index.tsx': [
         "import React from 'react';", // 1 allowed
         "import { Text } from 'react-native/Libraries/Text/Text';", // 2 allowed subpath
-        "import { Button } from '@inlay/ui';", // 3 allowed
+        "import { Button } from '@inlay-app/ui';", // 3 allowed
         "import { n } from './util';", // 4 inside the package
         "import * as ImagePicker from 'expo-image-picker';", // 5 allowlist.json
         "export { a } from 'lodash';", // 6 hit
@@ -127,7 +130,7 @@ describe('check-imports', () => {
     const root = fixtureRoot({
       'disguises/tested/package.json': JSON.stringify({ name: 'tested' }),
       'disguises/tested/__tests__/root.test.tsx': [
-        "import { renderDisguise } from '@inlay/testkit';",
+        "import { renderDisguise } from '@inlay-app/testkit';",
         "import { screen } from '@testing-library/react-native';",
         'export const helper = [renderDisguise, screen];',
       ].join('\n'),
@@ -149,7 +152,7 @@ describe('ESLint disguise block (built from the same allowlist.json)', () => {
     const code = [
       "import * as FileSystem from 'expo-file-system';",
       "import { View } from 'react-native';",
-      "import { useTrigger } from '@inlay/disguise-sdk';",
+      "import { useTrigger } from '@inlay-app/disguise-sdk';",
       "const legacy = require('expo-file-system/legacy');",
       "const crypto = import('expo-crypto');",
       'export default [FileSystem, View, useTrigger, legacy, crypto];',
@@ -171,7 +174,7 @@ describe('ESLint disguise block (built from the same allowlist.json)', () => {
   test('leaves test tooling imports in a disguise __tests__ directory alone', async () => {
     const eslint = new ESLint({ cwd: REPO_ROOT });
     const code = [
-      "import { renderDisguise } from '@inlay/testkit';",
+      "import { renderDisguise } from '@inlay-app/testkit';",
       "import { screen } from '@testing-library/react-native';",
       'export default [renderDisguise, screen];',
     ].join('\n');

@@ -1,4 +1,8 @@
-import { useDisguiseFetch, useDisguiseStorage, type DisguiseStorage } from '@inlay/disguise-sdk';
+import {
+  useDisguiseFetch,
+  useDisguiseStorage,
+  type DisguiseStorage,
+} from '@inlay-app/disguise-sdk';
 import {
   createContext,
   useCallback,

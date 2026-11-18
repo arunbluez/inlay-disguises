@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Float an idea first
+    url: https://github.com/arunbluez/inlay-disguises/discussions/categories/proposals
+    about: Not ready for a proposal? Start a discussion in Proposals, where the community votes.
+  - name: Report a security problem
+    url: https://github.com/arunbluez/inlay-disguises/security/advisories/new
+    about: Never in a public issue. See SECURITY.md.

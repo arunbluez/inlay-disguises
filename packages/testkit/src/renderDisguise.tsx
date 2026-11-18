@@ -1,8 +1,8 @@
 // `@testing-library/react-native` is an optional peer dependency, not a dependency: the test
 // suite that calls `renderDisguise` must share one copy with it (for `screen`, `act` and the
 // matchers), so it comes from that suite's own devDependencies. The playground never loads this
-// file; it imports `@inlay/testkit/MockHost`.
-import type { DisguiseManifest } from '@inlay/disguise-sdk';
+// file; it imports `@inlay-app/testkit/MockHost`.
+import type { DisguiseManifest } from '@inlay-app/disguise-sdk';
 import { render } from '@testing-library/react-native';
 
 import { createMockHost, MockHost, themeIdFor, type MockHostOptions } from './MockHost';

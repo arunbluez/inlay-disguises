@@ -1,8 +1,15 @@
 {
-  "name": "@inlay/testkit",
-  "version": "0.0.0",
+  "name": "@inlay-app/testkit",
+  "version": "1.0.0",
   "description": "MockHost for running and testing disguises without the host app.",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arunbluez/inlay-disguises.git",
+    "directory": "packages/testkit"
+  },
+  "homepage": "https://github.com/arunbluez/inlay-disguises/tree/main/packages/testkit#readme",
+  "bugs": "https://github.com/arunbluez/inlay-disguises/issues",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -26,7 +33,7 @@
     ]
   },
   "dependencies": {
-    "@inlay/disguise-sdk": "workspace:*"
+    "@inlay-app/disguise-sdk": "workspace:*"
   },
   "peerDependencies": {
     "@testing-library/react-native": ">=14.1.0",
@@ -51,5 +58,8 @@
     "react-native-gesture-handler": "~3.3.0",
     "test-renderer": "~1.3.1",
     "typescript": "~6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

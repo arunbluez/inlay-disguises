@@ -9,7 +9,7 @@ const { allowedPackages, forbiddenSpecifierRegex } = require('./scripts/import-b
 // enforces the same list in CI, including relative paths that leave the package).
 const forbidden = forbiddenSpecifierRegex(allowedPackages());
 const boundaryMessage =
-  'A disguise may import only react, react-native, @inlay/disguise-sdk, @inlay/ui and packages in packages/disguise-sdk/allowlist.json.';
+  'A disguise may import only react, react-native, @inlay-app/disguise-sdk, @inlay-app/ui and packages in packages/disguise-sdk/allowlist.json.';
 
 module.exports = defineConfig([
   expoConfig,

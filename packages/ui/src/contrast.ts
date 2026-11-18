@@ -79,7 +79,7 @@ const ui = (fg: Key, bg: ContrastPair['bg'], use: string): ContrastPair => ({
   use,
 });
 
-/** Every foreground/background pair the `@inlay/ui` components draw. */
+/** Every foreground/background pair the `@inlay-app/ui` components draw. */
 export const contrastPairs: readonly ContrastPair[] = [
   text('ink', 'bg', 'titles, labels, secondary buttons, screen headers'),
   text('ink', 'surface', 'row titles, field text, empty states'),

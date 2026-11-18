@@ -1,4 +1,4 @@
-import { renderDisguise } from '@inlay/testkit';
+import { renderDisguise } from '@inlay-app/testkit';
 import { act, fireEvent, screen } from '@testing-library/react-native';
 import { createGestureController } from 'react-native-gesture-handler/jest-utils';
 

@@ -1,9 +1,9 @@
-import type { DisguiseManifest } from '@inlay/disguise-sdk';
-import brief from '@inlay/disguise-brief';
-import compress from '@inlay/disguise-compress';
-import dial from '@inlay/disguise-dial';
-import sudoku from '@inlay/disguise-sudoku';
-import template from '@inlay/disguise-template';
+import type { DisguiseManifest } from '@inlay-app/disguise-sdk';
+import brief from '@inlay-app/disguise-brief';
+import compress from '@inlay-app/disguise-compress';
+import dial from '@inlay-app/disguise-dial';
+import sudoku from '@inlay-app/disguise-sudoku';
+import template from '@inlay-app/disguise-template';
 
 /**
  * Every disguise the playground runs, one line each. Add yours here and add its package (and any

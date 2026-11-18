@@ -5,7 +5,7 @@ import {
   ScreenHeader,
   useTheme,
   type DisguiseManifest,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { ScrollView, View } from 'react-native';
 
 export interface DisguiseListProps {

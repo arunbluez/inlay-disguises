@@ -135,7 +135,7 @@ describe('hooks inside DisguiseHostProvider', () => {
     await expect(result.current('https://example.com/')).rejects.toThrow(TypeError);
   });
 
-  it('theme is the @inlay/ui theme with the disguise accent', async () => {
+  it('theme is the @inlay-app/ui theme with the disguise accent', async () => {
     const value = createHostValue();
     const { result } = await renderHook(() => useHostTheme(), { wrapper: wrapperFor(value) });
 

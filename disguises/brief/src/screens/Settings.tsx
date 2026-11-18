@@ -1,4 +1,4 @@
-import { ChipRow, layout, ListRow, ScreenHeader, spacing } from '@inlay/disguise-sdk';
+import { ChipRow, layout, ListRow, ScreenHeader, spacing } from '@inlay-app/disguise-sdk';
 import { ScrollView, View } from 'react-native';
 
 import packageJson from '../../package.json';

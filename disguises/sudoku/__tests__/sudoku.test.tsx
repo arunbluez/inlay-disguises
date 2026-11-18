@@ -1,8 +1,8 @@
 // Sudoku under the testkit's MockHost. Nothing is replaced: the engine, the SDK, storage and every
 // screen are real. Today's puzzle depends on the date, so each test builds the expected puzzle
 // with the same engine.
-import { satisfiesMinSdk, themes } from '@inlay/disguise-sdk';
-import { createMockHost, MockHost, renderDisguise, type MockHostValue } from '@inlay/testkit';
+import { satisfiesMinSdk, themes } from '@inlay-app/disguise-sdk';
+import { createMockHost, MockHost, renderDisguise, type MockHostValue } from '@inlay-app/testkit';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { AppState, type AppStateStatus } from 'react-native';
 

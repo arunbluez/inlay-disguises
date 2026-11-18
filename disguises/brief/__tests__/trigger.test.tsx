@@ -3,7 +3,7 @@
 // is Gesture Handler's native long press, so these tests drive its states the way the native
 // recognizer reports them (BEGAN on touch down, ACTIVE once held for 600 ms, END on release,
 // FAILED when a tap lifts early, CANCELLED on a scroll).
-import { renderDisguise } from '@inlay/testkit';
+import { renderDisguise } from '@inlay-app/testkit';
 import { act, fireEvent, screen, within } from '@testing-library/react-native';
 import {
   createGestureController,

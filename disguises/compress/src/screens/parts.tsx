@@ -1,4 +1,4 @@
-// Small pieces the Compress screens share. Generic controls come from `@inlay/ui`.
+// Small pieces the Compress screens share. Generic controls come from `@inlay-app/ui`.
 import {
   controls,
   layout,
@@ -8,7 +8,7 @@ import {
   textStyle,
   useHostTheme,
   type TabBarTab,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { Children, type ReactNode } from 'react';
 import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
 

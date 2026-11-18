@@ -7,7 +7,7 @@ import {
   textStyle,
   useHostTheme,
   useTrigger,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { Text, View } from 'react-native';
 
 import { feedStories, useStore } from '../state/store';

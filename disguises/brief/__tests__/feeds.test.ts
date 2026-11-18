@@ -1,6 +1,6 @@
 // Brief's feed code on its own: the parser over synthetic RSS, Atom and RDF fixtures, the gist,
 // URL checks, dates, the story cache and the preset list. Nothing here touches the network.
-import { createMockHost } from '@inlay/testkit';
+import { createMockHost } from '@inlay-app/testkit';
 
 import {
   loadSaved,

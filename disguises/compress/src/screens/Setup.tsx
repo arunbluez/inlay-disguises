@@ -14,7 +14,7 @@ import {
   textStyle,
   useBottomInset,
   useHostTheme,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { useRef, useState, type ReactNode } from 'react';
 import { KeyboardAvoidingView, ScrollView, Text, View, type HostInstance } from 'react-native';
 

@@ -4,7 +4,7 @@ import {
   useBottomInset,
   useLifecycle,
   type DisguiseManifest,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { useEffect, type ComponentType } from 'react';
 import { View } from 'react-native';
 
@@ -75,7 +75,7 @@ const manifest: DisguiseManifest = {
   id: 'brief',
   name: strings.appName,
   version: packageJson.version,
-  minSdk: '0.0.0',
+  minSdk: '1.0.0',
   icon: {
     ios: {
       light: require('../assets/icon/ios-light.png'),

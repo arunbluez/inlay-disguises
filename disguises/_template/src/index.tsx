@@ -9,7 +9,7 @@ import {
   useTheme,
   useTrigger,
   type DisguiseManifest,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -85,7 +85,7 @@ const manifest: DisguiseManifest = {
   id: 'template',
   name: 'Template',
   version: '0.0.0',
-  minSdk: '0.0.0',
+  minSdk: '1.0.0',
   icon: {
     ios: {
       light: require('../assets/icon/ios-light.png'),

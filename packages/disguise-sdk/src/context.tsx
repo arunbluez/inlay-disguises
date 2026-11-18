@@ -1,4 +1,4 @@
-import type { Theme } from '@inlay/ui';
+import type { Theme } from '@inlay-app/ui';
 import { createContext, type ReactNode } from 'react';
 
 /** Hands codes to the host. */
@@ -31,7 +31,7 @@ export interface DisguiseStorage {
  */
 export type DisguiseFetch = (input: string, init?: RequestInit) => Promise<Response>;
 
-/** The `@inlay/ui` theme the host resolved for the disguise: base tokens, scheme and accent. */
+/** The `@inlay-app/ui` theme the host resolved for the disguise: base tokens, scheme and accent. */
 export type HostTheme = Theme;
 
 /** Registration for the host's reset signal. */

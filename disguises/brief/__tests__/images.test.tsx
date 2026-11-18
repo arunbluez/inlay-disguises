@@ -1,6 +1,6 @@
 // Brief's image store on its own: one store over the MockHost fetch stub, read by every card and
 // page through `useStoryImage`, and the per-host renditions it asks for. Images stay in memory.
-import { createMockHost } from '@inlay/testkit';
+import { createMockHost } from '@inlay-app/testkit';
 import { act, render, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
