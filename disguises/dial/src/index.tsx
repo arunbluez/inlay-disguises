@@ -73,7 +73,7 @@ const manifest: DisguiseManifest = {
   name: strings.appName,
   version: packageJson.version,
   // The SDK version this was built against (packages/disguise-sdk/package.json).
-  minSdk: '0.0.0',
+  minSdk: '1.0.0',
   icon: {
     ios: {
       light: require('../assets/icon/ios-light.png'),

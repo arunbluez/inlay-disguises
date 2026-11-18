@@ -95,7 +95,7 @@ describe('Dial manifest', () => {
     expect(manifest).toMatchObject({
       id: 'dial',
       name: 'Dial',
-      version: '0.0.0',
+      version: '1.0.0',
       minSdk: sdkPackage.version,
       triggerDescription:
         'Tap the centre, point the hour hand at each digit of your code in turn (12 for 0), then hold the centre.',
@@ -522,12 +522,12 @@ describe('Dial settings', () => {
     await press('dial-tabs-settings');
     const about = screen.getByTestId('dial-about');
     expect(about).toHaveTextContent(/Name\s*Dial/);
-    expect(about).toHaveTextContent(/Version\s*0\.0\.0/);
+    expect(about).toHaveTextContent(/Version\s*1\.0\.0/);
     expect(about).toHaveTextContent(/Licences\s*Apache-2\.0/);
     const texts = within(about)
       .queryAllByText(/.*/)
       .map((node) => String(node.props.children));
-    expect(texts).toEqual(['About', 'Name', 'Dial', 'Version', '0.0.0', 'Licences', 'Apache-2.0']);
+    expect(texts).toEqual(['About', 'Name', 'Dial', 'Version', '1.0.0', 'Licences', 'Apache-2.0']);
   });
 
   it('the Themes screen has at least five faces and applies one on tap', async () => {

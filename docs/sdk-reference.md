@@ -30,7 +30,7 @@ A disguise package's default export is a `DisguiseManifest`:
 | `root`               | `React.ComponentType` | The disguise's root screen. The host renders it inside its provider; it takes no props.                                                               |
 | `triggerDescription` | `string`              | One sentence, shown to the user when they set up the disguise, saying how a code is entered: "Type your code as the target size, then hold Compress." |
 | `allowedHosts`       | `readonly string[]`   | Exact host names the disguise may fetch from. Empty when it needs no network, which is the norm.                                                      |
-| `tier`               | `'free' \| 'pro'`     | Whether the disguise ships free or in the paid Pro tier. Community disguises may set either (see [Review process](review-process.md#tier)).           |
+| `tier`               | `'free' \| 'pro'`     | Whether the disguise ships free or in the paid Pro tier. Community disguises set `'pro'` (see [Review process](review-process.md#tier)).              |
 
 ### Icon
 
@@ -155,6 +155,8 @@ Maintainers decide. An approved addition lands as its own pull request that chan
 `SDK_VERSION` is the version of the `@inlay/disguise-sdk` build, from its `package.json`. A manifest's `minSdk` names the lowest SDK version the disguise needs. The host runs a disguise only when `satisfiesMinSdk(manifest)` is true: `SDK_VERSION` is at least `minSdk`, compared as `major.minor.patch`. A `minSdk` that is not plain `x.y.z` is never satisfied.
 
 Set `minSdk` to the SDK version you develop against, and raise it when you start using something a later SDK added.
+
+From `1.0.0` the packages follow [semver](https://semver.org): a change that can break a disguise (a manifest field, a hook's signature, a UI kit prop) is a new major version; additions are minor versions. A release of the packages is cut from `main` under an `sdk-x.y.z` tag ([Releasing](releasing.md)).
 
 ## Testing with `@inlay/testkit`
 

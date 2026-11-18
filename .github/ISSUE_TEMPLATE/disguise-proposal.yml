@@ -1,0 +1,60 @@
+name: Disguise proposal
+description: Propose a new disguise before you build it.
+title: 'Disguise proposal: <name>'
+labels: [proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a disguise. Read [Trigger design](https://github.com/arunbluez/inlay-disguises/blob/develop/docs/trigger-design.md) and the [Review process](https://github.com/arunbluez/inlay-disguises/blob/develop/docs/review-process.md) first. Anyone can vote with a 👍 reaction on this issue.
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: What appears under the launcher icon.
+      placeholder: Tip Split
+    validations:
+      required: true
+  - type: textarea
+    id: app
+    attributes:
+      label: What the app does
+      description: The normal job it does, and who would plausibly have it on their phone.
+    validations:
+      required: true
+  - type: textarea
+    id: trigger
+    attributes:
+      label: Trigger
+      description: Which field takes the code, which button the user holds, and what a tap and a wrong code do (exactly the normal thing).
+      placeholder: The bill field takes the code; hold Split. A tap or a wrong code splits the bill as usual.
+    validations:
+      required: true
+  - type: textarea
+    id: packages
+    attributes:
+      label: Packages outside the allowlist
+      description: Any package you need that is not in packages/disguise-sdk/allowlist.json, and why. Write "none" if none.
+    validations:
+      required: true
+  - type: textarea
+    id: network
+    attributes:
+      label: Network
+      description: Hosts the disguise must fetch from, and why. Most disguises need none.
+  - type: textarea
+    id: sketches
+    attributes:
+      label: Sketches or screenshots
+      description: Optional, but they help the vote and the review.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before you submit
+      options:
+        - label: I have read Trigger design and the Review process.
+          required: true
+        - label: I understand that community disguises ship in the app's Pro tier, and the code stays Apache-2.0 here.
+          required: true
+        - label: I agree to follow the Code of Conduct.
+          required: true

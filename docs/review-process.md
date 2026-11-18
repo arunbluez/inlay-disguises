@@ -4,14 +4,16 @@ A community disguise goes from idea to the app in four steps: proposal and commu
 
 ## 1. Propose it
 
-Open an issue titled `Disguise proposal: <name>` before you write much code. Describe:
+Not sure the idea is worth building? Float it first in [Discussions › Proposals](https://github.com/arunbluez/inlay-disguises/discussions/categories/proposals), where anyone can upvote and comment.
+
+When you are ready, open a [disguise proposal](https://github.com/arunbluez/inlay-disguises/issues/new?template=disguise-proposal.yml) issue before you write much code (link the discussion, if there was one). The template asks for:
 
 - what the app does and who would plausibly have it on their phone;
 - the trigger: which field takes the code and which button the user holds (see [Trigger design](trigger-design.md));
 - any package you need that is not on the [allowlist](sdk-reference.md#imports-and-the-allowlist);
 - a sketch or screenshots, if you have them.
 
-**Community vote.** Anyone can vote with a 👍 reaction on the proposal and discuss it in the comments. Maintainers use the votes to decide which proposals to take on and in what order; a well-supported proposal with a sound trigger is the one most likely to be reviewed soon. A maintainer labels the issue when it is accepted for review, or explains why not.
+**Community vote.** Anyone can vote with an upvote on the discussion or a 👍 reaction on the issue, and discuss it in the comments. Maintainers use the votes to decide which proposals to take on and in what order; a well-supported proposal with a sound trigger is the one most likely to be reviewed soon. A maintainer labels the issue when it is accepted for review, or explains why not.
 
 ## 2. Open a pull request
 
@@ -43,4 +45,4 @@ Merged disguises are compiled into the next app release, with their code, icons 
 
 ## Tier
 
-Each manifest sets `tier: 'free' | 'pro'`. A community disguise can ship either way: free for everyone, or in the app's paid Pro tier. The contributor picks one and says so in the pull request; `_template` starts at `'pro'`, so change it to `'free'` if that is what you want.
+Each manifest sets `tier: 'free' | 'pro'`. In the app, **community disguises ship in the paid Pro tier**: keep `tier: 'pro'`, which is where `_template` starts. The free tier holds a small, fixed set of the maintainers' own disguises, so the free app stays small and every disguise added later is part of what Pro buys. Your disguise's source stays Apache-2.0 here whatever its tier in the app.

@@ -1,0 +1,40 @@
+# Developer Certificate of Origin (see DCO, CONTRIBUTING.md): every non-merge commit in a pull
+# request to develop must carry a `Signed-off-by:` trailer with its author's email, as
+# `git commit -s` writes it. Make the `DCO` check required on develop in the branch rules.
+# Release pull requests (develop -> main) are not checked: they carry history from before the check.
+name: DCO
+
+on:
+  pull_request:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+jobs:
+  dco:
+    name: DCO
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Check Signed-off-by on every commit
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          missing=0
+          for sha in $(git rev-list --no-merges "$BASE..$HEAD"); do
+            email=$(git log -1 --format=%ae "$sha")
+            if ! git log -1 --format=%B "$sha" | grep -i '^Signed-off-by:' | grep -qiF "<$email>"; then
+              echo "::error::$(git log -1 --format='%h %s' "$sha") has no Signed-off-by for <$email>"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Sign off with 'git commit -s'; for commits already made: git rebase --signoff <base>, then force-push your branch."
+            exit 1
+          fi
+          echo "Every commit is signed off."

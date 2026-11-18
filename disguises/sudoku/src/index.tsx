@@ -51,8 +51,8 @@ const manifest: DisguiseManifest = {
   id: 'sudoku',
   name: strings.appName,
   version: packageJson.version,
-  // The SDK in this repo is still 0.0.0; a higher minSdk would keep every host from running it.
-  minSdk: '0.0.0',
+  // The SDK version this was built against (packages/disguise-sdk/package.json).
+  minSdk: '1.0.0',
   icon: {
     ios: {
       light: require('../assets/icon/ios-light.png'),

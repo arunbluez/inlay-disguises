@@ -1,8 +1,50 @@
 # Getting started
 
-This guide takes you from a fresh clone to your own disguise running in the playground, with every check passing. It takes about half an hour, most of it the first native build.
+This guide takes you from a fresh clone to your own disguise running in the playground, with every check passing. The first part, [your first disguise in 15 minutes](#your-first-disguise-in-15-minutes), needs no emulator: it ends with a renamed disguise whose tests pass. The full path (sections 1 to 6) adds the playground on an emulator and takes about half an hour more, most of it the first native build.
 
 A disguise is a small, ordinary-looking app screen (a photo compressor, a puzzle, a news reader) that ships inside the Inlay app. It is an npm package in `disguises/` that exports a manifest. The [SDK reference](sdk-reference.md) describes the manifest and the hooks; [Trigger design](trigger-design.md) explains how a disguise takes a code.
+
+## Your first disguise in 15 minutes
+
+You need Node 22 with nvm and Corepack (both come with a normal Node install; see [1. Tools](#1-tools)) and git. The example builds `tip-split`, a bill splitter whose bill field takes the code.
+
+1. **Clone and install** (about 3 minutes, most of it the download):
+
+   ```sh
+   git clone https://github.com/arunbluez/inlay-disguises.git
+   cd inlay-disguises
+   nvm install && nvm use
+   corepack enable
+   pnpm install
+   ```
+
+2. **Copy the template:**
+
+   ```sh
+   rsync -a --exclude node_modules disguises/_template/ disguises/tip-split/
+   mv disguises/tip-split/__tests__/template.test.tsx disguises/tip-split/__tests__/tip-split.test.tsx
+   ```
+
+3. **Rename it.** In `disguises/tip-split/package.json`, set `"name": "@inlay/disguise-tip-split"` and `"description": "Tip Split: splits a bill and the tip."`. In `disguises/tip-split/src/index.tsx`:
+   - in the manifest, set `id: 'tip-split'`, `name: 'Tip Split'` and `triggerDescription: 'Type your code as the bill, then hold Split.'`;
+   - in `Root`, set the header to `<ScreenHeader title="Tip Split" />`, the field to `label="Bill"` and the button to `label="Split"`.
+
+4. **Link it and run its tests:**
+
+   ```sh
+   pnpm install
+   pnpm --filter @inlay/disguise-tip-split test
+   ```
+
+   The template's suite now runs against your disguise: a hold submits the bill once and then splits as a tap would, a tap submits nothing, and a reset clears the field. Keep it green as you change things.
+
+5. **Run the checks** that every pull request runs:
+
+   ```sh
+   pnpm typecheck && pnpm lint && pnpm check-imports && pnpm check-words && pnpm format:check
+   ```
+
+That is a working disguise. To make it yours, replace the field, the button and `runNormalAction` with your app (keep the hold, `submit` and `onReset` wiring; [Trigger design](trigger-design.md) explains each part), replace the placeholder icons, and see it on screen in the playground: sections 3 to 5 below give the detail.
 
 ## 1. Tools
 

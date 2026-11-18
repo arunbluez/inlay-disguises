@@ -145,7 +145,7 @@ async function refresh(listTestID = 'brief-list') {
 describe('Brief manifest', () => {
   it('is a pro disguise named Brief whose allowedHosts are the presets and their image hosts', () => {
     console.log('allowedHosts:', brief.allowedHosts);
-    expect(brief).toMatchObject({ id: 'brief', name: 'Brief', tier: 'pro', minSdk: '0.0.0' });
+    expect(brief).toMatchObject({ id: 'brief', name: 'Brief', tier: 'pro', minSdk: '1.0.0' });
     expect(brief.allowedHosts).toEqual(allowedHosts);
     expect(brief.triggerDescription).toMatch(/Search/);
     for (const asset of [...Object.values(brief.icon.ios), ...Object.values(brief.icon.android)]) {
