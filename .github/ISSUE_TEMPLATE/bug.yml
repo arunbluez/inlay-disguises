@@ -1,0 +1,62 @@
+name: Bug report
+description: Something in the SDK, the UI kit, the testkit, the playground or a disguise does not work.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Security problems never go in an issue.** Report them through the Security tab instead (see SECURITY.md).
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - '@inlay-app/disguise-sdk'
+        - '@inlay-app/ui'
+        - '@inlay-app/testkit'
+        - '@inlay-app/disguise-compress'
+        - '@inlay-app/disguise-dial'
+        - '@inlay-app/disguise-sudoku'
+        - '@inlay-app/disguise-brief'
+        - playground
+        - docs or tooling
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: 1.0.0, or a commit SHA on develop
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      description: OS and version, device or emulator, and Node and pnpm versions if it is a tooling problem.
+      placeholder: Android 16 emulator, Node 22.18, pnpm 10.34
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. pnpm --filter @inlay-app/playground android
+        2. Open Compress
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: Include the error, a log or a screenshot.
+    validations:
+      required: true

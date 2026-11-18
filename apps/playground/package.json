@@ -1,0 +1,40 @@
+{
+  "name": "@inlay-app/playground",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Runs a disguise standalone against MockHost.",
+  "license": "Apache-2.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@expo-google-fonts/archivo": "~0.4.2",
+    "@inlay-app/disguise-brief": "workspace:*",
+    "@inlay-app/disguise-compress": "workspace:*",
+    "@inlay-app/disguise-dial": "workspace:*",
+    "@inlay-app/disguise-sdk": "workspace:*",
+    "@inlay-app/disguise-sudoku": "workspace:*",
+    "@inlay-app/disguise-template": "workspace:*",
+    "@inlay-app/testkit": "workspace:*",
+    "expo": "~58.0.14",
+    "expo-dev-client": "~58.0.14",
+    "expo-font": "~58.0.8",
+    "expo-image-manipulator": "~58.0.14",
+    "expo-image-picker": "~58.0.10",
+    "expo-media-library": "~58.0.10",
+    "expo-sharing": "~58.0.19",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-safe-area-context": "~5.10.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "typescript": "~6.0.3"
+  }
+}

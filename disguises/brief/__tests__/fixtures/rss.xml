@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Example Wire</title>
+    <link>https://news.example.org/</link>
+    <description>Synthetic test feed</description>
+    <item>
+      <title>Media content image &amp; a &#8220;quoted&#8221; title</title>
+      <link>https://news.example.org/a/1</link>
+      <guid isPermaLink="false">wire-1</guid>
+      <pubDate>Tue, 27 Oct 2026 13:01:37 -0400</pubDate>
+      <description><![CDATA[<p>First <b>story</b>&nbsp;body.</p>]]></description>
+      <media:content url="https://media.example.org/video/1.mp4" medium="video" type="video/mp4"/>
+      <media:content url="https://images.example.org/1.jpg" medium="image"/>
+      <media:thumbnail url="https://images.example.org/1-thumb.jpg"/>
+    </item>
+    <item>
+      <title>Media content by MIME type</title>
+      <link>https://news.example.org/a/2</link>
+      <guid>https://news.example.org/a/2</guid>
+      <pubDate>Tue, 27 Oct 2026 17:00:51 GMT</pubDate>
+      <description>Second story.</description>
+      <media:content url="https://images.example.org/2.png" type="image/png"/>
+    </item>
+    <item>
+      <title>Thumbnail only</title>
+      <link>https://news.example.org/a/3</link>
+      <pubDate>27 Oct 2026 08:00 EDT</pubDate>
+      <description>Third story.</description>
+      <media:thumbnail width="240" height="135" url="https://images.example.org/3.jpg?w=240&amp;h=135"/>
+    </item>
+    <item>
+      <title>Image enclosure</title>
+      <link>https://news.example.org/a/4</link>
+      <description>Fourth story.</description>
+      <enclosure url="https://media.example.org/4.mp3" type="audio/mpeg" length="100"/>
+      <enclosure url="https://images.example.org/4.jpg" type="image/jpeg" length="100"/>
+    </item>
+    <item>
+      <title>Image in content:encoded</title>
+      <link>https://news.example.org/a/5</link>
+      <description>&lt;img src="https://images.example.org/5-description.jpg"&gt; Fifth story.</description>
+      <content:encoded><![CDATA[<p>Lead</p><img alt="x" src='/img/5.jpg?a=1&amp;b=2'><img src="https://images.example.org/5-second.jpg">]]></content:encoded>
+    </item>
+    <item>
+      <title>Image in description, protocol-relative</title>
+      <link>https://news.example.org/a/6</link>
+      <description>&lt;p&gt;&lt;img src=//images.example.org/6.jpg width=1&gt;Sixth story.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Plain http image</title>
+      <link>https://news.example.org/a/7</link>
+      <description>Seventh story.</description>
+      <media:thumbnail url="http://images.example.org/7.jpg"/>
+    </item>
+    <item>
+      <title>No image at all</title>
+      <link>https://news.example.org/a/8</link>
+      <dc:date>2026-10-26T09:30:00Z</dc:date>
+      <description>Eighth story, with no picture.</description>
+    </item>
+    <item>
+      <title>A script link</title>
+      <link>javascript:alert(1)</link>
+      <guid>wire-9</guid>
+      <description>Ninth story.</description>
+    </item>
+    <item>
+      <description>An item without a title is skipped.</description>
+      <link>https://news.example.org/a/10</link>
+    </item>
+  </channel>
+</rss>

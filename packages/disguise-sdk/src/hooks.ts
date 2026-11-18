@@ -1,0 +1,51 @@
+import { useContext } from 'react';
+
+import {
+  DisguiseHostContext,
+  type DisguiseFetch,
+  type DisguiseHostValue,
+  type DisguiseStorage,
+  type HostTheme,
+  type Lifecycle,
+  type Trigger,
+} from './context';
+
+function useHostValue(hookName: string): DisguiseHostValue {
+  const value = useContext(DisguiseHostContext);
+  if (!value) throw new Error(`${hookName} must be used inside DisguiseHostProvider`);
+  return value;
+}
+
+/** The host's code entry: `useTrigger().submit(code)`. It never reports a result. */
+export function useTrigger(): Trigger {
+  return useHostValue('useTrigger').trigger;
+}
+
+/** Key-value storage, namespaced to this disguise by the host. */
+export function useDisguiseStorage(): DisguiseStorage {
+  return useHostValue('useDisguiseStorage').storage;
+}
+
+/** `fetch`, limited by the host to the manifest's `allowedHosts`; rejects for any other host. */
+export function useDisguiseFetch(): DisguiseFetch {
+  return useHostValue('useDisguiseFetch').fetch;
+}
+
+/** The `@inlay-app/ui` theme (base tokens, scheme and this disguise's accent). */
+export function useHostTheme(): HostTheme {
+  return useHostValue('useHostTheme').theme;
+}
+
+/** `onReset` registration; register in an effect and return the unregister function from it. */
+export function useLifecycle(): Lifecycle {
+  return useHostValue('useLifecycle').lifecycle;
+}
+
+/**
+ * The height of the system area along the screen's bottom edge (home indicator, navigation bar).
+ * The host draws the disguise down to that edge: a bar at the bottom pads its content by this much
+ * so its colour reaches the edge, and anything else at the bottom keeps clear of it.
+ */
+export function useBottomInset(): number {
+  return useHostValue('useBottomInset').bottomInset;
+}

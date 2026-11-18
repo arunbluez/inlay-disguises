@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <title>Example Journal</title>
+  <id>urn:example:journal</id>
+  <updated>2026-10-27T10:00:00Z</updated>
+  <entry>
+    <title type="html">Atom &lt;em&gt;entry&lt;/em&gt; one</title>
+    <id>urn:example:journal:1</id>
+    <link rel="self" href="https://journal.example.org/api/1"/>
+    <link rel="alternate" type="text/html" href="https://journal.example.org/1"/>
+    <published>2026-10-27T09:00:00Z</published>
+    <updated>2026-10-27T10:00:00+02:00</updated>
+    <summary type="html">&lt;p&gt;Summary &lt;img src="pictures/1.jpg"&gt;one.&lt;/p&gt;</summary>
+  </entry>
+  <entry>
+    <title>Atom entry two</title>
+    <id>urn:example:journal:2</id>
+    <link href="https://journal.example.org/2"/>
+    <updated>2026-10-26T08:00:00Z</updated>
+    <content type="html">&lt;img src="https://images.example.org/atom-2.jpg"&gt; Content two.</content>
+    <media:thumbnail url="https://images.example.org/atom-2-thumb.jpg"/>
+  </entry>
+  <entry>
+    <title>Atom entry three</title>
+    <id>urn:example:journal:3</id>
+    <link href="https://journal.example.org/3"/>
+    <updated>2026-10-25T08:00:00Z</updated>
+    <summary>Plain summary three.</summary>
+  </entry>
+</feed>

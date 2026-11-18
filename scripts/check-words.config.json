@@ -1,0 +1,11 @@
+{
+  "root": "..",
+  "include": [
+    "disguises/**",
+    "packages/ui/**",
+    "packages/disguise-sdk/**",
+    "docs/**",
+    "CONTRIBUTING.md"
+  ],
+  "allow": "../check-words.allow.json"
+}

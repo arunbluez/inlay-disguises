@@ -1,0 +1,6 @@
+.agent/
+.claude/
+pnpm-lock.yaml
+**/ios/
+**/android/
+**/.expo/

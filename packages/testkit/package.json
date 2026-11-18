@@ -1,0 +1,65 @@
+{
+  "name": "@inlay-app/testkit",
+  "version": "1.0.0",
+  "description": "MockHost for running and testing disguises without the host app.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arunbluez/inlay-disguises.git",
+    "directory": "packages/testkit"
+  },
+  "homepage": "https://github.com/arunbluez/inlay-disguises/tree/main/packages/testkit#readme",
+  "bugs": "https://github.com/arunbluez/inlay-disguises/issues",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./MockHost": "./src/MockHost.tsx",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "watchman": false,
+    "setupFiles": [
+      "react-native-gesture-handler/jestSetup"
+    ]
+  },
+  "dependencies": {
+    "@inlay-app/disguise-sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "@testing-library/react-native": ">=14.1.0",
+    "react": "*",
+    "react-native": "*",
+    "react-native-gesture-handler": ">=3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@testing-library/react-native": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "~14.1.0",
+    "@types/jest": "^30.0.0",
+    "@types/react": "~19.3.0",
+    "expo": "~58.0.14",
+    "jest": "~30.5.2",
+    "jest-expo": "~58.0.11",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-gesture-handler": "~3.3.0",
+    "test-renderer": "~1.3.1",
+    "typescript": "~6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
