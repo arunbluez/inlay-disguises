@@ -54,7 +54,7 @@ body:
       options:
         - label: I have read Trigger design and the Review process.
           required: true
-        - label: I understand that community disguises ship in the app's Pro tier, and the code stays Apache-2.0 here.
+        - label: I understand that a community disguise ships free or in the app's Pro tier, as I choose in the pull request, and the code stays Apache-2.0 here.
           required: true
         - label: I agree to follow the Code of Conduct.
           required: true

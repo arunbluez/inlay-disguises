@@ -45,4 +45,4 @@ Merged disguises are compiled into the next app release, with their code, icons 
 
 ## Tier
 
-Each manifest sets `tier: 'free' | 'pro'`. In the app, **community disguises ship in the paid Pro tier**: keep `tier: 'pro'`, which is where `_template` starts. The free tier holds a small, fixed set of the maintainers' own disguises, so the free app stays small and every disguise added later is part of what Pro buys. Your disguise's source stays Apache-2.0 here whatever its tier in the app.
+Each manifest sets `tier: 'free' | 'pro'`. A community disguise can ship either way: free for everyone, or in the app's paid Pro tier. The contributor picks one and says so in the pull request; `_template` starts at `'pro'`, so change it to `'free'` if that is what you want. Your disguise's source stays Apache-2.0 here whatever its tier in the app.

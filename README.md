@@ -51,7 +51,7 @@ The first run compiles native code; after that `pnpm --filter @inlay/playground 
 - [Getting started](docs/getting-started.md): clone, copy the template, run it, run the checks.
 - [SDK reference](docs/sdk-reference.md): the manifest, the hooks, the UI kit, the import allowlist, versions and testing.
 - [Trigger design](docs/trigger-design.md): how a disguise takes a code, and the reviewer's checklist.
-- [Review process](docs/review-process.md): proposal and vote, review, release, and the tier community disguises ship in.
+- [Review process](docs/review-process.md): proposal and vote, review, release, and choosing the free or Pro tier.
 - [Releasing](docs/releasing.md): how maintainers tag and publish the packages.
 
 ## The rules
