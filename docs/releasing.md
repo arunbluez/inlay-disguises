@@ -4,15 +4,15 @@ For maintainers. A release publishes the packages to npm from `main` and marks t
 
 Published (each has `publishConfig.access: public`, a `LICENSE`, a `README` and a `files` list):
 
-| Package                    | Path                    |
-| -------------------------- | ----------------------- |
-| `@inlay/disguise-sdk`      | `packages/disguise-sdk` |
-| `@inlay/ui`                | `packages/ui`           |
-| `@inlay/testkit`           | `packages/testkit`      |
-| `@inlay/disguise-compress` | `disguises/compress`    |
-| `@inlay/disguise-dial`     | `disguises/dial`        |
-| `@inlay/disguise-sudoku`   | `disguises/sudoku`      |
-| `@inlay/disguise-brief`    | `disguises/brief`       |
+| Package                        | Path                    |
+| ------------------------------ | ----------------------- |
+| `@inlay-app/disguise-sdk`      | `packages/disguise-sdk` |
+| `@inlay-app/ui`                | `packages/ui`           |
+| `@inlay-app/testkit`           | `packages/testkit`      |
+| `@inlay-app/disguise-compress` | `disguises/compress`    |
+| `@inlay-app/disguise-dial`     | `disguises/dial`        |
+| `@inlay-app/disguise-sudoku`   | `disguises/sudoku`      |
+| `@inlay-app/disguise-brief`    | `disguises/brief`       |
 
 Never published: `apps/playground` and `disguises/_template`. Their `package.json` files opt out of publishing, so `pnpm publish` skips them.
 
@@ -23,7 +23,7 @@ The packages ship their TypeScript source as is; Metro and `jest-expo` compile i
 ### npm scope
 
 1. Sign in at [npmjs.com](https://www.npmjs.com) with two-factor authentication on (**Account › Two-Factor Authentication**, "Authorization and writes").
-2. Check the scope is free: `npm view @inlay/disguise-sdk` must answer `404`. Then **Profile picture › Add Organization**, name `inlay`, plan **Unlimited public packages** (free). If `inlay` is taken, stop: a different scope renames every import in this repo and in the app.
+2. Check the scope is free: `npm view @inlay-app/disguise-sdk` must answer `404`. Then **Profile picture › Add Organization**, name `inlay-app`, plan **Unlimited public packages** (free). If `inlay-app` is taken, stop: a different scope renames every import in this repo and in the app.
 3. Never put an npm token in a file in this repo, in `.npmrc` or in a shell history. Publishing is done from a maintainer's machine with `npm login`.
 
 ### GitHub settings
@@ -62,8 +62,8 @@ The packages ship their TypeScript source as is; Metro and `jest-expo` compile i
    git push origin sdk-1.0.0
    ```
 
-   `pnpm -r publish` publishes in dependency order (`@inlay/ui`, then the SDK, then the testkit and the disguises) and skips any version already on the registry, so if npm asks for a one-time password and it runs out part way, run it again with `--otp <code>`. It refuses to run from a branch other than `main` or with uncommitted changes.
+   `pnpm -r publish` publishes in dependency order (`@inlay-app/ui`, then the SDK, then the testkit and the disguises) and skips any version already on the registry, so if npm asks for a one-time password and it runs out part way, run it again with `--otp <code>`. It refuses to run from a branch other than `main` or with uncommitted changes.
 
-6. Check the result: `npm view @inlay/disguise-sdk version` prints the new version, and the package pages on npmjs.com show the README.
+6. Check the result: `npm view @inlay-app/disguise-sdk version` prints the new version, and the package pages on npmjs.com show the README.
 
-A published version can't be replaced. A mistake is fixed with a new patch version; `npm deprecate @inlay/<name>@<version> "<reason>"` warns anyone who installs the bad one.
+A published version can't be replaced. A mistake is fixed with a new patch version; `npm deprecate @inlay-app/<name>@<version> "<reason>"` warns anyone who installs the bad one.

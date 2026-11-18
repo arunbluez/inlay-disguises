@@ -1,4 +1,4 @@
-import { EmptyState } from '@inlay/disguise-sdk';
+import { EmptyState } from '@inlay-app/disguise-sdk';
 
 import { searchStories, useStore } from '../state/store';
 import { strings } from '../strings';

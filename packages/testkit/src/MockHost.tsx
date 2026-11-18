@@ -16,7 +16,7 @@ import {
   type DisguiseManifest,
   type HostLifecycle,
   type HostTheme,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { useSyncExternalStore, type ReactNode } from 'react';
 import { Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';

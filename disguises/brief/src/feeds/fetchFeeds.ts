@@ -1,6 +1,6 @@
 // Fetches the enabled feeds through the host's fetch (which enforces `allowedHosts`). Never
 // throws: a feed that fails only counts as failed, and the others still arrive.
-import type { DisguiseFetch } from '@inlay/disguise-sdk';
+import type { DisguiseFetch } from '@inlay-app/disguise-sdk';
 
 import { STORY_LIMIT } from './cache';
 import type { Source } from './defaults';

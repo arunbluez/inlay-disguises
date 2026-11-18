@@ -1,4 +1,4 @@
-# @inlay/testkit
+# @inlay-app/testkit
 
 Runs a disguise without the app that hosts it.
 
@@ -7,7 +7,7 @@ Runs a disguise without the app that hosts it.
 - `createMockHost(options)` and `MockHost` are the same pieces without the test renderer, for a playground app.
 
 ```tsx
-import { renderDisguise } from '@inlay/testkit';
+import { renderDisguise } from '@inlay-app/testkit';
 
 const { host } = await renderDisguise(manifest);
 ```

@@ -2,7 +2,7 @@
 // trigonometry, and each hand is a view turned about the dial's centre (rotate, then translateY
 // so the hand's foot sits on the centre). The home dial, the Themes miniatures and the second-time
 // sub-dial are all this component.
-import { fontStyle, HoldArea, motion, tabularNums, useTheme } from '@inlay/disguise-sdk';
+import { fontStyle, HoldArea, motion, tabularNums, useTheme } from '@inlay-app/disguise-sdk';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,

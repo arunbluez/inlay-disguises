@@ -12,7 +12,7 @@ Node 22, pinned in `.nvmrc`: run `nvm use` at the root first. pnpm workspaces; t
 
 ## Rules
 
-- A disguise may import only `react`, `react-native`, `@inlay/disguise-sdk`, `@inlay/ui` and the allowlist. `pnpm check-imports` enforces it.
+- A disguise may import only `react`, `react-native`, `@inlay-app/disguise-sdk`, `@inlay-app/ui` and the allowlist. `pnpm check-imports` enforces it.
 - No telltale words anywhere in disguise source or strings. The banned list lives in the shared planning docs (`.agent/`), and `pnpm check-words` enforces it. Disguise About screens show name, version and licences only — no links, no email.
 - `useTrigger().submit(code)` never returns a result; a wrong code must do the disguise's normal thing. Clear the code field in `onReset`.
 - Every disguise must run in the playground against `MockHost` and have a testkit test asserting `submit` and reset.
@@ -20,7 +20,7 @@ Node 22, pinned in `.nvmrc`: run `nvm use` at the root first. pnpm workspaces; t
 
 ## Loop
 
-Headless first: `pnpm typecheck`, `pnpm lint`, `pnpm test` (Jest + testkit). After any UI change: run the disguise in the playground on the emulator/simulator (`pnpm --filter @inlay/playground android`, or `ios` once Xcode is installed) → `agent-device snapshot` and compare with the design → `pnpm check-imports && pnpm check-words` (from E02).
+Headless first: `pnpm typecheck`, `pnpm lint`, `pnpm test` (Jest + testkit). After any UI change: run the disguise in the playground on the emulator/simulator (`pnpm --filter @inlay-app/playground android`, or `ios` once Xcode is installed) → `agent-device snapshot` and compare with the design → `pnpm check-imports && pnpm check-words` (from E02).
 
 Branches: `main` (release) and `develop` (integration); work on `epic/Exx-*` cut from `develop`, PR back to `develop`.
 

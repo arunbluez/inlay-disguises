@@ -31,7 +31,7 @@ export function useDisguiseFetch(): DisguiseFetch {
   return useHostValue('useDisguiseFetch').fetch;
 }
 
-/** The `@inlay/ui` theme (base tokens, scheme and this disguise's accent). */
+/** The `@inlay-app/ui` theme (base tokens, scheme and this disguise's accent). */
 export function useHostTheme(): HostTheme {
   return useHostValue('useHostTheme').theme;
 }

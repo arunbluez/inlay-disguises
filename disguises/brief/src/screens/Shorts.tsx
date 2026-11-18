@@ -1,4 +1,4 @@
-import { Button, layout, spacing, textStyle, useHostTheme } from '@inlay/disguise-sdk';
+import { Button, layout, spacing, textStyle, useHostTheme } from '@inlay-app/disguise-sdk';
 import { useState, type ReactNode } from 'react';
 import { FlatList, RefreshControl, Text, View } from 'react-native';
 

@@ -1,4 +1,4 @@
-import type { DisguiseFetch } from '@inlay/disguise-sdk';
+import type { DisguiseFetch } from '@inlay-app/disguise-sdk';
 
 /** One request the fetch stub let through. */
 export interface FetchCall {

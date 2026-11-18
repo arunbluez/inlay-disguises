@@ -11,13 +11,13 @@ body:
     attributes:
       label: Package
       options:
-        - '@inlay/disguise-sdk'
-        - '@inlay/ui'
-        - '@inlay/testkit'
-        - '@inlay/disguise-compress'
-        - '@inlay/disguise-dial'
-        - '@inlay/disguise-sudoku'
-        - '@inlay/disguise-brief'
+        - '@inlay-app/disguise-sdk'
+        - '@inlay-app/ui'
+        - '@inlay-app/testkit'
+        - '@inlay-app/disguise-compress'
+        - '@inlay-app/disguise-dial'
+        - '@inlay-app/disguise-sudoku'
+        - '@inlay-app/disguise-brief'
         - playground
         - docs or tooling
     validations:
@@ -42,7 +42,7 @@ body:
     attributes:
       label: Steps to reproduce
       placeholder: |
-        1. pnpm --filter @inlay/playground android
+        1. pnpm --filter @inlay-app/playground android
         2. Open Compress
         3. ...
     validations:

@@ -4,7 +4,7 @@ import {
   useBottomInset,
   useLifecycle,
   type DisguiseManifest,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { useEffect, type ComponentType } from 'react';
 import { View } from 'react-native';
 

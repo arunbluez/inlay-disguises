@@ -25,7 +25,7 @@ You need Node 22 with nvm and Corepack (both come with a normal Node install; se
    mv disguises/tip-split/__tests__/template.test.tsx disguises/tip-split/__tests__/tip-split.test.tsx
    ```
 
-3. **Rename it.** In `disguises/tip-split/package.json`, set `"name": "@inlay/disguise-tip-split"` and `"description": "Tip Split: splits a bill and the tip."`. In `disguises/tip-split/src/index.tsx`:
+3. **Rename it.** In `disguises/tip-split/package.json`, set `"name": "@inlay-app/disguise-tip-split"` and `"description": "Tip Split: splits a bill and the tip."`. In `disguises/tip-split/src/index.tsx`:
    - in the manifest, set `id: 'tip-split'`, `name: 'Tip Split'` and `triggerDescription: 'Type your code as the bill, then hold Split.'`;
    - in `Root`, set the header to `<ScreenHeader title="Tip Split" />`, the field to `label="Bill"` and the button to `label="Split"`.
 
@@ -33,7 +33,7 @@ You need Node 22 with nvm and Corepack (both come with a normal Node install; se
 
    ```sh
    pnpm install
-   pnpm --filter @inlay/disguise-tip-split test
+   pnpm --filter @inlay-app/disguise-tip-split test
    ```
 
    The template's suite now runs against your disguise: a hold submits the bill once and then splits as a tap would, a tap submits nothing, and a reset clears the field. Keep it green as you change things.
@@ -74,7 +74,7 @@ rsync -a --exclude node_modules disguises/_template/ disguises/unit-converter/
 
 Then edit the copy:
 
-1. `package.json`: set `name` to `@inlay/disguise-unit-converter` and write a one-line `description`.
+1. `package.json`: set `name` to `@inlay-app/disguise-unit-converter` and write a one-line `description`.
 2. `src/index.tsx`: set the manifest `id` (the same kebab-case id), `name` (what appears under the launcher icon) and `triggerDescription` (one sentence: how a code is entered). Keep `version` at `0.0.0` and `minSdk` at the SDK version you build against.
 3. `assets/icon/`: replace the six neutral placeholders with your own 1024x1024 PNGs. The [icon set](sdk-reference.md#icon) lists what each one is.
 4. Replace the template's field, button and `runNormalAction` with your disguise. Keep the hold, `submit` and `onReset` wiring; [Trigger design](trigger-design.md) explains why each part is there.
@@ -89,7 +89,7 @@ The playground lists every disguise in `apps/playground/src/disguises.ts` and ru
 1. Add your package to `apps/playground/package.json` under `dependencies`:
 
    ```json
-   "@inlay/disguise-unit-converter": "workspace:*"
+   "@inlay-app/disguise-unit-converter": "workspace:*"
    ```
 
    If your disguise uses a native package from the [allowlist](sdk-reference.md#imports-and-the-allowlist) that the playground does not have yet, add that package too, at the version Expo recommends (`npx expo install <package>` inside `apps/playground`).
@@ -97,7 +97,7 @@ The playground lists every disguise in `apps/playground/src/disguises.ts` and ru
 2. Add one line to `apps/playground/src/disguises.ts`:
 
    ```ts
-   import unitConverter from '@inlay/disguise-unit-converter';
+   import unitConverter from '@inlay-app/disguise-unit-converter';
 
    export const disguises: readonly DisguiseManifest[] = [
      template, // _template
@@ -112,11 +112,11 @@ The playground lists every disguise in `apps/playground/src/disguises.ts` and ru
 Start an Android emulator or boot an iOS simulator, then from the repo root:
 
 ```sh
-pnpm --filter @inlay/playground android   # Android
-pnpm --filter @inlay/playground ios       # iOS, macOS with Xcode only
+pnpm --filter @inlay-app/playground android   # Android
+pnpm --filter @inlay-app/playground ios       # iOS, macOS with Xcode only
 ```
 
-This builds the development app, installs it and starts Metro. If port 8081 is taken, add `--port 8083` (any free port). After the first build, `pnpm --filter @inlay/playground start` is enough until you add a native package.
+This builds the development app, installs it and starts Metro. If port 8081 is taken, add `--port 8083` (any free port). After the first build, `pnpm --filter @inlay-app/playground start` is enough until you add a native package.
 
 In the playground, tap your disguise in the list. A banner across the top shows **Last code**, the last value your disguise handed to `submit`, with **Reset** (runs your `onReset` handlers, as the real app does after it accepts a code) and **Back** (returns to the list). Try a hold with a value in your field: the banner shows the value, and your screen should carry on exactly as it would after a tap.
 
@@ -137,6 +137,6 @@ pnpm format:check
 - `check-words` fails when a disguise, the shared UI kit or these docs contain a word that would hint at what a disguise covers. It prints the file, the line and the word. If the hit is a platform keyword rather than text (a style value, a config field), add an exact-pattern entry with a reason to `check-words.allow.json`; never reword a style or drop a field to get past it.
 - `pnpm format` rewrites files with Prettier when `format:check` fails.
 
-To run one package's tests while you work: `pnpm --filter @inlay/disguise-unit-converter test`.
+To run one package's tests while you work: `pnpm --filter @inlay-app/disguise-unit-converter test`.
 
 When everything passes, read [CONTRIBUTING](../CONTRIBUTING.md) for sign-off and the [review process](review-process.md), and open a pull request.

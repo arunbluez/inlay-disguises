@@ -29,25 +29,25 @@ importers:
       '@expo-google-fonts/archivo':
         specifier: ~0.4.2
         version: 0.4.2
-      '@inlay/disguise-brief':
+      '@inlay-app/disguise-brief':
         specifier: workspace:*
         version: link:../../disguises/brief
-      '@inlay/disguise-compress':
+      '@inlay-app/disguise-compress':
         specifier: workspace:*
         version: link:../../disguises/compress
-      '@inlay/disguise-dial':
+      '@inlay-app/disguise-dial':
         specifier: workspace:*
         version: link:../../disguises/dial
-      '@inlay/disguise-sdk':
+      '@inlay-app/disguise-sdk':
         specifier: workspace:*
         version: link:../../packages/disguise-sdk
-      '@inlay/disguise-sudoku':
+      '@inlay-app/disguise-sudoku':
         specifier: workspace:*
         version: link:../../disguises/sudoku
-      '@inlay/disguise-template':
+      '@inlay-app/disguise-template':
         specifier: workspace:*
         version: link:../../disguises/_template
-      '@inlay/testkit':
+      '@inlay-app/testkit':
         specifier: workspace:*
         version: link:../../packages/testkit
       expo:
@@ -93,11 +93,11 @@ importers:
 
   disguises/_template:
     dependencies:
-      '@inlay/disguise-sdk':
+      '@inlay-app/disguise-sdk':
         specifier: workspace:*
         version: link:../../packages/disguise-sdk
     devDependencies:
-      '@inlay/testkit':
+      '@inlay-app/testkit':
         specifier: workspace:*
         version: link:../../packages/testkit
       '@testing-library/react-native':
@@ -136,14 +136,14 @@ importers:
 
   disguises/brief:
     dependencies:
-      '@inlay/disguise-sdk':
+      '@inlay-app/disguise-sdk':
         specifier: workspace:*
         version: link:../../packages/disguise-sdk
       fast-xml-parser:
         specifier: ~5.11.2
         version: 5.11.2
     devDependencies:
-      '@inlay/testkit':
+      '@inlay-app/testkit':
         specifier: workspace:*
         version: link:../../packages/testkit
       '@testing-library/react-native':
@@ -182,11 +182,11 @@ importers:
 
   disguises/compress:
     dependencies:
-      '@inlay/disguise-sdk':
+      '@inlay-app/disguise-sdk':
         specifier: workspace:*
         version: link:../../packages/disguise-sdk
     devDependencies:
-      '@inlay/testkit':
+      '@inlay-app/testkit':
         specifier: workspace:*
         version: link:../../packages/testkit
       '@testing-library/react-native':
@@ -237,11 +237,11 @@ importers:
 
   disguises/dial:
     dependencies:
-      '@inlay/disguise-sdk':
+      '@inlay-app/disguise-sdk':
         specifier: workspace:*
         version: link:../../packages/disguise-sdk
     devDependencies:
-      '@inlay/testkit':
+      '@inlay-app/testkit':
         specifier: workspace:*
         version: link:../../packages/testkit
       '@testing-library/react-native':
@@ -280,11 +280,11 @@ importers:
 
   disguises/sudoku:
     dependencies:
-      '@inlay/disguise-sdk':
+      '@inlay-app/disguise-sdk':
         specifier: workspace:*
         version: link:../../packages/disguise-sdk
     devDependencies:
-      '@inlay/testkit':
+      '@inlay-app/testkit':
         specifier: workspace:*
         version: link:../../packages/testkit
       '@testing-library/react-native':
@@ -323,7 +323,7 @@ importers:
 
   packages/disguise-sdk:
     dependencies:
-      '@inlay/ui':
+      '@inlay-app/ui':
         specifier: workspace:*
         version: link:../ui
     devDependencies:
@@ -360,7 +360,7 @@ importers:
 
   packages/testkit:
     dependencies:
-      '@inlay/disguise-sdk':
+      '@inlay-app/disguise-sdk':
         specifier: workspace:*
         version: link:../disguise-sdk
     devDependencies:

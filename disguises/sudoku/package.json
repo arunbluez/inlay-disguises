@@ -1,5 +1,5 @@
 {
-  "name": "@inlay/disguise-sudoku",
+  "name": "@inlay-app/disguise-sudoku",
   "version": "1.0.0",
   "description": "Sudoku: a daily number puzzle.",
   "license": "Apache-2.0",
@@ -29,7 +29,7 @@
     ]
   },
   "dependencies": {
-    "@inlay/disguise-sdk": "workspace:*"
+    "@inlay-app/disguise-sdk": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",
@@ -37,7 +37,7 @@
     "react-native-gesture-handler": "*"
   },
   "devDependencies": {
-    "@inlay/testkit": "workspace:*",
+    "@inlay-app/testkit": "workspace:*",
     "@testing-library/react-native": "~14.1.0",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.3.0",

@@ -1,7 +1,7 @@
 // Story images, held in memory only. The bytes come through the host's fetch (so `allowedHosts`
 // applies to images too) and become a `data:` URI for React Native's `Image`; nothing is written
 // to disguise storage or to any file, and `clear` drops every one.
-import type { DisguiseFetch } from '@inlay/disguise-sdk';
+import type { DisguiseFetch } from '@inlay-app/disguise-sdk';
 import { useEffect, useSyncExternalStore } from 'react';
 
 import { withDeadline } from './feeds/fetchFeeds';

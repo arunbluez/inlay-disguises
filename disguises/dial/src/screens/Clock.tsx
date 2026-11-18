@@ -8,7 +8,7 @@ import {
   tabularNums,
   textStyle,
   useHostTheme,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 
 import { Dial } from '../Dial';

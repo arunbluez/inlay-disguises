@@ -4,7 +4,7 @@ import {
   useBottomInset,
   type DisguiseManifest,
   type TabBarTab,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import type { ComponentType } from 'react';
 import { View } from 'react-native';
 

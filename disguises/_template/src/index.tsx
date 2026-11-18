@@ -9,7 +9,7 @@ import {
   useTheme,
   useTrigger,
   type DisguiseManifest,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 

@@ -37,7 +37,7 @@ export interface DisguiseManifest {
   name: string;
   /** The disguise package's semver version. */
   version: string;
-  /** Lowest `@inlay/disguise-sdk` version the disguise runs on (`x.y.z`); see `satisfiesMinSdk`. */
+  /** Lowest `@inlay-app/disguise-sdk` version the disguise runs on (`x.y.z`); see `satisfiesMinSdk`. */
   minSdk: string;
   /** Launcher icons for iOS and Android. */
   icon: DisguiseIcons;

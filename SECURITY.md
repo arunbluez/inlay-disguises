@@ -19,7 +19,7 @@ Please give us a reasonable time to ship the fix before you disclose it.
 
 ## Scope
 
-In scope: the packages in this repository (`@inlay/disguise-sdk`, `@inlay/ui`, `@inlay/testkit`, `@inlay/disguise-*`), the playground, and the repository's CI and release workflows. Examples: a disguise that behaves differently for a right and a wrong code, a way for a disguise to escape the import boundary or the `allowedHosts` list, or anything that leaks a typed code (to storage, logs or the network).
+In scope: the packages in this repository (`@inlay-app/disguise-sdk`, `@inlay-app/ui`, `@inlay-app/testkit`, `@inlay-app/disguise-*`), the playground, and the repository's CI and release workflows. Examples: a disguise that behaves differently for a right and a wrong code, a way for a disguise to escape the import boundary or the `allowedHosts` list, or anything that leaks a typed code (to storage, logs or the network).
 
 The app that runs these disguises is a separate codebase. If you find a problem in the app itself, report it the same way; it reaches the same maintainers.
 

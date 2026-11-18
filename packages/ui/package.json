@@ -1,5 +1,5 @@
 {
-  "name": "@inlay/ui",
+  "name": "@inlay-app/ui",
   "version": "1.0.0",
   "description": "Design tokens, themes and base components shared by Inlay disguises and the host app.",
   "license": "Apache-2.0",

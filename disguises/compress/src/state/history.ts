@@ -1,4 +1,4 @@
-import type { DisguiseStorage } from '@inlay/disguise-sdk';
+import type { DisguiseStorage } from '@inlay-app/disguise-sdk';
 
 import type { OutputFormat } from '../engine/compress';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@inlay/testkit",
+  "name": "@inlay-app/testkit",
   "version": "1.0.0",
   "description": "MockHost for running and testing disguises without the host app.",
   "license": "Apache-2.0",
@@ -33,7 +33,7 @@
     ]
   },
   "dependencies": {
-    "@inlay/disguise-sdk": "workspace:*"
+    "@inlay-app/disguise-sdk": "workspace:*"
   },
   "peerDependencies": {
     "@testing-library/react-native": ">=14.1.0",

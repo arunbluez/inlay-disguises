@@ -1,7 +1,7 @@
 // What Brief keeps in disguise storage: the story cache, Saved, the sources switched off and the
 // layout. Only `Story` fields are stored, never image bytes. Keys carry a version; a value that
 // doesn't parse reads as the default.
-import type { DisguiseStorage } from '@inlay/disguise-sdk';
+import type { DisguiseStorage } from '@inlay-app/disguise-sdk';
 
 import type { Story } from './parse';
 

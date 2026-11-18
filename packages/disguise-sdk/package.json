@@ -1,5 +1,5 @@
 {
-  "name": "@inlay/disguise-sdk",
+  "name": "@inlay-app/disguise-sdk",
   "version": "1.0.0",
   "description": "Manifest type and hooks a disguise uses to talk to its host app.",
   "license": "Apache-2.0",
@@ -26,7 +26,7 @@
     "watchman": false
   },
   "dependencies": {
-    "@inlay/ui": "workspace:*"
+    "@inlay-app/ui": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",

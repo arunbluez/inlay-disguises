@@ -1,7 +1,7 @@
 // Brief under the testkit's MockHost: the feeds and images are answered by the MockHost fetch
 // stub (which applies `allowedHosts` exactly like the host app), storage is the MockHost's. The
 // SDK, the parser, the store and every screen are real; only `Linking.openURL` is observed.
-import { createMockHost, MockHost, type MockHostValue } from '@inlay/testkit';
+import { createMockHost, MockHost, type MockHostValue } from '@inlay-app/testkit';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { Linking } from 'react-native';
 

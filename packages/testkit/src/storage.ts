@@ -1,4 +1,4 @@
-import type { DisguiseStorage } from '@inlay/disguise-sdk';
+import type { DisguiseStorage } from '@inlay-app/disguise-sdk';
 
 /** In-memory `DisguiseStorage` a test can inspect and empty. Nothing touches disk. */
 export interface MockStorage extends DisguiseStorage {

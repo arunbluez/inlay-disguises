@@ -2,7 +2,7 @@
 // dial is the only control with a hold; its tap and its hold both end in the same action. Each
 // time the hour hand comes to rest in set mode, the digit it points at is kept and shown, faintly,
 // under the readout; a hold hands the digits kept so far to the host.
-import { useDisguiseStorage, useLifecycle, useTrigger } from '@inlay/disguise-sdk';
+import { useDisguiseStorage, useLifecycle, useTrigger } from '@inlay-app/disguise-sdk';
 import {
   createContext,
   useCallback,

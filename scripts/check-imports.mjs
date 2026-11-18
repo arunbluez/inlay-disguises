@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Import boundary for disguises (PRD E02 req. 4). Every package under disguises/ may import only
-// react, react-native, @inlay/disguise-sdk, @inlay/ui, packages in
+// react, react-native, @inlay-app/disguise-sdk, @inlay-app/ui, packages in
 // packages/disguise-sdk/allowlist.json (subpaths included) and relative paths inside the package.
 // Its package.json dependencies, peerDependencies and optionalDependencies must be on the same
 // list (devDependencies are build tooling and never ship). Tests in `__tests__/` are build tooling

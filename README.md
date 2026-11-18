@@ -10,14 +10,14 @@ Every disguise is reviewed in the open, compiled into an app release and shipped
 
 ## What is here
 
-| Path                                            | What it is                                                                                                                                                                          | npm                   |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `packages/disguise-sdk`                         | The SDK: the `DisguiseManifest` type, six hooks (`useTrigger`, `useLifecycle`, `useDisguiseStorage`, `useDisguiseFetch`, `useHostTheme`, `useBottomInset`) and the import allowlist | `@inlay/disguise-sdk` |
-| `packages/ui`                                   | The shared UI kit and design tokens, used by every disguise and by the app itself                                                                                                   | `@inlay/ui`           |
-| `packages/testkit`                              | `MockHost` and `renderDisguise()`: run a disguise in Jest or the playground without the app                                                                                         | `@inlay/testkit`      |
-| `apps/playground`                               | An Expo development app that runs any disguise standalone against `MockHost`                                                                                                        | not published         |
-| `disguises/compress`, `sudoku`, `brief`, `dial` | The disguises that ship in the app                                                                                                                                                  | `@inlay/disguise-*`   |
-| `disguises/_template`                           | The starting point for a new one, with a complete test suite                                                                                                                        | not published         |
+| Path                                            | What it is                                                                                                                                                                          | npm                       |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `packages/disguise-sdk`                         | The SDK: the `DisguiseManifest` type, six hooks (`useTrigger`, `useLifecycle`, `useDisguiseStorage`, `useDisguiseFetch`, `useHostTheme`, `useBottomInset`) and the import allowlist | `@inlay-app/disguise-sdk` |
+| `packages/ui`                                   | The shared UI kit and design tokens, used by every disguise and by the app itself                                                                                                   | `@inlay-app/ui`           |
+| `packages/testkit`                              | `MockHost` and `renderDisguise()`: run a disguise in Jest or the playground without the app                                                                                         | `@inlay-app/testkit`      |
+| `apps/playground`                               | An Expo development app that runs any disguise standalone against `MockHost`                                                                                                        | not published             |
+| `disguises/compress`, `sudoku`, `brief`, `dial` | The disguises that ship in the app                                                                                                                                                  | `@inlay-app/disguise-*`   |
+| `disguises/_template`                           | The starting point for a new one, with a complete test suite                                                                                                                        | not published             |
 
 ## Quick start
 
@@ -41,10 +41,10 @@ pnpm typecheck && pnpm lint && pnpm test && pnpm check-imports && pnpm check-wor
 `apps/playground` is a development build that lists every disguise and runs one at a time against `MockHost`, a stand-in for the app. A banner shows the last code the disguise submitted, with **Reset** (runs the disguise's reset handlers, as the app does) and **Back**. With an emulator or simulator running:
 
 ```sh
-pnpm --filter @inlay/playground android   # or: ios (macOS with Xcode)
+pnpm --filter @inlay-app/playground android   # or: ios (macOS with Xcode)
 ```
 
-The first run compiles native code; after that `pnpm --filter @inlay/playground start` is enough. [Getting started](docs/getting-started.md#4-register-it-in-the-playground) shows how to add your disguise to it.
+The first run compiles native code; after that `pnpm --filter @inlay-app/playground start` is enough. [Getting started](docs/getting-started.md#4-register-it-in-the-playground) shows how to add your disguise to it.
 
 ## Docs
 
@@ -56,7 +56,7 @@ The first run compiles native code; after that `pnpm --filter @inlay/playground 
 
 ## The rules
 
-- **Imports.** Only `react`, `react-native`, `@inlay/disguise-sdk`, `@inlay/ui` and the packages in [`packages/disguise-sdk/allowlist.json`](packages/disguise-sdk/allowlist.json). `pnpm check-imports` enforces it. Additions are requested in an issue first and land as their own pull request.
+- **Imports.** Only `react`, `react-native`, `@inlay-app/disguise-sdk`, `@inlay-app/ui` and the packages in [`packages/disguise-sdk/allowlist.json`](packages/disguise-sdk/allowlist.json). `pnpm check-imports` enforces it. Additions are requested in an issue first and land as their own pull request.
 - **No telltale words.** Nothing in a disguise (strings, identifiers, file names, icon, metadata) may hint at what it covers. The list lives in [`scripts/check-words.mjs`](scripts/check-words.mjs); `pnpm check-words` enforces it.
 - **The trigger.** A tap never submits. A hold of 600 ms submits the field's value once. A wrong code does exactly what a tap does. `onReset` clears the field, cancels pending work and returns home. [Trigger design](docs/trigger-design.md) has the reasoning and the review checklist.
 - **No network by default.** `allowedHosts` stays empty unless the disguise needs a service.

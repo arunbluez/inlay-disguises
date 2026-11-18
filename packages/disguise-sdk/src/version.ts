@@ -2,7 +2,7 @@ import packageJson from '../package.json';
 
 import type { DisguiseManifest } from './manifest';
 
-/** The version of this `@inlay/disguise-sdk` build, from its `package.json`. */
+/** The version of this `@inlay-app/disguise-sdk` build, from its `package.json`. */
 export const SDK_VERSION: string = packageJson.version;
 
 function parseVersion(version: string): [number, number, number] | null {

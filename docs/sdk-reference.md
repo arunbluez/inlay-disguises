@@ -1,6 +1,6 @@
 # SDK reference
 
-`@inlay/disguise-sdk` is everything a disguise uses to talk to the app that runs it (the host): a manifest type, six hooks and the shared UI kit. The source is in `packages/disguise-sdk/src`; every exported name has a doc comment there.
+`@inlay-app/disguise-sdk` is everything a disguise uses to talk to the app that runs it (the host): a manifest type, six hooks and the shared UI kit. The source is in `packages/disguise-sdk/src`; every exported name has a doc comment there.
 
 ```ts
 import {
@@ -13,7 +13,7 @@ import {
   Button,
   NumberField,
   type DisguiseManifest,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 ```
 
 ## Manifest
@@ -108,7 +108,7 @@ type DisguiseFetch = (input: string, init?: RequestInit) => Promise<Response>;
 
 ### `useHostTheme(): HostTheme`
 
-The theme the host resolved for the disguise: the colours for the current light or dark scheme (including the disguise's accent), the elevation tokens, the scheme and whether the Archivo font is loaded. It is the same value `useTheme()` returns inside `@inlay/ui` components.
+The theme the host resolved for the disguise: the colours for the current light or dark scheme (including the disguise's accent), the elevation tokens, the scheme and whether the Archivo font is loaded. It is the same value `useTheme()` returns inside `@inlay-app/ui` components.
 
 ### `useBottomInset(): number`
 
@@ -124,18 +124,18 @@ return <TabBar tabs={tabs} value={tab} onChange={setTab} bottomInset={bottomInse
 
 ## UI kit
 
-The SDK re-exports `@inlay/ui`, so `@inlay/disguise-sdk` alone gives you the design tokens (`spacing`, `layout`, `radii`, `motion`, `textStyle` and the rest), `useTheme()` and the base components: `Button` (with `onHold`), `TextField`, `NumberField`, `Slider`, `Toggle`, `Chip`/`ChipRow`, `ListGroup`/`ListRow`, `Sheet`, `Toast`, `TabBar`, `EmptyState`, `ProgressBar`, `ScreenHeader`, `FileRow` and `ActionCard`. Build from these and the theme colours rather than hard-coded values, so a disguise matches the rest of the app in light and dark.
+The SDK re-exports `@inlay-app/ui`, so `@inlay-app/disguise-sdk` alone gives you the design tokens (`spacing`, `layout`, `radii`, `motion`, `textStyle` and the rest), `useTheme()` and the base components: `Button` (with `onHold`), `TextField`, `NumberField`, `Slider`, `Toggle`, `Chip`/`ChipRow`, `ListGroup`/`ListRow`, `Sheet`, `Toast`, `TabBar`, `EmptyState`, `ProgressBar`, `ScreenHeader`, `FileRow` and `ActionCard`. Build from these and the theme colours rather than hard-coded values, so a disguise matches the rest of the app in light and dark.
 
 ## Imports and the allowlist
 
 A disguise may import only:
 
 - `react` and `react-native`;
-- `@inlay/disguise-sdk` and `@inlay/ui`;
+- `@inlay-app/disguise-sdk` and `@inlay-app/ui`;
 - the packages listed in [`packages/disguise-sdk/allowlist.json`](../packages/disguise-sdk/allowlist.json) (subpaths included);
 - relative paths that stay inside its own package.
 
-The same rule applies to the `dependencies`, `peerDependencies` and `optionalDependencies` in its `package.json`. `devDependencies` and files under `__tests__/` are build tooling that never ships, so tests may use `@inlay/testkit` and `@testing-library/react-native`; no shipped file may import from `__tests__/`. ESLint flags a violation as you type, and `pnpm check-imports` enforces it in CI.
+The same rule applies to the `dependencies`, `peerDependencies` and `optionalDependencies` in its `package.json`. `devDependencies` and files under `__tests__/` are build tooling that never ships, so tests may use `@inlay-app/testkit` and `@testing-library/react-native`; no shipped file may import from `__tests__/`. ESLint flags a violation as you type, and `pnpm check-imports` enforces it in CI.
 
 `allowlist.json` is a list of `{ "name", "reason" }` entries. The list is short on purpose: every package on it ships in the app for every user, so each one costs download size and adds code to review.
 
@@ -152,21 +152,21 @@ Maintainers decide. An approved addition lands as its own pull request that chan
 
 ## Versions
 
-`SDK_VERSION` is the version of the `@inlay/disguise-sdk` build, from its `package.json`. A manifest's `minSdk` names the lowest SDK version the disguise needs. The host runs a disguise only when `satisfiesMinSdk(manifest)` is true: `SDK_VERSION` is at least `minSdk`, compared as `major.minor.patch`. A `minSdk` that is not plain `x.y.z` is never satisfied.
+`SDK_VERSION` is the version of the `@inlay-app/disguise-sdk` build, from its `package.json`. A manifest's `minSdk` names the lowest SDK version the disguise needs. The host runs a disguise only when `satisfiesMinSdk(manifest)` is true: `SDK_VERSION` is at least `minSdk`, compared as `major.minor.patch`. A `minSdk` that is not plain `x.y.z` is never satisfied.
 
 Set `minSdk` to the SDK version you develop against, and raise it when you start using something a later SDK added.
 
 From `1.0.0` the packages follow [semver](https://semver.org): a change that can break a disguise (a manifest field, a hook's signature, a UI kit prop) is a new major version; additions are minor versions. A release of the packages is cut from `main` under an `sdk-x.y.z` tag ([Releasing](releasing.md)).
 
-## Testing with `@inlay/testkit`
+## Testing with `@inlay-app/testkit`
 
-`@inlay/testkit` runs a disguise without the app:
+`@inlay-app/testkit` runs a disguise without the app:
 
 - `renderDisguise(manifest, options?)` renders the disguise under `MockHost` with React Native Testing Library and resolves to the mock host plus the render queries. It is async: `const { host } = await renderDisguise(manifest)`.
 - `host.submittedCodes` lists every value passed to `submit`, oldest first. `host.reset()` runs every `onReset` handler, as the app does. `host.storage` is in-memory and inspectable; `host.fetchCalls` lists the requests the fetch stub let through.
 - `createMockHost(options)` and `MockHost` are the same pieces without the test renderer; the playground uses them.
 
-A test suite needs `@inlay/testkit`, `@testing-library/react-native`, `jest`, `jest-expo` and `react-native-gesture-handler` as devDependencies, and `react-native-gesture-handler/jestSetup` in Jest `setupFiles`. `_template/package.json` has the full set. To drive a hold, use Gesture Handler's test controller with the button's `testID` plus `-hold`:
+A test suite needs `@inlay-app/testkit`, `@testing-library/react-native`, `jest`, `jest-expo` and `react-native-gesture-handler` as devDependencies, and `react-native-gesture-handler/jestSetup` in Jest `setupFiles`. `_template/package.json` has the full set. To drive a hold, use Gesture Handler's test controller with the button's `testID` plus `-hold`:
 
 ```tsx
 import { createGestureController } from 'react-native-gesture-handler/jest-utils';

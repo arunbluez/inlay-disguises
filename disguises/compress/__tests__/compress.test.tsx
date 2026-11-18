@@ -1,6 +1,6 @@
 // Compress under the testkit's MockHost. Only the third-party native modules are replaced (the
 // system photo picker and the image encoder); the SDK, storage and every screen are real.
-import { createMockHost, MockHost, renderDisguise } from '@inlay/testkit';
+import { createMockHost, MockHost, renderDisguise } from '@inlay-app/testkit';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { Keyboard, type KeyboardEvent } from 'react-native';
 import type { ImagePickerResult } from 'expo-image-picker';

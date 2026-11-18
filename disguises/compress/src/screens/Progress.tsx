@@ -6,7 +6,7 @@ import {
   tabularNums,
   textStyle,
   useHostTheme,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { Text, View } from 'react-native';
 
 import { useStore } from '../state/store';

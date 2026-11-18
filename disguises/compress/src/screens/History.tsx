@@ -1,4 +1,4 @@
-import { EmptyState, layout, ScreenHeader, spacing } from '@inlay/disguise-sdk';
+import { EmptyState, layout, ScreenHeader, spacing } from '@inlay-app/disguise-sdk';
 import { ScrollView, View } from 'react-native';
 
 import { useStore } from '../state/store';

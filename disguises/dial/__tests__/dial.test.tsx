@@ -1,7 +1,7 @@
 // Dial under the testkit's MockHost. Nothing is replaced: the SDK, storage, the dial and every
 // screen are real. The hold is Gesture Handler's native long press on the centre; drags are the
 // responder events the dial's drag surface receives, at points computed from the dial's size.
-import { createMockHost, MockHost, renderDisguise } from '@inlay/testkit';
+import { createMockHost, MockHost, renderDisguise } from '@inlay-app/testkit';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import {
@@ -9,7 +9,7 @@ import {
   getByGestureTestId,
 } from 'react-native-gesture-handler/jest-utils';
 
-import sdkPackage from '@inlay/disguise-sdk/package.json';
+import sdkPackage from '@inlay-app/disguise-sdk/package.json';
 import manifest from '../src';
 import { HOUR_RING } from '../src/time';
 

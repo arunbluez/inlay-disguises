@@ -7,7 +7,7 @@ import {
   textStyle,
   Toggle,
   useHostTheme,
-} from '@inlay/disguise-sdk';
+} from '@inlay-app/disguise-sdk';
 import { ScrollView, Text, View } from 'react-native';
 
 import packageJson from '../../package.json';

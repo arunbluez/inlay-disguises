@@ -1,7 +1,7 @@
 // The disguise SDK: the manifest a disguise exports, the hooks it uses to talk to its host, and
-// the provider and helpers a host uses to run it. Re-exports `@inlay/ui` so a disguise can depend
+// the provider and helpers a host uses to run it. Re-exports `@inlay-app/ui` so a disguise can depend
 // on this package alone.
-export * from '@inlay/ui';
+export * from '@inlay-app/ui';
 export type { DisguiseIcons, DisguiseManifest, DisguiseTier, IconAsset } from './manifest';
 export {
   createLifecycle,

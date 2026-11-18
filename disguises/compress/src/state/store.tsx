@@ -1,4 +1,4 @@
-import { useDisguiseStorage, useTrigger, type DisguiseStorage } from '@inlay/disguise-sdk';
+import { useDisguiseStorage, useTrigger, type DisguiseStorage } from '@inlay-app/disguise-sdk';
 import {
   createContext,
   useCallback,
