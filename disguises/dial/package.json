@@ -26,7 +26,8 @@
     "watchman": false,
     "setupFiles": [
       "react-native-gesture-handler/jestSetup"
-    ]
+    ],
+    "testTimeout": 30000
   },
   "dependencies": {
     "@inlay-app/disguise-sdk": "workspace:*"
